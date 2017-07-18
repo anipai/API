@@ -1,0 +1,25 @@
+product: 1.0.0
+info:
+  title: Test International Shipping Plan
+  version: '8'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the International Shipping API
+  name: test-international-shipping-plan
+apis:
+  international-shipping:
+    $ref: international-shipping_1.0.0-rev15.yaml
+plans:
+  test-international-shipping-plan:
+    title: Test International Shipping Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the International Shipping API
+    approval: true
+    apis:
+      international-shipping:
+        operations:
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/cancelshipment'
+            operation: delete
+          - path: /bagcontent
+            operation: post
+          - path: /createshipment
+            operation: post

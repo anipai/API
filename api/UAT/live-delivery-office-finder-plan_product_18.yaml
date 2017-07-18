@@ -1,0 +1,22 @@
+product: 1.0.0
+info:
+  title: Live Delivery Office Finder Plan
+  version: '18'
+  description: This plan is for Royal Mail customers to subscribe to the Delivery Office Finder API in the Live environment
+  name: live-delivery-office-finder-plan
+apis:
+  delivery-office-finder-api-rest:
+    $ref: delivery-office-finder-api-rest_1.0.0-rev40.yaml
+plans:
+  live-delivery-office-finder-plan:
+    title: Live Delivery Office Finder Plan
+    description: This plan is for Royal Mail customers to subscribe to the Delivery Office Finder API in the Live environment
+    approval: true
+    rate-limit:
+      hard-limit: true
+      value: 1/1second
+    apis:
+      delivery-office-finder-api-rest:
+        operations:
+          - path: /
+            operation: get

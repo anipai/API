@@ -1,0 +1,8 @@
+applications:
+- path: .
+  memory: 512M
+  instances: 1
+  name: Poc2Client
+  domain: eu-gb.mybluemix.net
+  host: tracking
+  disk_quota: 1024M

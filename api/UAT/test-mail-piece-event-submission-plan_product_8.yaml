@@ -1,0 +1,19 @@
+product: 1.0.0
+info:
+  title: Test Mail Piece Event Submission Plan
+  version: '8'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Mail Piece Event Submission API
+  name: test-mail-piece-event-submission-plan
+apis:
+  mail-piece-event-submission-api:
+    $ref: mail-piece-event-submission-api_1-rev7.yaml
+plans:
+  test-mail-piece-event-submission-plan:
+    title: Test Mail Piece Event Submission Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Mail Piece Event Submission API
+    approval: false
+    apis:
+      mail-piece-event-submission-api:
+        operations:
+          - path: /PostMPETracks
+            operation: post

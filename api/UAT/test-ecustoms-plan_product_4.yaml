@@ -1,0 +1,25 @@
+product: 1.0.0
+info:
+  title: Test eCustoms Plan
+  version: '4'
+  description: This plan will be shared to the the Projects team where they will review the API and Portal Configurations in APIM UAT environment
+  name: test-ecustoms-plan
+apis:
+  customs-declaration-api-soap:
+    $ref: customs-declaration-api-soap_1-rev4.yaml
+plans:
+  test-ecustoms-plan:
+    title: Test eCustoms Plan
+    description: This plan will be shared to the the Projects team where they will review the API and Portal Configurations in APIM UAT environment
+    approval: true
+    apis:
+      customs-declaration-api-soap:
+        operations:
+          - path: /CreateOrUpdateDeclarations
+            operation: post
+          - path: /GetHSCodes
+            operation: post
+          - path: /GetRestrictionProhibitionByDescription
+            operation: post
+          - path: /GetRestrictionProhibitionByHS
+            operation: post

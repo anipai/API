@@ -1,0 +1,171 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.myreadyapimvnLocalCollectproj.app</groupId>
+  <artifactId>my-readyapimvnLocalCollectV2</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>my-readyapimvnLocalCollectV2</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+<pluginRepositories>
+      <pluginRepository>
+         <id>SmartBearPluginRepository</id>
+         <url>http://smartbearsoftware.com/repository/maven2</url>
+      </pluginRepository>
+   </pluginRepositories>
+   <build>
+      <plugins>
+         <plugin>
+
+            <!--Plugin groupID used to uniquely identify the project with the plugin.-->
+            <groupId>com.smartbear</groupId>
+
+            <!--Plugin artifactId used to find the plugin in the project.-->
+            <artifactId>ready-api-maven-plugin</artifactId>
+
+            <!--Specifies your Ready! API version. Maven will use the appropriate plugin version.-->
+            <!-- IMPORTANT: Must be the same as your Ready! API version.-->
+            <version>1.9.0</version>
+
+            <executions>
+               <execution>
+
+                  <!--Specifies the lifecycle phase to run Ready! API tests .-->
+                  <!--We recommend using the test phase.-->
+                  <phase>test</phase>
+
+                  <goals>
+                     <!--Do not change. Commands Maven plugin to run a functional test.-->
+                     <goal>test</goal>
+                  </goals>
+
+                  <configuration>
+
+                     <!--Required. Specifies the path to the project to execute.-->
+                     <projectFile>API/Local Collect/V2 REST/Test/V2_temp/Local-Collect-V2-soapui-project.xml</projectFile>
+
+                     <!--Required for reports. Specifies the format of the report to generate.-->
+                     <!--Possible values: PDF, XLS, HTML, RTF, CSV, TXT and XML. Only available in Ready! API Pro. -->                      
+					 <reportFormat>PDF</reportFormat>
+
+                     <!--Required for Maven Surefire reports. Must be true. -->
+                     <!--Commands Ready! API to generate JUnit-style reports.-->
+                     <junitReport>true</junitReport>
+
+                     <!--Required for Maven Surefire reports. Must be as shown. -->
+                     <!--Specifies the folder to store reports in. -->
+                     <reports>${basedir}/target/surefire-reports</reports>
+
+                     <!-- ========= Additional elements ============= -->
+
+                     <!--Specifies the name of the test suite to run.-->
+                     <!--testSuite>TAPI_SOAP_ShortTest_AllRequests_Live_PromotedToLive</testSuite-->
+
+                     <!--Specifies the name of the test case to run.-->
+                     <!--testCase>History-RMGTT</testCase-->
+
+                     <!--Specifies the tags to use. Only the test cases with specified tags will be run. Use the syntax below. -->
+                     <!--tags><param>TestCase tag1, tag2</param></tags-->
+
+                     <!--Overrides service endpoints specified in the test. -->
+                     <!--endpoint></endpoint-->
+
+                     <!--Overrides the host specified in the the test.-->
+                     <!--host></host-->
+
+                     <!--Overrides user name for all requests.-->
+                     <!--username></username-->
+
+                     <!--Overrides passwords for all requests.-->
+                     <!--password></password-->
+
+                     <!--Overrides domain used for requests.-->
+                     <!--domain></domain-->
+
+                     <!--If true, commands Maven to create a printed report.-->
+                     <!--printReport></printReport-->
+
+                     <!--Sets the output folder for reports.-->
+                     <outputFolder>reports</outputFolder>
+
+                     <!--If true, commands Maven to export all requests.-->
+                     <!--exportAll></exportAll-->
+
+                     <!--Specifies the SoapUI settings file to use.-->
+                     <!--settingsFile></settingsFile-->
+
+                     <!--Specifies the type of WSS password.-->
+                     <!--wssPasswordType></wssPasswordType-->
+
+                     <!--Specifies the password for an encrypted project.-->
+                     <!--project.password></project.password -->
+
+                     <!--Specifies the password for an encrypted settings file.-->
+                     <!--settingsFile.password></settingsFile.password-->
+
+                     <!--Specifies the value of a global property for the test run. Syntax: <variable>=<value>-->-->
+                     <!--globalProperties></globalProperties-->
+
+                     <!--Specifies the value of a project property for the test run. Syntax: <variable>=<value>-->
+                     <!--projectProperties></projectProperties-->
+
+                     <!--Saves the project after the test run.-->
+                     <!--saveAfterRun></saveAfterRun-->
+
+                     <!--If true, commands Maven to continue the test run even when an assertion triggers.-->
+                     <!--testFailIgnore>true</testFailIgnore-->
+
+                     <!--Specifies the report type. Only available in Ready! API Pro.-->
+                     <!--Click Reporting on Ready! API toolbar to find the list of available repors.-->
+                     <!--reportName></reportName-->
+
+                     <!--Enables HTML coverage reports. Only available in Ready! API Pro.-->
+                     <!--coverage></coverage-->
+
+                     <!--Specifies the environment to use in the test run. Only available in Ready! API Pro.-->
+                     <!--environment></environment-->
+
+                     <!--Provides access to Ready! API properties.-->
+                     <!--readyApiProperties></readyApiProperties-->
+
+                     <!--If true, Ready! API will not send usage statistics.-->
+                     <!--optOutUsageStatistics></optOutUsageStatistics-->
+
+                     <!-- ========= /Additional elements ============= -->
+
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <!--Add Maven Site Plugin to improve test stability and prepare test data for Maven SureFire.-->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.5</version>
+            <configuration>
+               <locales>en,fr</locales>
+            </configuration>
+         </plugin>
+
+      </plugins>
+
+   </build>
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.19.1</version>
+         </plugin>
+      </plugins>
+   </reporting>
+</project>

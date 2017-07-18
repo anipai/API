@@ -1,0 +1,35 @@
+product: 1.0.0
+info:
+  title: Test Tracking Plan
+  version: '7'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Tracking API
+  name: test-tracking-plan
+apis:
+  tracking-api-soap:
+    $ref: tracking-api-soap_1.1.1-rev26.yaml
+  tracking-api-rest:
+    $ref: tracking-api-rest_1.1.2-rev22.yaml
+plans:
+  test-tracking-plan:
+    title: Test Tracking Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Tracking API
+    approval: true
+    apis:
+      tracking-api-soap:
+        operations:
+          - path: /getMultiItemSummary
+            operation: post
+          - path: /getProofOfDelivery
+            operation: post
+          - path: /getSingleItemHistory
+            operation: post
+          - path: /getSingleItemSummary
+            operation: post
+      tracking-api-rest:
+        operations:
+          - path: '/{trackingNumber}/proofOfDelivery'
+            operation: get
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/summary'
+            operation: get

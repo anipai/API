@@ -1,0 +1,969 @@
+swagger: '2.0'
+info:
+  title: Local Collect API (SOAP)
+  description: "Local Collect is a delivery enhancement to Royal Mail Tracked & Special Delivery Guaranteed products that enables customers to benefit from ‘Click and Collect’ options by having their parcels delivered to participating Post Offices. The Local Collect API allows customers to retrieve an up-to-date list of Post Offices and confirm selection in a given location, where the item will be held awaiting collection.\n \nThere are no costs to customers for using the Local Collect API services, however development costs must be covered by the customer. Royal Mail will not accept any responsibility for these development, implementation and testing costs."
+  version: 2.4.1-rev27
+  x-ibm-name: local-collect-api-soap
+basePath: /LocalCollect
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Local Collect Endpoint:
+      description: This is the Local Collect end point
+      encoded: false
+      value: 'https://localcollect.royalmail.com:28643/axis2/services/LocalCollect'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: Local Collect Service Overview
+      description: ''
+      id: 5665850f0cf223fe051968d0
+    - title: Local Collect API Technical User Guide
+      description: ''
+      id: 566586640cf223fe05196937
+    - title: 'Local Collect Customer Presentation '
+      description: ''
+      id: 5665850f0cf223fe051968da
+    - title: Sample Data Set
+      description: ''
+      id: 566585100cf223fe051968e1
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: local-collect-api-soap_2.4.1-rev27.zip
+    service: LocalCollect
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - GetLCDeliveryLocations
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(Local Collect Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - SetLCDeliveryLocation
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 2
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(Local Collect Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /SetLCDeliveryLocation:
+    post:
+      description: Confirms selection in a given Post Office for a delivery to ensure there is sufficient physical space for parcels to be held awaiting collection.
+      tags: []
+      operationId: SetLCDeliveryLocation
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v2:SetLCDeliveryLocationRequest
+              xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/V2.0"
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v1:date>2008-09-28</v1:date>
+
+                  <!--Optional:-->
+
+                  <v1:version>1000.00</v1:version>
+
+                  <v1:identification>
+
+                    <v1:applicationId>string</v1:applicationId>
+
+                    <!--Optional:-->
+
+                    <v1:intermediaryId>string</v1:intermediaryId>
+
+                    <v1:transactionId>string</v1:transactionId>
+
+                  </v1:identification>
+
+                </v1:integrationHeader>
+
+                <v2:lCBookingReference>string</v2:lCBookingReference>
+
+              </v2:SetLCDeliveryLocationRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:setLCDeliveryLocation'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v2:SetLCDeliveryLocationResponse
+              xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/V2.0"
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v1:date>2008-09-28</v1:date>
+
+                  <!--Optional:-->
+
+                  <v1:version>1000.00</v1:version>
+
+                  <v1:identification>
+
+                    <v1:applicationId>string</v1:applicationId>
+
+                    <!--Optional:-->
+
+                    <v1:intermediaryId>string</v1:intermediaryId>
+
+                    <v1:transactionId>string</v1:transactionId>
+
+                  </v1:identification>
+
+                </v1:integrationHeader>
+
+                <!--You have a CHOICE of the next 2 items at this level-->
+
+                <v2:errorResponse>
+
+                  <v2:errorCode>
+
+                    <v2:code>string</v2:code>
+
+                    <v2:description>string</v2:description>
+
+                  </v2:errorCode>
+
+                  <v2:errorCause>string</v2:errorCause>
+
+                  <v2:errorResolution>string</v2:errorResolution>
+
+                </v2:errorResponse>
+
+                <v2:reservationReference>string</v2:reservationReference>
+
+                <v2:location>
+
+                  <v2:organisationName>string</v2:organisationName>
+
+                  <!--Optional:-->
+
+                  <v2:locationPosition>
+
+                    <geoDeticSystem>
+
+                      <systemNameCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </systemNameCode>
+
+                    </geoDeticSystem>
+
+                    <!--Optional:-->
+
+                    <geoSpatialPositionType>
+
+                      <geospatialPositionCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </geospatialPositionCode>
+
+                    </geoSpatialPositionType>
+
+                    <!--Optional:-->
+
+                    <altitude>1000.00</altitude>
+
+                    <!--Optional:-->
+
+                    <longitude>1000.00</longitude>
+
+                    <!--Optional:-->
+
+                    <latitude>1000.00</latitude>
+
+                  </v2:locationPosition>
+
+                  <v2:locationName>string</v2:locationName>
+
+                  <!--Optional:-->
+
+                  <v2:address>
+
+                    <!--Zero or more repetitions:-->
+
+                    <addressUsageType>
+
+                      <addressUsageCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </addressUsageCode>
+
+                    </addressUsageType>
+
+                    <!--Optional:-->
+
+                    <domesticIndicator>true</domesticIndicator>
+
+                    <!--Optional:-->
+
+                    <buildingName>string</buildingName>
+
+                    <!--Optional:-->
+
+                    <buildingNumber>100</buildingNumber>
+
+                    <addressLine1>string</addressLine1>
+
+                    <!--Optional:-->
+
+                    <addressLine2>string</addressLine2>
+
+                    <!--Optional:-->
+
+                    <addressLine3>string</addressLine3>
+
+                    <!--Optional:-->
+
+                    <addressLine4>string</addressLine4>
+
+                    <!--Optional:-->
+
+                    <stateOrProvince>
+
+                      <stateOrProvinceCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </stateOrProvinceCode>
+
+                    </stateOrProvince>
+
+                    <!--Optional:-->
+
+                    <postTown>string</postTown>
+
+                    <!--Optional:-->
+
+                    <county>
+
+                      <countyCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </countyCode>
+
+                    </county>
+
+                    <!--Optional:-->
+
+                    <postcode>string</postcode>
+
+                    <!--Optional:-->
+
+                    <country>
+
+                      <countryCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </countryCode>
+
+                    </country>
+
+                    <!--Optional:-->
+
+                    <status>
+
+                      <status>
+
+                        <statusCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </statusCode>
+
+                      </status>
+
+                      <validFrom>2004-02-14T12:44:14</validFrom>
+
+                      <!--Optional:-->
+
+                      <validTo>2018-11-01T00:36:46-05:00</validTo>
+
+                    </status>
+
+                    <!--Optional:-->
+
+                    <audit>
+
+                      <lastUpdateDate>2013-05-21T20:02:49-05:00</lastUpdateDate>
+
+                      <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                    </audit>
+
+                  </v2:address>
+
+                  <!--Optional:-->
+
+                  <v2:lCAvailability>true</v2:lCAvailability>
+
+                  <!--Optional:-->
+
+                  <v2:lCBookingReference>string</v2:lCBookingReference>
+
+                  <!--1 to 8 repetitions:-->
+
+                  <v2:openingDay>
+
+                    <v2:dayOfWeekType>
+
+                      <dayOfWeekCode>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </dayOfWeekCode>
+
+                    </v2:dayOfWeekType>
+
+                    <!--Optional:-->
+
+                    <v2:openingTime>05:32:42-06:00</v2:openingTime>
+
+                    <!--Optional:-->
+
+                    <v2:closingTime>13:07:42</v2:closingTime>
+
+                    <!--Optional:-->
+
+                    <v2:lunchTime>
+
+                      <v2:lunchClosingTime>13:42:56</v2:lunchClosingTime>
+
+                      <v2:lunchOpeningTime>04:44:59</v2:lunchOpeningTime>
+
+                    </v2:lunchTime>
+
+                  </v2:openingDay>
+
+                  <!--Optional:-->
+
+                  <v2:searchDistance>1.5E2</v2:searchDistance>
+
+                </v2:location>
+
+              </v2:SetLCDeliveryLocationResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /GetLCDeliveryLocations:
+    post:
+      description: Retrieves an up-to-date list of Post Offices that offer Local Collect and have sufficient capacity to receive parcels (for a given location and delivery date).
+      operationId: GetLCDeliveryLocations
+      summary: null
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v2:GetLCDeliveryLocationsRequest
+              xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/V2.0"
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v1:date>2008-09-28</v1:date>
+
+                  <!--Optional:-->
+
+                  <v1:version>1000.00</v1:version>
+
+                  <v1:identification>
+
+                    <v1:applicationId>string</v1:applicationId>
+
+                    <!--Optional:-->
+
+                    <v1:intermediaryId>string</v1:intermediaryId>
+
+                    <v1:transactionId>string</v1:transactionId>
+
+                  </v1:identification>
+
+                </v1:integrationHeader>
+
+                <!--You have a CHOICE of the next 2 items at this level-->
+
+                <v2:searchPostcode>string</v2:searchPostcode>
+
+                <v2:searchPosition>
+
+                  <geoDeticSystem>
+
+                    <systemNameCode>
+
+                      <!--Optional:-->
+
+                      <code>string</code>
+
+                      <!--Optional:-->
+
+                      <name>string</name>
+
+                      <!--Optional:-->
+
+                      <description>string</description>
+
+                    </systemNameCode>
+
+                  </geoDeticSystem>
+
+                  <!--Optional:-->
+
+                  <geoSpatialPositionType>
+
+                    <geospatialPositionCode>
+
+                      <!--Optional:-->
+
+                      <code>string</code>
+
+                      <!--Optional:-->
+
+                      <name>string</name>
+
+                      <!--Optional:-->
+
+                      <description>string</description>
+
+                    </geospatialPositionCode>
+
+                  </geoSpatialPositionType>
+
+                  <!--Optional:-->
+
+                  <altitude>1000.00</altitude>
+
+                  <!--Optional:-->
+
+                  <longitude>1000.00</longitude>
+
+                  <!--Optional:-->
+
+                  <latitude>1000.00</latitude>
+
+                </v2:searchPosition>
+
+                <!--Optional:-->
+
+                <v2:radius>99</v2:radius>
+
+                <v2:estimatedDeliveryDate>2014-09-18</v2:estimatedDeliveryDate>
+
+              </v2:GetLCDeliveryLocationsRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:getLCDeliveryLocations'
+        soap-operation: '{http://www.royalmailgroup.com/API/LocalCollect/V2.0}GetLCDeliveryLocationsRequest'
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v2:GetLCDeliveryLocationsResponse
+              xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/V2.0"
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v1:date>2008-09-28</v1:date>
+
+                  <!--Optional:-->
+
+                  <v1:version>1000.00</v1:version>
+
+                  <v1:identification>
+
+                    <v1:applicationId>string</v1:applicationId>
+
+                    <!--Optional:-->
+
+                    <v1:intermediaryId>string</v1:intermediaryId>
+
+                    <v1:transactionId>string</v1:transactionId>
+
+                  </v1:identification>
+
+                </v1:integrationHeader>
+
+                <!--You have a CHOICE of the next 2 items at this level-->
+
+                <v2:errorResponse>
+
+                  <v2:errorCode>
+
+                    <v2:code>string</v2:code>
+
+                    <v2:description>string</v2:description>
+
+                  </v2:errorCode>
+
+                  <v2:errorCause>string</v2:errorCause>
+
+                  <v2:errorResolution>string</v2:errorResolution>
+
+                </v2:errorResponse>
+
+                <v2:locations>
+
+                  <v2:location>
+
+                    <v2:organisationName>string</v2:organisationName>
+
+                    <!--Optional:-->
+
+                    <v2:locationPosition>
+
+                      <geoDeticSystem>
+
+                        <systemNameCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </systemNameCode>
+
+                      </geoDeticSystem>
+
+                      <!--Optional:-->
+
+                      <geoSpatialPositionType>
+
+                        <geospatialPositionCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </geospatialPositionCode>
+
+                      </geoSpatialPositionType>
+
+                      <!--Optional:-->
+
+                      <altitude>1000.00</altitude>
+
+                      <!--Optional:-->
+
+                      <longitude>1000.00</longitude>
+
+                      <!--Optional:-->
+
+                      <latitude>1000.00</latitude>
+
+                    </v2:locationPosition>
+
+                    <v2:locationName>string</v2:locationName>
+
+                    <!--Optional:-->
+
+                    <v2:address>
+
+                      <!--Zero or more repetitions:-->
+
+                      <addressUsageType>
+
+                        <addressUsageCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </addressUsageCode>
+
+                      </addressUsageType>
+
+                      <!--Optional:-->
+
+                      <domesticIndicator>true</domesticIndicator>
+
+                      <!--Optional:-->
+
+                      <buildingName>string</buildingName>
+
+                      <!--Optional:-->
+
+                      <buildingNumber>100</buildingNumber>
+
+                      <addressLine1>string</addressLine1>
+
+                      <!--Optional:-->
+
+                      <addressLine2>string</addressLine2>
+
+                      <!--Optional:-->
+
+                      <addressLine3>string</addressLine3>
+
+                      <!--Optional:-->
+
+                      <addressLine4>string</addressLine4>
+
+                      <!--Optional:-->
+
+                      <stateOrProvince>
+
+                        <stateOrProvinceCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </stateOrProvinceCode>
+
+                      </stateOrProvince>
+
+                      <!--Optional:-->
+
+                      <postTown>string</postTown>
+
+                      <!--Optional:-->
+
+                      <county>
+
+                        <countyCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </countyCode>
+
+                      </county>
+
+                      <!--Optional:-->
+
+                      <postcode>string</postcode>
+
+                      <!--Optional:-->
+
+                      <country>
+
+                        <countryCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </countryCode>
+
+                      </country>
+
+                      <!--Optional:-->
+
+                      <status>
+
+                        <status>
+
+                          <statusCode>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </statusCode>
+
+                        </status>
+
+                        <validFrom>2004-02-14T12:44:14</validFrom>
+
+                        <!--Optional:-->
+
+                        <validTo>2018-11-01T00:36:46-05:00</validTo>
+
+                      </status>
+
+                      <!--Optional:-->
+
+                      <audit>
+
+                        <lastUpdateDate>2013-05-21T20:02:49-05:00</lastUpdateDate>
+
+                        <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                      </audit>
+
+                    </v2:address>
+
+                    <!--Optional:-->
+
+                    <v2:lCAvailability>true</v2:lCAvailability>
+
+                    <!--Optional:-->
+
+                    <v2:lCBookingReference>string</v2:lCBookingReference>
+
+                    <!--1 to 8 repetitions:-->
+
+                    <v2:openingDay>
+
+                      <v2:dayOfWeekType>
+
+                        <dayOfWeekCode>
+
+                          <!--Optional:-->
+
+                          <code>string</code>
+
+                          <!--Optional:-->
+
+                          <name>string</name>
+
+                          <!--Optional:-->
+
+                          <description>string</description>
+
+                        </dayOfWeekCode>
+
+                      </v2:dayOfWeekType>
+
+                      <!--Optional:-->
+
+                      <v2:openingTime>05:32:42-06:00</v2:openingTime>
+
+                      <!--Optional:-->
+
+                      <v2:closingTime>13:07:42</v2:closingTime>
+
+                      <!--Optional:-->
+
+                      <v2:lunchTime>
+
+                        <v2:lunchClosingTime>13:42:56</v2:lunchClosingTime>
+
+                        <v2:lunchOpeningTime>04:44:59</v2:lunchOpeningTime>
+
+                      </v2:lunchTime>
+
+                    </v2:openingDay>
+
+                    <!--Optional:-->
+
+                    <v2:searchDistance>1.5E2</v2:searchDistance>
+
+                  </v2:location>
+
+                </v2:locations>
+
+              </v2:GetLCDeliveryLocationsResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+security: []

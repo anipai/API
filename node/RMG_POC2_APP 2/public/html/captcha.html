@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <script type="application/javascript" src='https://www.google.com/recaptcha/api.js'></script>
+  <script type="application/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+
+<body>
+  <div class=main_body_div>
+    <div class=central_column_div>
+
+      <div class="heading_holder_div">
+        <h1>RMG Parcel Tracking</h1>
+      </div>
+      <div class="form_holder_div">
+        <form name="form1" id="target" method="get" accept-charset="UTF-8" action="https://tracking.eu-gb.mybluemix.net/getTrackingSummary">
+          <p>Enter your tracking number and name below to retrieve location data about your package</p>
+          <input type="text" name="trackingNumber" placeholder="Tracking Number" class="form_element"><br>
+          <input type="hidden" name="sourceip" value="::1">
+          <input type="hidden" name="client_id" value="70e0d8f1-3419-4ac7-9cc6-b6d75cbed593">
+          <input type="text" name="jwtibm" placeholder="JWT from IBM APIC" class="form_element"><br>
+          <input type="text" name="jwtebus" placeholder="JWT from EBusiness" class="form_element"><br>
+          <input type="text" name="jwtcaptchasession" placeholder="JWT for session" class="form_element"><br>
+          <div class="g-recaptcha form_element" data-sitekey="6LchQRoUAAAAAIXhVMTBEpbzR2P7BCI7kyUtNnrT"></div>
+          <input type="submit" name="submit" value="Submit">
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

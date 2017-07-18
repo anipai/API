@@ -1,0 +1,283 @@
+swagger: '2.0'
+info:
+  version: 1.0.0-rev40
+  title: Delivery Office Finder API (REST)
+  description: 'The Delivery Office Finder API enables customers to obtain details of the Royal Mail Delivery Office dedicated to the provided postcode with the name, address, facilities and business hours of the Delivery Office being returned.'
+  x-ibm-name: delivery-office-finder-api-rest
+basePath: /deliveryOffices
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    DOF Endpoint:
+      description: This is the endpoint of the DOF Backend
+      encoded: false
+      value: 'http://www.royalmail.com/capi/dof/rml/v1/location/deliveryOffice/{postcode}'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: Delivery Office Finder API Technical User Guide
+      description: ''
+      id: 564d90e10cf222f6df868c18
+  gateway: datapower-gateway
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - verb: get
+                  path: /
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            postcode:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: parameters
+                        schema:
+                          type: object
+                          properties:
+                            postcode:
+                              type: string
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            x-request-from:
+                              type: string
+                              default: IBM-API-Manager
+                    actions:
+                      - set: out1.postcode
+                        from: '#/in1.postcode'
+                      - set: out2.x-request-from
+                        default: IBM-API-Manager
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: GET
+                    target-url: $(DOF Endpoint)
+                    title: HTTP GET Operation 2
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+tags: []
+definitions:
+  ErrorResponse: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+paths:
+  /:
+    get:
+      description: 'Enter a postcode in the URL and the response JSON will contain the name, the address and the business hours of the Delivery Office dedicated to this postcode.'
+      tags: []
+      parameters:
+        - default: '{postcode}'
+          description: Enter UK Postcode to locate a delivery office for.
+          name: postcode
+          type: string
+          required: true
+          in: query
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              header:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  responseDate:
+                    type: string
+                  apiVersion:
+                    type: string
+              searchedPostcode:
+                type: string
+              deliveryOffice:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  officeDetails:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      address1:
+                        type: string
+                      address2:
+                        type: string
+                      address3:
+                        type: string
+                      address4:
+                        type: string
+                      address5:
+                        type: string
+                      address6:
+                        type: string
+                      address7:
+                        type: string
+                      address8:
+                        type: string
+                      postcode:
+                        type: string
+                  businessDays:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        businessDay:
+                          type: string
+                        openingTimes:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              opensAt:
+                                type: string
+                              closesAt:
+                                type: string
+                  locationDetails:
+                    type: object
+                    properties:
+                      latitude:
+                        type: number
+                      longitude:
+                        type: number
+                      distance:
+                        type: integer
+                  facilities:
+                    type: array
+                    items:
+                      type: string
+          description: Successful query
+          examples:
+            application/json:
+              header:
+                statusCode: '200'
+                responseDate: '2015-09-29 10:46:45'
+                apiVersion: '1'
+              searchedPostcode: M11AD
+              deliveryOffice:
+                id: 7690
+                officeDetails:
+                  name: Manchester CDO Enquiry Office
+                  address1: Royal Mail
+                  address2: Manchester CDO Enquiry Office
+                  address3: Manchester Mail Centre
+                  address4: 77 Oldham Road
+                  address5: MANCHESTER
+                  address6: ''
+                  address7: ''
+                  address8: ''
+                  postcode: M4 5AA
+                businessDays:
+                  - businessDay: Sunday
+                    openingTimes:
+                      - opensAt: '12:00'
+                        closesAt: '16:00'
+                  - businessDay: Monday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '17:30'
+                  - businessDay: Tuesday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '17:30'
+                  - businessDay: Wednesday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '20:00'
+                  - businessDay: Thursday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '17:30'
+                  - businessDay: Friday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '17:30'
+                  - businessDay: Saturday
+                    openingTimes:
+                      - opensAt: '06:00'
+                        closesAt: '14:00'
+                locationDetails:
+                  latitude: 53.4874
+                  longitude: -2.2272
+                  distance: 1255
+                facilities:
+                  - carParking
+                  - disabledAccess
+        '400':
+          description: 'Bad request, invalid or incorrectly formatted postcode.'
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '400'
+              httpMessage: Bad Request
+              moreInformation: Invalid UK Postcode
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+        '404':
+          description: Invalid Postcode
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '404'
+              httpMessage: Not Found
+              moreInformation: eBDofApi001 - No Delivery Office Found for postcode
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Locates the delivery office for a given UK Postcode.
+security: []

@@ -1,0 +1,688 @@
+swagger: '2.0'
+info:
+  title: PFW Tracking API (SOAP) LIVE
+  description: "The Parcelforce Tracking API exposes a web service that allows customers enquire on the tracking status of mail items which are being handled through the Parcelforce network. There are two API operations available which provide both single and multi-item tracking services. \n \nThe first API operation provides single item parcel tracking functionality based on Parcelforce consignment number, parcel label, foreign parcel label or senders reference for one account. The second API operation provides registration, parcel searching and multiple parcel searching functionality based on customer number (or sender reference) and account information.\n \nThere are no costs to customers for using the PFW Tracking API, however customers own development costs must be covered by the customer developing the solution. Royal Mail Group will not accept any responsibility for these development, implementation and testing costs."
+  version: 1-rev5
+  x-ibm-name: pfw-tracking-api-soap-live
+basePath: /parceltracking/v1
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Multi Parcel Tracking Endpoint:
+      description: Multi Parcel Tracking Endpoint
+      encoded: false
+      value: 'https://api.royalmail.com:443/multiparceltracking/v1'
+    Single Parcel Tracking Endpoint:
+      description: Single Parcel Tracking Endpoint
+      encoded: false
+      value: 'https://api.royalmail.com:443/singleparceltracking/v1'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: PFW Tracking API (SOAP) Sample Data Set
+      description: ''
+      id: 56d7d9e40cf2a5688a927057
+    - title: RMG PFW Tracking API (SOAP) Technical User Guide
+      description: ''
+      id: 56d7da0e0cf2a5688a927060
+    - title: PFW Tracking API Reference Data
+      description: ''
+      id: 56d017ac0cf219c7f64da283
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: pfw-tracking-api-soap-live_1-rev5.wsdl
+    service: ParcelTrackingService
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - ParcelTrackingEnquiry
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(Multi Parcel Tracking Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - TrackingEnquiry
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 2
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(Single Parcel Tracking Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Secret
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Id
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /ParcelTrackingEnquiry:
+    post:
+      description: Provides the latest tracking information for Parcelforce mail items based on a customer number (sender reference) and account information.
+      tags: []
+      operationId: ParcelTrackingEnquiry
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><ns:ParcelTrackingEnquiry
+              xmlns:ns="urn:royalmail/ParcelTracking/2003/06/23">
+
+                <!--Optional:-->
+
+                <ns:TrackRequest>
+
+                  <ns:Parameters>
+
+                    <ns:SearchType>QBPT</ns:SearchType>
+
+                    <!--Optional:-->
+
+                    <ns:MaxConsignments>1</ns:MaxConsignments>
+
+                    <!--Optional:-->
+
+                    <ns:SearchValue>string</ns:SearchValue>
+
+                    <!--Optional:-->
+
+                    <ns:CustNum>string</ns:CustNum>
+
+                    <!--Optional:-->
+
+                    <ns:Creation>stringstringstringstringst</ns:Creation>
+
+                    <!--Optional:-->
+
+                    <ns:ODS>stringstringstringstringst</ns:ODS>
+
+                    <!--Optional:-->
+
+                    <ns:StartDate>stringstringstringstringst</ns:StartDate>
+
+                    <!--Optional:-->
+
+                    <ns:EndDate>stringstringstringstringst</ns:EndDate>
+
+                    <!--Optional:-->
+
+                    <ns:AccountsForAuthentication>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:AccountForAuthentication>
+
+                        <ns:ContractNumber>string</ns:ContractNumber>
+
+                        <ns:AccountNumber>string</ns:AccountNumber>
+
+                      </ns:AccountForAuthentication>
+
+                    </ns:AccountsForAuthentication>
+
+                    <!--Optional:-->
+
+                    <ns:ProductCodes>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:ProductCode>string</ns:ProductCode>
+
+                    </ns:ProductCodes>
+
+                    <!--Optional:-->
+
+                    <ns:Identifiers>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:Identifier>string</ns:Identifier>
+
+                    </ns:Identifiers>
+
+                    <!--Optional:-->
+
+                    <ns:AccountNumbers>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:AccountNumber>string</ns:AccountNumber>
+
+                    </ns:AccountNumbers>
+
+                  </ns:Parameters>
+
+                </ns:TrackRequest>
+
+              </ns:ParcelTrackingEnquiry></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:royalmail/ParcelTracking/2003/06/23/ParcelTrackingEnquiry'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <ns:ParcelTrackingEnquiryResponse
+              xmlns:ns="urn:royalmail/ParcelTracking/2003/06/23"
+              xmlns:trac="http://xmllib.intranet.point/trackingv11.xsd">
+
+                <ns:ParcelTrackingEnquiryResult>
+
+                  <!--You have a CHOICE of the next 3 items at this level-->
+
+                  <!--1 or more repetitions:-->
+
+                  <ns:Response>
+
+                    <!--You have a CHOICE of the next 3 items at this level-->
+
+                    <ns:TrackResponse>
+
+                      <!--Optional:-->
+
+                      <ns:CommonData Id="string" SendRef="string"
+              CustNme="string" Cont="string" Service="string" Prod="string"
+              ItemAdv="100" ItemCol="100" ItemDel="100" ForeignId="string"
+              RecNme="string" Brand="string" SpeclInst="string" Origin="string"
+              ExpectDelDate="2008-09-28" ExpectDelTime="18:18:33"
+              DateSent="stringstringstrings">
+
+                        <!--Optional:-->
+
+                        <ns:DelAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:DelAd>
+
+                        <!--Optional:-->
+
+                        <ns:CollAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:CollAd>
+
+                        <!--Optional:-->
+
+                        <ns:AltAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:AltAd>
+
+                        <!--0 to 10 repetitions:-->
+
+                        <ns:LinkCons LinkConsId="100" Id="string"
+              Creation="2006-08-19T12:27:14-05:00" ODS="2009-05-16T07:42:28"/>
+
+                      </ns:CommonData>
+
+                      <!--0 to 999 repetitions:-->
+
+                      <ns:Item ItemId="string" Signatory="string" SigKey="string"
+              Status="string">
+
+                        <!--Zero or more repetitions:-->
+
+                        <ns:Event EvntLoc="string" EvntDes="string"
+              EvntCode="string" EvntTime="19:18:37-05:00"
+              EvntDate="2012-09-13-05:00" EvntInst="string"/>
+
+                      </ns:Item>
+
+                      <!--0 to 999 repetitions:-->
+
+                      <ns:SigImage SigKey="string">
+
+                        <!--You have a CHOICE of the next 2 items at this
+              level-->
+
+                        <ns:CompDataStr>string</ns:CompDataStr>
+
+                        <ns:ImgURL>string</ns:ImgURL>
+
+                      </ns:SigImage>
+
+                    </ns:TrackResponse>
+
+                    <ns:SndRefResponse>
+
+                      <!--1 to 999 repetitions:-->
+
+                      <ns:SndRefDetail Id="string" RecNme="string"
+              Cont="string"/>
+
+                    </ns:SndRefResponse>
+
+                    <ns:ErrorResponse Id="string" Des="string" Error="string"
+              Brand="string" EvntInst="string"/>
+
+                  </ns:Response>
+
+                  <ns:TrackResponse>
+
+                    <!--You have a CHOICE of the next 2 items at this level-->
+
+                    <ns:Consignments>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:Consignment>
+
+                        <ns:Number>string</ns:Number>
+
+                        <ns:DateSent>stringstringstrings</ns:DateSent>
+
+                        <ns:Parcels>
+
+                          <!--Zero or more repetitions:-->
+
+                          <ns:Parcel>
+
+                            <ns:Number>string</ns:Number>
+
+                            <ns:Status>string</ns:Status>
+
+                          </ns:Parcel>
+
+                        </ns:Parcels>
+
+                      </ns:Consignment>
+
+                    </ns:Consignments>
+
+                    <ns:Customers>
+
+                      <!--1 or more repetitions:-->
+
+                      <ns:Customer>
+
+                        <ns:AccountNumber>string</ns:AccountNumber>
+
+                        <ns:Status>Y</ns:Status>
+
+                        <!--Optional:-->
+
+                        <ns:Contracts>
+
+                          <!--1 or more repetitions:-->
+
+                          <ns:Contract>
+
+                            <ns:ContractNumber>string</ns:ContractNumber>
+
+                            <ns:Status>Y</ns:Status>
+
+                            <ns:Products>
+
+                              <!--Zero or more repetitions:-->
+
+                              <ns:Product>
+
+                                <!--Optional:-->
+
+                                <ns:ProductCode>string</ns:ProductCode>
+
+                                <!--Optional:-->
+
+                                <ns:Description>string</ns:Description>
+
+                                <!--Optional:-->
+
+                                <ns:StructureNumber>string</ns:StructureNumber>
+
+                              </ns:Product>
+
+                            </ns:Products>
+
+                          </ns:Contract>
+
+                        </ns:Contracts>
+
+                      </ns:Customer>
+
+                    </ns:Customers>
+
+                  </ns:TrackResponse>
+
+                  <ns:MultipleTrackingResponses>
+
+                    <!--You have a CHOICE of the next 2 items at this level-->
+
+                    <!--1 or more repetitions:-->
+
+                    <trac:Response>
+
+                      <!--You have a CHOICE of the next 3 items at this level-->
+
+                      <trac:TrackResponse>
+
+                        <!--Optional:-->
+
+                        <trac:CommonData Id="string" SendRef="string"
+              CustNme="string" Cont="string" Service="string" Prod="string"
+              ItemAdv="100" ItemCol="100" ItemDel="100" ForeignId="string"
+              RecNme="string" Brand="string" SpeclInst="string" Origin="string"
+              ExpectDelDate="2012-01-07" ExpectDelTime="04:44:59"
+              DateSent="stringstringstrings">
+
+                          <!--Optional:-->
+
+                          <trac:DelAd>
+
+                            <trac:AddLabel>string</trac:AddLabel>
+
+                            <trac:PoCde>string</trac:PoCde>
+
+                            <trac:Cntry>string</trac:Cntry>
+
+                          </trac:DelAd>
+
+                          <!--Optional:-->
+
+                          <trac:CollAd>
+
+                            <trac:AddLabel>string</trac:AddLabel>
+
+                            <trac:PoCde>string</trac:PoCde>
+
+                            <trac:Cntry>string</trac:Cntry>
+
+                          </trac:CollAd>
+
+                          <!--Optional:-->
+
+                          <trac:AltAd>
+
+                            <trac:AddLabel>string</trac:AddLabel>
+
+                            <trac:PoCde>string</trac:PoCde>
+
+                            <trac:Cntry>string</trac:Cntry>
+
+                          </trac:AltAd>
+
+                          <!--0 to 10 repetitions:-->
+
+                          <trac:LinkCons LinkConsId="100" Id="string"
+              Creation="2013-06-17T12:14:58" ODS="2005-09-12T03:55:02-05:00"/>
+
+                        </trac:CommonData>
+
+                        <!--0 to 999 repetitions:-->
+
+                        <trac:Item ItemId="string" Signatory="string"
+              SigKey="string" Status="string">
+
+                          <!--Zero or more repetitions:-->
+
+                          <trac:Event EvntLoc="string" EvntDes="string"
+              EvntCode="string" EvntTime="11:20:00" EvntDate="2009-11-03-06:00"
+              EvntInst="string"/>
+
+                        </trac:Item>
+
+                        <!--0 to 999 repetitions:-->
+
+                        <trac:SigImage SigKey="string">
+
+                          <!--You have a CHOICE of the next 2 items at this
+              level-->
+
+                          <trac:CompDataStr>string</trac:CompDataStr>
+
+                          <trac:ImgURL>string</trac:ImgURL>
+
+                        </trac:SigImage>
+
+                      </trac:TrackResponse>
+
+                      <trac:SndRefResponse>
+
+                        <!--1 to 999 repetitions:-->
+
+                        <trac:SndRefDetail Id="string" RecNme="string"
+              Cont="string"/>
+
+                      </trac:SndRefResponse>
+
+                      <trac:ErrorResponse Id="string" Des="string" Error="string"
+              Brand="string" EvntInst="string"/>
+
+                    </trac:Response>
+
+                    <!--1 or more repetitions:-->
+
+                    <ns:NoResponse>
+
+                      <ns:Identifier>string</ns:Identifier>
+
+                    </ns:NoResponse>
+
+                  </ns:MultipleTrackingResponses>
+
+                </ns:ParcelTrackingEnquiryResult>
+
+              </ns:ParcelTrackingEnquiryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /TrackingEnquiry:
+    post:
+      description: Provides the latest tracking information based on a Parcelforce Consignment number.
+      tags: []
+      operationId: TrackingEnquiry
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><tem:TrackingEnquiry
+              xmlns:tem="http://tempuri.org/">
+
+                <!--Optional:-->
+
+                <tem:SearchField>string</tem:SearchField>
+
+                <!--Optional:-->
+
+                <tem:DatePosted>string</tem:DatePosted>
+
+                <!--Optional:-->
+
+                <tem:CustomerNo>string</tem:CustomerNo>
+
+                <!--Optional:-->
+
+                <tem:IntInbound>string</tem:IntInbound>
+
+              </tem:TrackingEnquiry></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'http://tempuri.org/TrackingEnquiry'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <tem:TrackingEnquiryResponse xmlns:tem="http://tempuri.org/"
+              xmlns:ns="urn:royalmail/ParcelTracking/2003/06/23">
+
+                <tem:TrackingEnquiryResult>
+
+                  <ns:Response>
+
+                    <!--You have a CHOICE of the next 3 items at this level-->
+
+                    <ns:TrackResponse>
+
+                      <!--Optional:-->
+
+                      <ns:CommonData Id="string" SendRef="string"
+              CustNme="string" Cont="string" Service="string" Prod="string"
+              ItemAdv="100" ItemCol="100" ItemDel="100" ForeignId="string"
+              RecNme="string" Brand="string" SpeclInst="string" Origin="string"
+              ExpectDelDate="2008-09-28" ExpectDelTime="18:18:33"
+              DateSent="stringstringstrings">
+
+                        <!--Optional:-->
+
+                        <ns:DelAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:DelAd>
+
+                        <!--Optional:-->
+
+                        <ns:CollAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:CollAd>
+
+                        <!--Optional:-->
+
+                        <ns:AltAd>
+
+                          <ns:AddLabel>string</ns:AddLabel>
+
+                          <ns:PoCde>string</ns:PoCde>
+
+                          <ns:Cntry>string</ns:Cntry>
+
+                        </ns:AltAd>
+
+                        <!--0 to 10 repetitions:-->
+
+                        <ns:LinkCons LinkConsId="100" Id="string"
+              Creation="2006-08-19T12:27:14-05:00" ODS="2009-05-16T07:42:28"/>
+
+                      </ns:CommonData>
+
+                      <!--0 to 999 repetitions:-->
+
+                      <ns:Item ItemId="string" Signatory="string" SigKey="string"
+              Status="string">
+
+                        <!--Zero or more repetitions:-->
+
+                        <ns:Event EvntLoc="string" EvntDes="string"
+              EvntCode="string" EvntTime="19:18:37-05:00"
+              EvntDate="2012-09-13-05:00" EvntInst="string"/>
+
+                      </ns:Item>
+
+                      <!--0 to 999 repetitions:-->
+
+                      <ns:SigImage SigKey="string">
+
+                        <!--You have a CHOICE of the next 2 items at this
+              level-->
+
+                        <ns:CompDataStr>string</ns:CompDataStr>
+
+                        <ns:ImgURL>string</ns:ImgURL>
+
+                      </ns:SigImage>
+
+                    </ns:TrackResponse>
+
+                    <ns:SndRefResponse>
+
+                      <!--1 to 999 repetitions:-->
+
+                      <ns:SndRefDetail Id="string" RecNme="string"
+              Cont="string"/>
+
+                    </ns:SndRefResponse>
+
+                    <ns:ErrorResponse Id="string" Des="string" Error="string"
+              Brand="string" EvntInst="string"/>
+
+                  </ns:Response>
+
+                </tem:TrackingEnquiryResult>
+
+              </tem:TrackingEnquiryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+security: []

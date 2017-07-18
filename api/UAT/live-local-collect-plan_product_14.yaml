@@ -1,0 +1,31 @@
+product: 1.0.0
+info:
+  title: Live Local Collect Plan
+  version: '14'
+  description: This plan is for Royal Mail customers to subscribe to the Local Collect APIs in the Live environment
+  name: live-local-collect-plan
+apis:
+  local-collect-api-live-soap:
+    $ref: local-collect-api-live-soap_1-rev7.yaml
+  local-collect-api-live-rest:
+    $ref: local-collect-api-live-rest_1-rev2.yaml
+plans:
+  live-local-collect-plan:
+    title: Live Local Collect Plan
+    description: This plan is for Royal Mail customers to subscribe to the Local Collect APIs in the Live environment
+    approval: true
+    apis:
+      local-collect-api-live-soap:
+        operations:
+          - path: /SetLCDeliveryLocation
+            operation: post
+          - path: /GetLCDeliveryLocations
+            operation: post
+      local-collect-api-live-rest:
+        operations:
+          - path: '/{bookingReference}'
+            operation: put
+          - path: /
+            operation: get
+          - path: /geosearch
+            operation: get

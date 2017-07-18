@@ -1,0 +1,29 @@
+product: 1.0.0
+info:
+  title: Live V1 Online Postage Plan
+  version: '5'
+  description: This plan is for Royal Mail customers to subscribe to the Online Postage APIs in the Live environment
+  name: live-v1-online-postage-plan
+apis:
+  online-postage-api-live-soap:
+    $ref: online-postage-api-live-soap_1-rev3.yaml
+plans:
+  live-v1-online-postage-plan:
+    title: Live V1 Online Postage Plan
+    description: This plan is for Royal Mail customers to subscribe to the Online Postage APIs in the Live environment
+    approval: true
+    apis:
+      online-postage-api-live-soap:
+        operations:
+          - path: /createPostage
+            operation: post
+          - path: /getCountries
+            operation: post
+          - path: /getPostageServiceDetails
+            operation: post
+          - path: /getServicesByCountry
+            operation: post
+          - path: /getStatus
+            operation: post
+          - path: /spoilPostage
+            operation: post

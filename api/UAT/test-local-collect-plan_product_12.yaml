@@ -1,0 +1,34 @@
+product: 1.0.0
+info:
+  title: Test Local Collect Plan
+  version: '12'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Local Collect API
+  name: test-local-collect-plan
+visibility:
+  view:
+    enabled: true
+    type: public
+    tags: []
+    orgs: []
+  subscribe:
+    enabled: true
+    type: authenticated
+    tags: []
+    orgs: []
+apis:
+  local-collect-api-soap:
+    $ref: local-collect-api-soap_2.4.1-rev27.yaml
+  local-collect-api-rest:
+    $ref: local-collect-api-rest_2.4.1-rev42.yaml
+plans:
+  test-local-collect-plan:
+    title: Test Local Collect Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Local Collect API
+    approval: true
+    apis:
+      local-collect-api-soap:
+        operations:
+          - path: /SetLCDeliveryLocation
+            operation: post
+          - path: /GetLCDeliveryLocations
+            operation: post

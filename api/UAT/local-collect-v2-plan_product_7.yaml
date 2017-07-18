@@ -1,0 +1,30 @@
+product: 1.0.0
+info:
+  title: Local Collect V2 Plan
+  version: '7'
+  description: This is the only plan for Local Collect V2. This API will not have any on boarding plan and does not need any approval to use it.
+  name: local-collect-v2-plan
+apis:
+  local-collect-api-v2-soap:
+    $ref: local-collect-api-v2-soap_1.0.0-rev20.yaml
+  local-collect-api-v2-rest:
+    $ref: local-collect-api-v2-rest_1.0.0-rev13.yaml
+plans:
+  local-collect-v2-plan:
+    title: Local Collect V2 Plan
+    description: This is the only plan for Local Collect V2. This API will not have any on boarding plan and does not need any approval to use it.
+    approval: true
+    rate-limit:
+      hard-limit: true
+      value: 100/10minute
+    apis:
+      local-collect-api-v2-soap:
+        operations:
+          - path: /getLocations
+            operation: post
+      api-c98a5:
+        operations:
+          - path: /geo/spatial
+            operation: get
+          - path: '/{postcode}'
+            operation: get

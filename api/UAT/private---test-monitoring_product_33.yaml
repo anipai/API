@@ -1,0 +1,151 @@
+product: 1.0.0
+info:
+  title: Private - Test Monitoring
+  version: '33'
+  description: Monitoring and Non Transactional Testing of Onboarding endpoints
+  name: private---test-monitoring
+apis:
+  delivery-office-finder-api-rest:
+    $ref: delivery-office-finder-api-rest_1.0.0-rev40.yaml
+  local-collect-api-soap:
+    $ref: local-collect-api-soap_2.4.1-rev27.yaml
+  echo:
+    $ref: echo_1.0.0-rev3.yaml
+  shipping-api-v1-soap:
+    $ref: shipping-api-v1-soap_1.0.1-rev14.yaml
+  shipping-api-v2-soap:
+    $ref: shipping-api-v2-soap_2.0.9-rev24.yaml
+  tracking-api-soap:
+    $ref: tracking-api-soap_1.1.1-rev26.yaml
+  local-collect-api-rest:
+    $ref: local-collect-api-rest_2.4.1-rev42.yaml
+  tracking-api-rest:
+    $ref: tracking-api-rest_1.1.2-rev22.yaml
+  online-postage-api-v1-soap:
+    $ref: online-postage-api-v1-soap_1.2.4-rev5.yaml
+  pfw-tracking-api-soap:
+    $ref: pfw-tracking-api-soap_1-rev5.yaml
+  customs-declaration-api-soap:
+    $ref: customs-declaration-api-soap_1-rev1.yaml
+  international-tracked-direct-api:
+    $ref: international-tracked-direct-api_1.0.0-rev17.yaml
+plans:
+  private---test-monitoring:
+    title: Private - Test Monitoring
+    description: Monitoring and Non Transactional Testing of Onboarding endpoints
+    approval: true
+    apis:
+      delivery-office-finder-api-rest:
+        operations:
+          - path: /
+            operation: get
+      local-collect-api-soap:
+        operations:
+          - path: /SetLCDeliveryLocation
+            operation: post
+          - path: /GetLCDeliveryLocations
+            operation: post
+      echo:
+        operations:
+          - path: /get
+            operation: get
+      shipping-api-v1-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /updateShipment
+            operation: post
+      shipping-api-v2-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printDocument
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /request1DRanges
+            operation: post
+          - path: /request2DItemIDRange
+            operation: post
+          - path: /updateShipment
+            operation: post
+      tracking-api-soap:
+        operations:
+          - path: /getMultiItemSummary
+            operation: post
+          - path: /getProofOfDelivery
+            operation: post
+          - path: /getSingleItemHistory
+            operation: post
+          - path: /getSingleItemSummary
+            operation: post
+      local-collect-api-rest:
+        operations:
+          - path: '/{bookingReference}'
+            operation: put
+          - path: /
+            operation: get
+          - path: /geosearch
+            operation: get
+      tracking-api-rest:
+        operations:
+          - path: '/{trackingNumber}/proofOfDelivery'
+            operation: get
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/summary'
+            operation: get
+      online-postage-api-v1-soap:
+        operations:
+          - path: /createPostage
+            operation: post
+          - path: /getCountries
+            operation: post
+          - path: /getPostageServiceDetails
+            operation: post
+          - path: /getServicesByCountry
+            operation: post
+          - path: /getStatus
+            operation: post
+          - path: /spoilPostage
+            operation: post
+      pfw-tracking-api-soap:
+        operations:
+          - path: /ParcelTrackingEnquiry
+            operation: post
+          - path: /TrackingEnquiry
+            operation: post
+      customs-declaration-api-soap:
+        operations:
+          - path: /CreateOrUpdateDeclarations
+            operation: post
+          - path: /GetHSCodes
+            operation: post
+          - path: /GetRestrictionProhibitionByDescription
+            operation: post
+          - path: /GetRestrictionProhibitionByHS
+            operation: post
+      international-tracked-direct-api:
+        operations:
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/cancelshipment'
+            operation: delete
+          - path: /bagcontent
+            operation: post
+          - path: /createshipment
+            operation: post

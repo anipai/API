@@ -1,0 +1,2231 @@
+swagger: '2.0'
+info:
+  title: Local Collect API LIVE (REST)
+  description: "Local Collect is a delivery enhancement to Royal Mail Tracked & Special Delivery Guaranteed products that enables customers to benefit from ‘Click and Collect’ options by having their parcels delivered to participating Post Offices. The Local Collect API allows customers to retrieve an up-to-date list of Post Offices and confirm selection in a given location, where the item will be held awaiting collection.\n \nThere are no costs to customers for using the Local Collect API services, however development costs must be covered by the customer. Royal Mail will not accept any responsibility for these development, implementation and testing costs."
+  version: 1-rev2
+  x-ibm-name: local-collect-api-live-rest
+basePath: /localCollectOffices
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Local Collect Endpoint:
+      description: ''
+      encoded: false
+      value: 'https://localcollect.royalmail.com:28642/axis2/services/LocalCollect'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    ApplicationId:
+      description: Local Collect Application ID value
+      encoded: false
+      value: '943016001'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: RMG Local Collect (REST) API Sample Data Set
+      description: ''
+      id: 5672c06f0cf2d07eb5a0280f
+    - title: RMG Local Collect API (REST) Technical User Guide
+      description: ''
+      id: 5672c0720cf2d07eb5a02849
+    - title: Royal Mail Local Collect Customer presentation
+      description: ''
+      id: 5672c0720cf2d07eb5a0284e
+  gateway: datapower-gateway
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - verb: get
+                  path: /
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            estDeliveryDate:
+                              type: string
+                            radius:
+                              type: string
+                            postcode:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    GetLCDeliveryLocationsRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(client.app.id)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        searchPostcode:
+                                          type: string
+                                        radius:
+                                          type: number
+                                          format: float
+                                          default: 99
+                                        estimatedDeliveryDate:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:getLCDeliveryLocations"'
+                    actions:
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.searchPostcode
+                        from: '#/in1.postcode'
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.radius
+                        from: '#/in1.radius'
+                        value: apim.v4.toNumber($(1))
+                        default: 99
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.estimatedDeliveryDate
+                        from: '#/in1.estDeliveryDate'
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.integrationHeader.identification.applicationId
+                        default: $(client.app.id)
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:getLCDeliveryLocations"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(Local Collect Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: Web Service Invoke Operation
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - map:
+                    inputs:
+                      in1:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    GetLCDeliveryLocationsResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            date:
+                                              type: string
+                                            version:
+                                              type: number
+                                              format: float
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        errorResponse:
+                                          type: object
+                                          properties:
+                                            errorCode:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                            errorCause:
+                                              type: string
+                                            errorResolution:
+                                              type: string
+                                        locations:
+                                          type: object
+                                          properties:
+                                            location:
+                                              type: array
+                                              items:
+                                                type: object
+                                                properties:
+                                                  organisationName:
+                                                    type: string
+                                                  locationPosition:
+                                                    type: object
+                                                    properties:
+                                                      geoDeticSystem:
+                                                        type: object
+                                                        properties:
+                                                          systemNameCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      geoSpatialPositionType:
+                                                        type: object
+                                                        properties:
+                                                          geospatialPositionCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      altitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      longitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      latitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                  locationName:
+                                                    type: string
+                                                  address:
+                                                    type: object
+                                                    properties:
+                                                      addressUsageType:
+                                                        type: array
+                                                        items:
+                                                          type: object
+                                                          properties:
+                                                            addressUsageCode:
+                                                              type: object
+                                                              properties:
+                                                                code:
+                                                                  type: string
+                                                                name:
+                                                                  type: string
+                                                                description:
+                                                                  type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      domesticIndicator:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      buildingName:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      buildingNumber:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine1:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine2:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine3:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine4:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      stateOrProvince:
+                                                        type: object
+                                                        properties:
+                                                          stateOrProvinceCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      postTown:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      county:
+                                                        type: object
+                                                        properties:
+                                                          countyCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      postcode:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      country:
+                                                        type: object
+                                                        properties:
+                                                          countryCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      status:
+                                                        type: object
+                                                        properties:
+                                                          status:
+                                                            type: object
+                                                            properties:
+                                                              statusCode:
+                                                                type: object
+                                                                properties:
+                                                                  code:
+                                                                    type: string
+                                                                  name:
+                                                                    type: string
+                                                                  description:
+                                                                    type: string
+                                                          validFrom:
+                                                            type: string
+                                                          validTo:
+                                                            type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      audit:
+                                                        type: object
+                                                        properties:
+                                                          lastUpdateDate:
+                                                            type: string
+                                                          lastUpdateUserIdentifier:
+                                                            type: string
+                                                        xml:
+                                                          namespace: ''
+                                                  lCAvailability:
+                                                    type: string
+                                                  lCBookingReference:
+                                                    type: string
+                                                  openingDay:
+                                                    type: array
+                                                    items:
+                                                      type: object
+                                                      properties:
+                                                        dayOfWeekType:
+                                                          type: object
+                                                          properties:
+                                                            dayOfWeekCode:
+                                                              type: object
+                                                              properties:
+                                                                code:
+                                                                  type: string
+                                                                name:
+                                                                  type: string
+                                                                description:
+                                                                  type: string
+                                                              xml:
+                                                                namespace: ''
+                                                        openingTime:
+                                                          type: string
+                                                        closingTime:
+                                                          type: string
+                                                        lunchTime:
+                                                          type: object
+                                                          properties:
+                                                            lunchClosingTime:
+                                                              type: string
+                                                            lunchOpeningTime:
+                                                              type: string
+                                                  searchDistance:
+                                                    type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            details:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                                prefix: p2
+                        content: application/xml
+                      in2:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            estDeliveryDate:
+                              type: string
+                            radius:
+                              type: string
+                            postcode:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            request:
+                              type: object
+                              properties:
+                                postcode:
+                                  type: string
+                                estDeliveryDate:
+                                  type: string
+                                radius:
+                                  type: string
+                            locations:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  bookingReference:
+                                    type: string
+                                  organisationName:
+                                    type: string
+                                  locationName:
+                                    type: string
+                                  addressLine1:
+                                    type: string
+                                  addressLine2:
+                                    type: string
+                                  addressLine3:
+                                    type: string
+                                  addressLine4:
+                                    type: string
+                                  county:
+                                    type: string
+                                  postcode:
+                                    type: string
+                                  longitude:
+                                    type: string
+                                  latitude:
+                                    type: string
+                                  availability:
+                                    type: string
+                                  searchDistance:
+                                    type: string
+                                  openingDays:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        dayOfWeek:
+                                          type: string
+                                        openingTime:
+                                          type: string
+                                        closingTime:
+                                          type: string
+                                        lunchOpeningTime:
+                                          type: string
+                                        lunchClosingTime:
+                                          type: string
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                description:
+                                  type: string
+                                cause:
+                                  type: string
+                                resolution:
+                                  type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - create: out1.locations
+                        foreach: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.locations.location'
+                        from: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.locations.location'
+                        actions:
+                          - set: bookingReference
+                            from: lCBookingReference
+                          - set: organisationName
+                            from: organisationName
+                          - set: locationName
+                            from: locationName
+                          - set: addressLine1
+                            from: address.addressLine1
+                          - set: addressLine2
+                            from: address.addressLine2
+                          - set: addressLine3
+                            from: address.addressLine3
+                          - set: addressLine4
+                            from: address.addressLine4
+                          - set: county
+                            from: address.county.countyCode.name
+                          - set: postcode
+                            from: address.postcode
+                          - set: longitude
+                            from: locationPosition.longitude
+                            value: apim.v4.toString($(1))
+                          - set: latitude
+                            from: locationPosition.latitude
+                            value: apim.v4.toString($(1))
+                          - set: availability
+                            from: lCAvailability
+                          - set: searchDistance
+                            from: searchDistance
+                          - create: openingDays
+                            foreach: openingDay
+                            from: openingDay
+                            actions:
+                              - set: dayOfWeek
+                                from: dayOfWeekType.dayOfWeekCode.name
+                              - set: openingTime
+                                from: openingTime
+                              - set: closingTime
+                                from: closingTime
+                              - set: lunchOpeningTime
+                                from: lunchTime.lunchOpeningTime
+                              - set: lunchClosingTime
+                                from: lunchTime.lunchClosingTime
+                      - set: out1.request.postcode
+                        from: '#/in2.postcode'
+                      - set: out1.request.estDeliveryDate
+                        from: '#/in2.estDeliveryDate'
+                      - set: out1.request.radius
+                        from: '#/in2.radius'
+                      - set: out1.error.code
+                        from: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCode.code'
+                      - set: out1.error.description
+                        from: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCode.description'
+                      - set: out1.error.cause
+                        from: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCause'
+                      - set: out1.error.resolution
+                        from: '#/in1.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorResolution'
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: get
+                  path: /geosearch
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            latitude:
+                              type: string
+                            longitude:
+                              type: string
+                            estDeliveryDate:
+                              type: string
+                            radius:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    GetLCDeliveryLocationsRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(client.app.id)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        searchPosition:
+                                          type: object
+                                          properties:
+                                            geoDeticSystem:
+                                              type: object
+                                              properties:
+                                                systemNameCode:
+                                                  type: object
+                                                  properties:
+                                                    code:
+                                                      type: string
+                                                      default: WGS84
+                                              xml:
+                                                namespace: ''
+                                            longitude:
+                                              type: number
+                                              format: float
+                                              xml:
+                                                namespace: ''
+                                            latitude:
+                                              type: number
+                                              format: float
+                                              xml:
+                                                namespace: ''
+                                        radius:
+                                          type: number
+                                          format: float
+                                          default: 99
+                                        estimatedDeliveryDate:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:getLCDeliveryLocations"'
+                    actions:
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.radius
+                        from: '#/in1.radius'
+                        value: apim.v4.toNumber($(1))
+                        default: 99
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.estimatedDeliveryDate
+                        from: '#/in1.estDeliveryDate'
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.searchPosition.longitude
+                        from: '#/in1.longitude'
+                        value: apim.v4.toNumber($(1))
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.searchPosition.latitude
+                        from: '#/in1.latitude'
+                        value: apim.v4.toNumber($(1))
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.integrationHeader.identification.applicationId
+                        default: $(client.app.id)
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out1.Envelope.Body.GetLCDeliveryLocationsRequest.searchPosition.geoDeticSystem.systemNameCode.code
+                        default: WGS84
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:getLCDeliveryLocations"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(Local Collect Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: Web Service Invoke Operation 2
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 2
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            latitude:
+                              type: string
+                            longitude:
+                              type: string
+                            estDeliveryDate:
+                              type: string
+                            radius:
+                              type: string
+                      in2:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    GetLCDeliveryLocationsResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            date:
+                                              type: string
+                                            version:
+                                              type: number
+                                              format: float
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        errorResponse:
+                                          type: object
+                                          properties:
+                                            errorCode:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                            errorCause:
+                                              type: string
+                                            errorResolution:
+                                              type: string
+                                        locations:
+                                          type: object
+                                          properties:
+                                            location:
+                                              type: array
+                                              items:
+                                                type: object
+                                                properties:
+                                                  organisationName:
+                                                    type: string
+                                                  locationPosition:
+                                                    type: object
+                                                    properties:
+                                                      geoDeticSystem:
+                                                        type: object
+                                                        properties:
+                                                          systemNameCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      geoSpatialPositionType:
+                                                        type: object
+                                                        properties:
+                                                          geospatialPositionCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      altitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      longitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      latitude:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                  locationName:
+                                                    type: string
+                                                  address:
+                                                    type: object
+                                                    properties:
+                                                      addressUsageType:
+                                                        type: array
+                                                        items:
+                                                          type: object
+                                                          properties:
+                                                            addressUsageCode:
+                                                              type: object
+                                                              properties:
+                                                                code:
+                                                                  type: string
+                                                                name:
+                                                                  type: string
+                                                                description:
+                                                                  type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      domesticIndicator:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      buildingName:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      buildingNumber:
+                                                        type: number
+                                                        format: float
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine1:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine2:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine3:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      addressLine4:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      stateOrProvince:
+                                                        type: object
+                                                        properties:
+                                                          stateOrProvinceCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      postTown:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      county:
+                                                        type: object
+                                                        properties:
+                                                          countyCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      postcode:
+                                                        type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      country:
+                                                        type: object
+                                                        properties:
+                                                          countryCode:
+                                                            type: object
+                                                            properties:
+                                                              code:
+                                                                type: string
+                                                              name:
+                                                                type: string
+                                                              description:
+                                                                type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      status:
+                                                        type: object
+                                                        properties:
+                                                          status:
+                                                            type: object
+                                                            properties:
+                                                              statusCode:
+                                                                type: object
+                                                                properties:
+                                                                  code:
+                                                                    type: string
+                                                                  name:
+                                                                    type: string
+                                                                  description:
+                                                                    type: string
+                                                          validFrom:
+                                                            type: string
+                                                          validTo:
+                                                            type: string
+                                                        xml:
+                                                          namespace: ''
+                                                      audit:
+                                                        type: object
+                                                        properties:
+                                                          lastUpdateDate:
+                                                            type: string
+                                                          lastUpdateUserIdentifier:
+                                                            type: string
+                                                        xml:
+                                                          namespace: ''
+                                                  lCAvailability:
+                                                    type: string
+                                                  lCBookingReference:
+                                                    type: string
+                                                  openingDay:
+                                                    type: array
+                                                    items:
+                                                      type: object
+                                                      properties:
+                                                        dayOfWeekType:
+                                                          type: object
+                                                          properties:
+                                                            dayOfWeekCode:
+                                                              type: object
+                                                              properties:
+                                                                code:
+                                                                  type: string
+                                                                name:
+                                                                  type: string
+                                                                description:
+                                                                  type: string
+                                                              xml:
+                                                                namespace: ''
+                                                        openingTime:
+                                                          type: string
+                                                        closingTime:
+                                                          type: string
+                                                        lunchTime:
+                                                          type: object
+                                                          properties:
+                                                            lunchClosingTime:
+                                                              type: string
+                                                            lunchOpeningTime:
+                                                              type: string
+                                                  searchDistance:
+                                                    type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            details:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                                prefix: p2
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            request:
+                              type: object
+                              properties:
+                                longitude:
+                                  type: string
+                                latitiude:
+                                  type: string
+                                estDeliveryDate:
+                                  type: string
+                                radius:
+                                  type: string
+                            locations:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  bookingReference:
+                                    type: string
+                                  organisationName:
+                                    type: string
+                                  locationName:
+                                    type: string
+                                  addressLine1:
+                                    type: string
+                                  addressLine2:
+                                    type: string
+                                  addressLine3:
+                                    type: string
+                                  addressLine4:
+                                    type: string
+                                  county:
+                                    type: string
+                                  postcode:
+                                    type: string
+                                  longitude:
+                                    type: string
+                                  latitude:
+                                    type: string
+                                  availability:
+                                    type: string
+                                  searchDistance:
+                                    type: string
+                                  openingDays:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        dayOfWeek:
+                                          type: string
+                                        openingTime:
+                                          type: string
+                                        closingTime:
+                                          type: string
+                                        lunchOpeningTime:
+                                          type: string
+                                        lunchClosingTime:
+                                          type: string
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                description:
+                                  type: string
+                                cause:
+                                  type: string
+                                resolution:
+                                  type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - create: out1.locations
+                        foreach: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.locations.location'
+                        from: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.locations.location'
+                        actions:
+                          - set: bookingReference
+                            from: lCBookingReference
+                          - set: organisationName
+                            from: organisationName
+                          - set: locationName
+                            from: locationName
+                          - set: addressLine1
+                            from: address.addressLine1
+                          - set: addressLine2
+                            from: address.addressLine2
+                          - set: addressLine3
+                            from: address.addressLine3
+                          - set: addressLine4
+                            from: address.addressLine4
+                          - set: county
+                            from: address.county.countyCode.name
+                          - set: postcode
+                            from: address.postcode
+                          - set: longitude
+                            from: locationPosition.longitude
+                            value: apim.v4.toString($(1))
+                          - set: latitude
+                            from: locationPosition.latitude
+                            value: apim.v4.toString($(1))
+                          - set: availability
+                            from: lCAvailability
+                          - set: searchDistance
+                            from: searchDistance
+                          - create: openingDays
+                            foreach: openingDay
+                            from: openingDay
+                            actions:
+                              - set: dayOfWeek
+                                from: dayOfWeekType.dayOfWeekCode.name
+                              - set: openingTime
+                                from: openingTime
+                              - set: closingTime
+                                from: closingTime
+                              - set: lunchOpeningTime
+                                from: lunchTime.lunchOpeningTime
+                              - set: lunchClosingTime
+                                from: lunchTime.lunchClosingTime
+                      - set: out1.request.longitude
+                        from: '#/in1.longitude'
+                      - set: out1.request.latitiude
+                        from: '#/in1.latitude'
+                      - set: out1.request.estDeliveryDate
+                        from: '#/in1.estDeliveryDate'
+                      - set: out1.request.radius
+                        from: '#/in1.radius'
+                      - set: out1.error.code
+                        from: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCode.code'
+                      - set: out1.error.description
+                        from: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCode.description'
+                      - set: out1.error.cause
+                        from: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorCause'
+                      - set: out1.error.resolution
+                        from: '#/in2.Envelope.Body.GetLCDeliveryLocationsResponse.errorResponse.errorResolution'
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: put
+                  path: '/{bookingReference}'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            bookingReference:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    SetLCDeliveryLocationRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(client.app.id)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        lCBookingReference:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:setLCDeliveryLocation"'
+                    actions:
+                      - set: out1.Envelope.Body.SetLCDeliveryLocationRequest.lCBookingReference
+                        from: '#/in1.bookingReference'
+                        value: "apim.v4.replace(apim.v4.replace(apim.v4.replace(apim.v4.replace(apim.v4.replace(apim.v4.replace(apim.v4.replace($(1), \"0x2F\", \"/\"), \"0x2B\", \"+\"), \"0x25\", \"%\"), \"0x23\", \"#\"), \"0x3F\", \"?\"), \"0x5C\", \"\\\"), \"0x3B\", \";\")"
+                      - set: out1.Envelope.Body.SetLCDeliveryLocationRequest.integrationHeader.identification.applicationId
+                        default: $(client.app.id)
+                      - set: out1.Envelope.Body.SetLCDeliveryLocationRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:setLCDeliveryLocation"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(Local Collect Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: Web Service Invoke Operation 26
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 8
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            bookingReference:
+                              type: string
+                      in2:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    SetLCDeliveryLocationResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            date:
+                                              type: string
+                                            version:
+                                              type: number
+                                              format: float
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                          xml:
+                                            namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                            prefix: p0
+                                        errorResponse:
+                                          type: object
+                                          properties:
+                                            errorCode:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                            errorCause:
+                                              type: string
+                                            errorResolution:
+                                              type: string
+                                        reservationReference:
+                                          type: string
+                                        location:
+                                          type: object
+                                          properties:
+                                            organisationName:
+                                              type: string
+                                            locationPosition:
+                                              type: object
+                                              properties:
+                                                geoDeticSystem:
+                                                  type: object
+                                                  properties:
+                                                    systemNameCode:
+                                                      type: object
+                                                      properties:
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                geoSpatialPositionType:
+                                                  type: object
+                                                  properties:
+                                                    geospatialPositionCode:
+                                                      type: object
+                                                      properties:
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                altitude:
+                                                  type: number
+                                                  format: float
+                                                  xml:
+                                                    namespace: ''
+                                                longitude:
+                                                  type: number
+                                                  format: float
+                                                  xml:
+                                                    namespace: ''
+                                                latitude:
+                                                  type: number
+                                                  format: float
+                                                  xml:
+                                                    namespace: ''
+                                            locationName:
+                                              type: string
+                                            address:
+                                              type: object
+                                              properties:
+                                                addressUsageType:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      addressUsageCode:
+                                                        type: object
+                                                        properties:
+                                                          code:
+                                                            type: string
+                                                          name:
+                                                            type: string
+                                                          description:
+                                                            type: string
+                                                  xml:
+                                                    namespace: ''
+                                                domesticIndicator:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                buildingName:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                buildingNumber:
+                                                  type: number
+                                                  format: float
+                                                  xml:
+                                                    namespace: ''
+                                                addressLine1:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                addressLine2:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                addressLine3:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                addressLine4:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                stateOrProvince:
+                                                  type: object
+                                                  properties:
+                                                    stateOrProvinceCode:
+                                                      type: object
+                                                      properties:
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                postTown:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                county:
+                                                  type: object
+                                                  properties:
+                                                    countyCode:
+                                                      type: object
+                                                      properties:
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                postcode:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                country:
+                                                  type: object
+                                                  properties:
+                                                    countryCode:
+                                                      type: object
+                                                      properties:
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                status:
+                                                  type: object
+                                                  properties:
+                                                    status:
+                                                      type: object
+                                                      properties:
+                                                        statusCode:
+                                                          type: object
+                                                          properties:
+                                                            code:
+                                                              type: string
+                                                            name:
+                                                              type: string
+                                                            description:
+                                                              type: string
+                                                    validFrom:
+                                                      type: string
+                                                    validTo:
+                                                      type: string
+                                                  xml:
+                                                    namespace: ''
+                                                audit:
+                                                  type: object
+                                                  properties:
+                                                    lastUpdateDate:
+                                                      type: string
+                                                    lastUpdateUserIdentifier:
+                                                      type: string
+                                                  xml:
+                                                    namespace: ''
+                                            lCAvailability:
+                                              type: string
+                                            lCBookingReference:
+                                              type: string
+                                            openingDay:
+                                              type: array
+                                              items:
+                                                type: object
+                                                properties:
+                                                  dayOfWeekType:
+                                                    type: object
+                                                    properties:
+                                                      dayOfWeekCode:
+                                                        type: object
+                                                        properties:
+                                                          code:
+                                                            type: string
+                                                          name:
+                                                            type: string
+                                                          description:
+                                                            type: string
+                                                        xml:
+                                                          namespace: ''
+                                                  openingTime:
+                                                    type: string
+                                                  closingTime:
+                                                    type: string
+                                                  lunchTime:
+                                                    type: object
+                                                    properties:
+                                                      lunchClosingTime:
+                                                        type: string
+                                                      lunchOpeningTime:
+                                                        type: string
+                                            searchDistance:
+                                              type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                        prefix: p1
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            details:
+                                              type: object
+                                              properties:
+                                                code:
+                                                  type: string
+                                                description:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/API/LocalCollect/V2.0'
+                                                prefix: p2
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            request:
+                              type: object
+                              properties:
+                                bookingReference:
+                                  type: string
+                            reservationReference:
+                              type: string
+                            location:
+                              type: object
+                              properties:
+                                organisationName:
+                                  type: string
+                                locationName:
+                                  type: string
+                                addressLine1:
+                                  type: string
+                                addressLine2:
+                                  type: string
+                                addressLine3:
+                                  type: string
+                                addressLine4:
+                                  type: string
+                                county:
+                                  type: string
+                                postcode:
+                                  type: string
+                                longitude:
+                                  type: string
+                                latitude:
+                                  type: string
+                                availability:
+                                  type: string
+                                searchDistance:
+                                  type: string
+                                openingDays:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      dayOfWeek:
+                                        type: string
+                                      openingTime:
+                                        type: string
+                                      closingTime:
+                                        type: string
+                                      lunchOpeningTime:
+                                        type: string
+                                      lunchClosingTime:
+                                        type: string
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                description:
+                                  type: string
+                                cause:
+                                  type: string
+                                resolution:
+                                  type: string
+                                context:
+                                  type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 201
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - set: out1.reservationReference
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.reservationReference'
+                      - set: out1.request.bookingReference
+                        from: '#/in1.bookingReference'
+                      - set: out1.location.organisationName
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.organisationName'
+                      - set: out1.location.locationName
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.locationName'
+                      - set: out1.location.addressLine1
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.addressLine1'
+                      - set: out1.location.addressLine2
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.addressLine2'
+                      - set: out1.location.addressLine3
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.addressLine3'
+                      - set: out1.location.addressLine4
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.addressLine4'
+                      - set: out1.location.county
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.county.countyCode.name'
+                      - set: out1.location.postcode
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.address.postcode'
+                      - set: out1.location.longitude
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.locationPosition.longitude'
+                        value: apim.v4.toString($(1))
+                      - set: out1.location.latitude
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.locationPosition.latitude'
+                        value: apim.v4.toString($(1))
+                      - set: out1.location.availability
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.lCAvailability'
+                      - set: out1.location.searchDistance
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.searchDistance'
+                      - create: out1.location.openingDays
+                        foreach: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.openingDay'
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.location.openingDay'
+                        actions:
+                          - set: dayOfWeek
+                            from: dayOfWeekType.dayOfWeekCode.name
+                          - set: openingTime
+                            from: openingTime
+                          - set: closingTime
+                            from: closingTime
+                          - set: lunchOpeningTime
+                            from: lunchTime.lunchOpeningTime
+                          - set: lunchClosingTime
+                            from: lunchTime.lunchClosingTime
+                      - set: out1.error.code
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.errorResponse.errorCode.code'
+                      - set: out1.error.description
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.errorResponse.errorCode.description'
+                      - set: out1.error.cause
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.errorResponse.errorCause'
+                      - set: out1.error.resolution
+                        from: '#/in2.Envelope.Body.SetLCDeliveryLocationResponse.errorResponse.errorResolution'
+                      - set: out2
+                        default: 201
+                    options:
+                      inlineNamespaces: false
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+paths:
+  '/{bookingReference}':
+    put:
+      description: Confirms selection in a given Post Office for a delivery to ensure there is sufficient physical space for parcels to be held awaiting collection.
+      tags: []
+      parameters:
+        - description: This is the reference for the estimated delivery date and location where capacity is to be reserved.
+          name: bookingReference
+          type: string
+          required: true
+          in: path
+        - schema: {}
+          description: ''
+          name: body
+          in: body
+      responses:
+        '201':
+          schema:
+            type: object
+            properties:
+              request:
+                type: object
+                properties:
+                  bookingReference:
+                    type: string
+              reservationReference:
+                type: string
+              location:
+                type: object
+                properties:
+                  organisationName:
+                    type: string
+                  locationName:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  addressLine3:
+                    type: string
+                  addressLine4:
+                    type: string
+                  county:
+                    type: string
+                  postcode:
+                    type: string
+                  longitude:
+                    type: string
+                  latitude:
+                    type: string
+                  availability:
+                    type: string
+                  searchDistance:
+                    type: string
+                  openingDays:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dayOfWeek:
+                          type: string
+                        openingTime:
+                          type: string
+                        closingTime:
+                          type: string
+                        lunchOpeningTime:
+                          type: string
+                        lunchClosingTime:
+                          type: string
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  cause:
+                    type: string
+                  resolution:
+                    type: string
+                  context:
+                    type: string
+          description: ''
+          examples:
+            application/json:
+              request:
+                bookingReference: ''
+              reservationReference: ''
+              location:
+                organisationName: ''
+                locationName: ''
+                addressLine1: ''
+                addressLine2: ''
+                addressLine3: ''
+                addressLine4: ''
+                county: ''
+                postcode: ''
+                longitude: ''
+                latitude: ''
+                availability: ''
+                searchDistance: ''
+                openingDays:
+                  - dayOfWeek: ''
+                    openingTime: ''
+                    closingTime: ''
+                    lunchOpeningTime: ''
+                    lunchClosingTime: ''
+              error:
+                code: ''
+                description: ''
+                cause: ''
+                resolution: ''
+                context: ''
+        '500':
+          description: General error
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Internal Server Error
+              moreInformation: Please contact the RMG Customer Solutions Team
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Confirms delivery for a selected Post Office.
+  /:
+    get:
+      description: Retrieves an up-to-date list of Post Offices that offer Local Collect and have sufficient capacity to receive parcels (for a given location and delivery date).
+      tags: []
+      parameters:
+        - default: '{estDeliveryDate}'
+          description: 'This is the date (in YYYY-MM-DD format) when the parcel is anticipated to arrive at the Post Office (taking into account Royal Mail product used to deliver the item e.g.Tracked 24). If customers do not know when the parcel will be despatched (e.g. due to consumers ordering out of stock items) customers should specify a delivery date that assumes the order will be despatched on the same day (as the order). Notes: 1. estimatedDeliveryDate must be at least one day in the future; 2. estDeliveryDate cannot be more than 30 days in the future'
+          name: estDeliveryDate
+          required: true
+          type: string
+          in: query
+        - default: '{radius}'
+          description: '(optional) - The number of results returned is determined by the use of the radius parameter (although if this is omitted a pre-determined [20] number of locations will be returned).'
+          name: radius
+          required: false
+          type: string
+          in: query
+        - default: '{postcode}'
+          description: This is the Postcode of the location to search for Post Offices near. Only UK postcodes are supported.
+          name: postcode
+          required: true
+          type: string
+          in: query
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              request:
+                type: object
+                properties:
+                  postcode:
+                    type: string
+                    description: UK only; should be in upper case and no space
+                  estDeliveryDate:
+                    type: string
+                    description: 'should be in YYYY-MM-DD format, at least 1 day in the future, but not more than 30 days ahead'
+                  radius:
+                    type: string
+                    description: should be in miles up to a maximum of 99.0
+              locations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookingReference:
+                      type: string
+                    organisationName:
+                      type: string
+                    locationName:
+                      type: string
+                    addressLine1:
+                      type: string
+                    addressLine2:
+                      type: string
+                    addressLine3:
+                      type: string
+                    addressLine4:
+                      type: string
+                    county:
+                      type: string
+                    postcode:
+                      type: string
+                    longitude:
+                      type: string
+                    latitude:
+                      type: string
+                    availability:
+                      type: string
+                    searchDistance:
+                      type: string
+                    openingDays:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          dayOfWeek:
+                            type: string
+                          openingTime:
+                            type: string
+                          closingTime:
+                            type: string
+                          lunchOpeningTime:
+                            type: string
+                          lunchClosingTime:
+                            type: string
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  cause:
+                    type: string
+                  resolution:
+                    type: string
+          description: ''
+          examples:
+            application/json:
+              request:
+                postcode: SW34TR
+                estDeliveryDate: '2015-09-15'
+                radius: '10'
+              locations:
+                - bookingReference: ''
+                  organisationName: ''
+                  locationName: ''
+                  addressLine1: ''
+                  addressLine2: ''
+                  addressLine3: ''
+                  addressLine4: ''
+                  county: ''
+                  postcode: ''
+                  longitude: ''
+                  latitude: ''
+                  availability: ''
+                  searchDistance: ''
+                  openingDays:
+                    - dayOfWeek: ''
+                      openingTime: ''
+                      closingTime: ''
+                      lunchOpeningTime: ''
+                      lunchClosingTime: ''
+              error:
+                code: ''
+                description: ''
+                cause: ''
+                resolution: ''
+        '500':
+          description: General error
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Internal Server Error
+              moreInformation: Please contact the RMG Customer Solutions Team
+          schema: {}
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Returns a list of Post Office locations based on Postcode search.
+  /geosearch:
+    get:
+      description: Retrieves an up-to-date list of Post Offices that offer Local Collect and have sufficient capacity to receive parcels (for a given location and delivery date).
+      tags: []
+      parameters:
+        - default: estDeliveryDate
+          description: 'This is the date (in YYYY-MM-DD format) when the parcel is anticipated to arrive at the Post Office (taking into account Royal Mail product used to deliver the item e.g.Tracked 24). If customers do not know when the parcel will be despatched (e.g. due to consumers ordering out of stock items) customers should specify a delivery date that assumes the order will be despatched on the same day (as the order). Notes: 1. estimatedDeliveryDate must be at least one day in the future; 2. estDeliveryDate cannot be more than 30 days in the future'
+          name: estDeliveryDate
+          required: true
+          type: string
+          in: query
+        - default: radius
+          description: '(optional) - The number of results returned is determined by the use of the radius parameter (although if this is omitted a pre-determined [20] number of locations will be returned).'
+          name: radius
+          required: false
+          type: string
+          in: query
+        - default: longitude
+          description: 'Provide longitude position to search for Post Offices near by, only UK postcodes are supported.'
+          name: longitude
+          required: true
+          type: string
+          in: query
+        - default: latitude
+          description: 'Provide latitude position to search for Post Offices near by, only UK postcodes are supported.'
+          name: latitude
+          required: true
+          type: string
+          in: query
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              request:
+                type: object
+                properties:
+                  longitude:
+                    type: string
+                  latitiude:
+                    type: string
+                  estDeliveryDate:
+                    type: string
+                    description: 'should be in YYYY-MM-DD format, at least 1 day in the future, but not more than 30 days ahead'
+                  radius:
+                    type: string
+                    description: should be in miles up to a maximum of 99.0
+              locations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookingReference:
+                      type: string
+                    organisationName:
+                      type: string
+                    locationName:
+                      type: string
+                    addressLine1:
+                      type: string
+                    addressLine2:
+                      type: string
+                    addressLine3:
+                      type: string
+                    addressLine4:
+                      type: string
+                    county:
+                      type: string
+                    postcode:
+                      type: string
+                    longitude:
+                      type: string
+                    latitude:
+                      type: string
+                    availability:
+                      type: string
+                    searchDistance:
+                      type: string
+                    openingDays:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          dayOfWeek:
+                            type: string
+                          openingTime:
+                            type: string
+                          closingTime:
+                            type: string
+                          lunchOpeningTime:
+                            type: string
+                          lunchClosingTime:
+                            type: string
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  cause:
+                    type: string
+                  resolution:
+                    type: string
+          description: ''
+          examples:
+            application/json:
+              request:
+                longitude: '-0.16317'
+                latitiude: '51.49000'
+                estDeliveryDate: '2015-09-15'
+                radius: '10'
+              locations:
+                - bookingReference: ''
+                  organisationName: ''
+                  locationName: ''
+                  addressLine1: ''
+                  addressLine2: ''
+                  addressLine3: ''
+                  addressLine4: ''
+                  county: ''
+                  postcode: ''
+                  longitude: ''
+                  latitude: ''
+                  availability: ''
+                  searchDistance: ''
+                  openingDays:
+                    - dayOfWeek: ''
+                      openingTime: ''
+                      closingTime: ''
+                      lunchOpeningTime: ''
+                      lunchClosingTime: ''
+              error:
+                code: ''
+                description: ''
+                cause: ''
+                resolution: ''
+        '500':
+          description: General error
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Internal Server Error
+              moreInformation: Please contact the RMG Customer Solutions Team
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Returns the list of Post Office Locations based on geospatial search.
+security: []

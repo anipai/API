@@ -1,0 +1,21 @@
+product: 1.0.0
+info:
+  name: local-collect-v2-live
+  title: Local Collect V2 LIVE
+  version: 1.0.0
+visibility:
+  view:
+    type: public
+  subscribe:
+    type: authenticated
+plans:
+  default:
+    title: Default Plan
+    description: Default Plan
+    approval: false
+    rate-limit:
+      value: 100/hour
+      hard-limit: false
+apis:
+  local-collect-rest-api-specification:
+    $ref: local-collect-rest-api-specification_2.0.0B.yaml

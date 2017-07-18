@@ -1,0 +1,12 @@
+{
+  "name": "apianalytics",
+  "version": "0.0.2",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "2.81.0"
+  }
+}

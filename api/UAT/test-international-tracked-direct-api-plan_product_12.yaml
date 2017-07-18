@@ -1,0 +1,25 @@
+product: 1.0.0
+info:
+  title: Test International Tracked Direct API Plan
+  version: '12'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the International Shipping API
+  name: test-international-tracked-direct-api-plan
+apis:
+  international-tracked-direct-api:
+    $ref: international-tracked-direct-api_1.0.0-rev17.yaml
+plans:
+  test-international-tracked-direct-api-plan:
+    title: Test International Tracked Direct API Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the International Shipping API
+    approval: true
+    apis:
+      international-tracked-direct-api:
+        operations:
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/cancelshipment'
+            operation: delete
+          - path: /bagcontent
+            operation: post
+          - path: /createshipment
+            operation: post

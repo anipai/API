@@ -1,0 +1,1433 @@
+swagger: '2.0'
+info:
+  title: Tracking API LIVE (REST)
+  description: "Tracking API provides the functionality to enquire on the tracking status of mail items. The API provides the latest tracking information, the tracking history, and the proof of delivery information (minus the signature image) for a single mail item. The API provides an alternative mechanism to using the track and trace function on the Royal Mail website (http://www.royalmail.com/track-trace). \n \nThere are no costs to customers for using the Tracking API services, however development costs must be covered by the customer. Royal Mail will not accept any responsibility for these development, implementation and testing costs.\n \nCustomers should address initial inquiries regarding development of systems for these purposes to their account handler."
+  version: 1-rev12
+  x-ibm-name: tracking-api-live-rest
+basePath: /mailPieces
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Tracking SSL Profile:
+      description: SSL profile of the underlying tracking API
+      encoded: false
+      value: Live (CA2)
+    TrackingAPIEndpoint:
+      description: Endpoint to Tracking API
+      encoded: false
+      value: 'https://api.royalmail.com/tracking'
+    ApplicationId:
+      description: 'Tracking call Application ID value, Onboarding: 0127229000, Live: RMG-API-G-01'
+      encoded: false
+      value: RMG-API-G-01
+    activity.log.level:
+      description: What to log for activity logging
+      encoded: false
+      value: payload
+    error.log.level:
+      description: What to log on api error
+      encoded: false
+      value: payload
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: Tracking API (REST) Reference Data
+      description: ''
+      id: 576a43100cf20d101f04a0a3
+    - title: RMG Tracking API (REST) Technical User Guide
+      description: ''
+      id: 576a325d0cf20d101f049a30
+    - title: RMG Tracking API (REST) Sample Data Set
+      description: ''
+      id: 576a325f0cf20d101f049a35
+  gateway: datapower-gateway
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - verb: get
+                  path: '/{trackingNumber}/history'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getSingleItemHistoryRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(api.properties.ApplicationId)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                        trackingNumber:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:getSingleItemHistory"'
+                    actions:
+                      - set: out1.Envelope.Body.getSingleItemHistoryRequest.trackingNumber
+                        from: '#/in1.trackingNumber'
+                      - set: out1.Envelope.Body.getSingleItemHistoryRequest.integrationHeader.identification.applicationId
+                        default: $(api.properties.ApplicationId)
+                      - set: out1.Envelope.Body.getSingleItemHistoryRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:getSingleItemHistory"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(TrackingAPIEndpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: Web Service Invoke Operation
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                      in2:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getSingleItemHistoryResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            dateTime:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                            version:
+                                              type: number
+                                              format: float
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p1
+                                            identification:
+                                              type: object
+                                              properties:
+                                                endUserId:
+                                                  type: string
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p2
+                                            testFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p3
+                                            debugFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p4
+                                        trackDetail:
+                                          type: array
+                                          items:
+                                            type: object
+                                            properties:
+                                              trackDate:
+                                                type: string
+                                              trackPoint:
+                                                type: string
+                                              trackTime:
+                                                type: string
+                                              header:
+                                                type: string
+                                              footer:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    footerID:
+                                                      type: string
+                                                    footerText:
+                                                      type: string
+                                              podMessage:
+                                                type: string
+                                        integrationFooter:
+                                          type: object
+                                          properties:
+                                            errors:
+                                              type: object
+                                              properties:
+                                                error:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      errorCode:
+                                                        type: string
+                                                      errorDescription:
+                                                        type: string
+                                                      errorCause:
+                                                        type: string
+                                                      errorResolution:
+                                                        type: string
+                                                      errorContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p5
+                                            warnings:
+                                              type: object
+                                              properties:
+                                                warning:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      warningCode:
+                                                        type: string
+                                                      warningDescription:
+                                                        type: string
+                                                      warningCause:
+                                                        type: string
+                                                      warningResolution:
+                                                        type: string
+                                                      warningContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p6
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p7
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            exceptionDetails:
+                                              type: object
+                                              properties:
+                                                exceptionTransactionId:
+                                                  type: string
+                                                exceptionCode:
+                                                  type: string
+                                                exceptionText:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                                prefix: p8
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            trackDetail:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  trackingNumber:
+                                    type: string
+                                  trackDate:
+                                    type: string
+                                  trackPoint:
+                                    type: string
+                                  trackTime:
+                                    type: string
+                                  status:
+                                    type: string
+                                  messages:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: string
+                                        detail:
+                                          type: string
+                                  podMessage:
+                                    type: string
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                description:
+                                  type: string
+                                cause:
+                                  type: string
+                                resolution:
+                                  type: string
+                                context:
+                                  type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - create: out1.trackDetail
+                        foreach: '#/in2.Envelope.Body.getSingleItemHistoryResponse.trackDetail'
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.trackDetail'
+                        actions:
+                          - set: trackingNumber
+                            from: '#/in1.trackingNumber'
+                          - set: trackDate
+                            from: trackDate
+                          - set: trackPoint
+                            from: trackPoint
+                          - set: trackTime
+                            from: trackTime
+                          - set: status
+                            from: header
+                          - create: messages
+                            foreach: footer
+                            from: footer
+                            actions:
+                              - set: id
+                                from: footerID
+                              - set: detail
+                                from: footerText
+                          - set: podMessage
+                            from: podMessage
+                      - set: out1.error.code
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.integrationFooter.errors.error.errorCode'
+                      - set: out1.error.description
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.integrationFooter.errors.error.errorDescription'
+                      - set: out1.error.cause
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.integrationFooter.errors.error.errorCause'
+                      - set: out1.error.resolution
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.integrationFooter.errors.error.errorResolution'
+                      - set: out1.error.context
+                        from: '#/in2.Envelope.Body.getSingleItemHistoryResponse.integrationFooter.errors.error.errorContext'
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: get
+                  path: '/{trackingNumber}/proofOfDelivery'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getProofOfDeliveryRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(api.properties.ApplicationId)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                        trackingNumber:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:getProofOfDelivery"'
+                    actions:
+                      - set: out1.Envelope.Body.getProofOfDeliveryRequest.trackingNumber
+                        from: '#/in1.trackingNumber'
+                      - set: out1.Envelope.Body.getProofOfDeliveryRequest.integrationHeader.identification.applicationId
+                        default: $(api.properties.ApplicationId)
+                      - set: out1.Envelope.Body.getProofOfDeliveryRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:getProofOfDelivery"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(TrackingAPIEndpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: Web Service Invoke Operation 2
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log 2
+                - map:
+                    inputs:
+                      in1:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getProofOfDeliveryResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            dateTime:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                            version:
+                                              type: number
+                                              format: float
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p1
+                                            identification:
+                                              type: object
+                                              properties:
+                                                endUserId:
+                                                  type: string
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p2
+                                            testFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p3
+                                            debugFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p4
+                                        wSImageResponse:
+                                          type: object
+                                          properties:
+                                            height:
+                                              type: object
+                                              properties:
+                                                unitOfMeasure:
+                                                  type: object
+                                                  properties:
+                                                    unitOfMeasureCode:
+                                                      type: object
+                                                      properties:
+                                                        identifier:
+                                                          type: string
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                value:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                            image:
+                                              type: string
+                                            printedName:
+                                              type: string
+                                            signatureTime:
+                                              type: string
+                                            trackingNumber:
+                                              type: string
+                                            width:
+                                              type: object
+                                              properties:
+                                                unitOfMeasure:
+                                                  type: object
+                                                  properties:
+                                                    unitOfMeasureCode:
+                                                      type: object
+                                                      properties:
+                                                        identifier:
+                                                          type: string
+                                                        code:
+                                                          type: string
+                                                        name:
+                                                          type: string
+                                                        description:
+                                                          type: string
+                                                  xml:
+                                                    namespace: ''
+                                                value:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                        integrationFooter:
+                                          type: object
+                                          properties:
+                                            errors:
+                                              type: object
+                                              properties:
+                                                error:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      errorCode:
+                                                        type: string
+                                                      errorDescription:
+                                                        type: string
+                                                      errorCause:
+                                                        type: string
+                                                      errorResolution:
+                                                        type: string
+                                                      errorContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p5
+                                            warnings:
+                                              type: object
+                                              properties:
+                                                warning:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      warningCode:
+                                                        type: string
+                                                      warningDescription:
+                                                        type: string
+                                                      warningCause:
+                                                        type: string
+                                                      warningResolution:
+                                                        type: string
+                                                      warningContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p6
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p7
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            exceptionDetails:
+                                              type: object
+                                              properties:
+                                                exceptionTransactionId:
+                                                  type: string
+                                                exceptionCode:
+                                                  type: string
+                                                exceptionText:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                                prefix: p8
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            proofOfDelivery:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  trackingNumber:
+                                    type: string
+                                  height:
+                                    type: string
+                                  width:
+                                    type: string
+                                  image:
+                                    type: string
+                                  printedName:
+                                    type: string
+                                  signatureTime:
+                                    type: string
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                description:
+                                  type: string
+                                cause:
+                                  type: string
+                                resolution:
+                                  type: string
+                                context:
+                                  type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - create: out1.proofOfDelivery
+                        actions:
+                          - set: trackingNumber
+                            from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.trackingNumber'
+                          - set: height
+                            from:
+                              - '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.height.value'
+                              - '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.height.unitOfMeasure.unitOfMeasureCode.name'
+                            value: 'apim.v4.concat([$(1), $(2)], " ", "", "")'
+                          - set: width
+                            from:
+                              - '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.width.value'
+                              - '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.width.unitOfMeasure.unitOfMeasureCode.name'
+                            value: 'apim.v4.concat([$(1), $(2)], " ", "", "")'
+                          - set: image
+                            from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.image'
+                          - set: printedName
+                            from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.printedName'
+                          - set: signatureTime
+                            from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.wSImageResponse.signatureTime'
+                      - set: out1.error.code
+                        from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.integrationFooter.errors.error.errorCode'
+                      - set: out1.error.description
+                        from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.integrationFooter.errors.error.errorDescription'
+                      - set: out1.error.cause
+                        from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.integrationFooter.errors.error.errorCause'
+                      - set: out1.error.resolution
+                        from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.integrationFooter.errors.error.errorResolution'
+                      - set: out1.error.context
+                        from: '#/in1.Envelope.Body.getProofOfDeliveryResponse.integrationFooter.errors.error.errorContext'
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: get
+                  path: '/{trackingNumber}/summary'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getSingleItemSummaryRequest:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            identification:
+                                              type: object
+                                              properties:
+                                                applicationId:
+                                                  type: string
+                                                  default: $(api.properties.ApplicationId)
+                                                transactionId:
+                                                  type: string
+                                                  default: $(request.headers.x-global-transaction-id)
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                        trackingNumber:
+                                          type: string
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: 'text/xml; charset="UTF-8"'
+                            SOAPAction:
+                              type: string
+                              default: '"urn:getSingleItemSummary"'
+                    actions:
+                      - set: out1.Envelope.Body.getSingleItemSummaryRequest.trackingNumber
+                        from: '#/in1.trackingNumber'
+                      - set: out1.Envelope.Body.getSingleItemSummaryRequest.integrationHeader.identification.applicationId
+                        default: $(api.properties.ApplicationId)
+                      - set: out1.Envelope.Body.getSingleItemSummaryRequest.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: 'text/xml; charset="UTF-8"'
+                      - set: out2.SOAPAction
+                        default: '"urn:getSingleItemSummary"'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(TrackingAPIEndpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: Web Service Invoke Operation 3
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response2
+                - if:
+                    title: if
+                    condition: apim.util.isSOAPError($(response2))
+                    execute:
+                      - gatewayscript:
+                          source: 'apim.error("StopFlow","500","Internal Server Error","Please contact the RMG Customer Solutions Team")'
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log 3
+                - map:
+                    inputs:
+                      in1:
+                        variable: response2.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                Body:
+                                  type: object
+                                  properties:
+                                    getSingleItemSummaryResponse:
+                                      type: object
+                                      properties:
+                                        integrationHeader:
+                                          type: object
+                                          properties:
+                                            dateTime:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p0
+                                            version:
+                                              type: number
+                                              format: float
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p1
+                                            identification:
+                                              type: object
+                                              properties:
+                                                endUserId:
+                                                  type: string
+                                                applicationId:
+                                                  type: string
+                                                intermediaryId:
+                                                  type: string
+                                                transactionId:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p2
+                                            testFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p3
+                                            debugFlag:
+                                              type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p4
+                                        itemSummary:
+                                          type: object
+                                          properties:
+                                            eventDate:
+                                              type: string
+                                            eventTime:
+                                              type: string
+                                            statusCode:
+                                              type: object
+                                              properties:
+                                                identifier:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                code:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                name:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                                description:
+                                                  type: string
+                                                  xml:
+                                                    namespace: ''
+                                            summaryLine:
+                                              type: string
+                                            trackingNumber:
+                                              type: string
+                                            header:
+                                              type: string
+                                            footer:
+                                              type: array
+                                              items:
+                                                type: object
+                                                properties:
+                                                  footerID:
+                                                    type: string
+                                                  footerText:
+                                                    type: string
+                                        integrationFooter:
+                                          type: object
+                                          properties:
+                                            errors:
+                                              type: object
+                                              properties:
+                                                error:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      errorCode:
+                                                        type: string
+                                                      errorDescription:
+                                                        type: string
+                                                      errorCause:
+                                                        type: string
+                                                      errorResolution:
+                                                        type: string
+                                                      errorContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p5
+                                            warnings:
+                                              type: object
+                                              properties:
+                                                warning:
+                                                  type: array
+                                                  items:
+                                                    type: object
+                                                    properties:
+                                                      warningCode:
+                                                        type: string
+                                                      warningDescription:
+                                                        type: string
+                                                      warningCause:
+                                                        type: string
+                                                      warningResolution:
+                                                        type: string
+                                                      warningContext:
+                                                        type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/integration/core/V1'
+                                                prefix: p6
+                                      xml:
+                                        namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                        prefix: p7
+                                    Fault:
+                                      type: object
+                                      properties:
+                                        faultcode:
+                                          type: string
+                                          enum:
+                                            - VersionMismatch
+                                            - MustUnderstand
+                                            - Client
+                                            - Server
+                                        faultstring:
+                                          type: string
+                                        faultactor:
+                                          type: string
+                                        detail:
+                                          type: object
+                                          properties:
+                                            exceptionDetails:
+                                              type: object
+                                              properties:
+                                                exceptionTransactionId:
+                                                  type: string
+                                                exceptionCode:
+                                                  type: string
+                                                exceptionText:
+                                                  type: string
+                                              xml:
+                                                namespace: 'http://www.royalmailgroup.com/api/track/V1'
+                                                prefix: p8
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            trackSummary:
+                              type: object
+                              properties:
+                                trackingNumber:
+                                  type: string
+                                eventDate:
+                                  type: string
+                                eventTime:
+                                  type: string
+                                statusCode:
+                                  type: string
+                                summaryLine:
+                                  type: string
+                                status:
+                                  type: string
+                                messages:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                      detail:
+                                        type: string
+                            errors:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  code:
+                                    type: string
+                                  description:
+                                    type: string
+                                  cause:
+                                    type: string
+                                  resolution:
+                                    type: string
+                                  context:
+                                    type: string
+                        content: application/json
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - create: out1.errors
+                        foreach: '#/in1.Envelope.Body.getSingleItemSummaryResponse.integrationFooter.errors.error'
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.integrationFooter.errors.error'
+                        actions:
+                          - set: code
+                            from: errorCode
+                          - set: description
+                            from: errorDescription
+                          - set: cause
+                            from: errorCause
+                          - set: resolution
+                            from: errorResolution
+                          - set: context
+                            from: errorContext
+                      - set: out1.trackSummary.trackingNumber
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.trackingNumber'
+                      - set: out1.trackSummary.eventDate
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.eventDate'
+                      - set: out1.trackSummary.eventTime
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.eventTime'
+                      - set: out1.trackSummary.statusCode
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.statusCode.code'
+                      - set: out1.trackSummary.summaryLine
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.summaryLine'
+                      - set: out1.trackSummary.status
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.header'
+                      - create: out1.trackSummary.messages
+                        foreach: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.footer'
+                        from: '#/in1.Envelope.Body.getSingleItemSummaryResponse.itemSummary.footer'
+                        actions:
+                          - set: id
+                            from: footerID
+                          - set: detail
+                            from: footerText
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+paths:
+  '/{trackingNumber}/proofOfDelivery':
+    get:
+      description: Provides the details captured at the point of delivery as proof that delivery has occurred. Note that a proof of delivery is only captured by the delivery track for those service offerings that require a signature on delivery. Please also note that for data protection reasons the API does not currently supply the signature image captured at the point of delivery.
+      tags: []
+      parameters:
+        - name: trackingNumber
+          type: string
+          required: true
+          in: path
+          description: ''
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              proofOfDelivery:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    trackingNumber:
+                      type: string
+                    height:
+                      type: string
+                    width:
+                      type: string
+                    image:
+                      type: string
+                    printedName:
+                      type: string
+                    signatureTime:
+                      type: string
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  cause:
+                    type: string
+                  resolution:
+                    type: string
+                  context:
+                    type: string
+          description: Tracking Proof of Delivery
+          examples:
+            application/json:
+              proofOfDelivery:
+                - trackingNumber: ''
+                  height: ''
+                  width: ''
+                  image: ''
+                  printedName: ''
+                  signatureTime: ''
+              error:
+                code: ''
+                description: ''
+                cause: ''
+                resolution: ''
+                context: ''
+        '500':
+          description: General error
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Bad Request
+              moreInformation: ''
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Get Proof of Delivery
+  '/{trackingNumber}/history':
+    get:
+      description: Provides the tracking history for a single mail item.
+      tags: []
+      parameters:
+        - name: trackingNumber
+          type: string
+          required: true
+          in: path
+          description: ''
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              trackDetail:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    trackingNumber:
+                      type: string
+                    trackDate:
+                      type: string
+                    trackPoint:
+                      type: string
+                    trackTime:
+                      type: string
+                    status:
+                      type: string
+                    messages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          detail:
+                            type: string
+                    podMessage:
+                      type: string
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  cause:
+                    type: string
+                  resolution:
+                    type: string
+                  context:
+                    type: string
+          description: Tracking Details
+          examples:
+            application/json:
+              trackDetail:
+                - trackingNumber: ''
+                  trackDate: ''
+                  trackPoint: ''
+                  trackTime: ''
+                  status: ''
+                  messages:
+                    - id: ''
+                      detail: ''
+                  podMessage: ''
+              error:
+                code: ''
+                description: ''
+                cause: ''
+                resolution: ''
+                context: ''
+        '500':
+          description: General Error
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Bad Request
+              moreInformation: ''
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Get Single Item History
+  '/{trackingNumber}/summary':
+    get:
+      description: Provides the latest tracking event for a single mail item.
+      tags: []
+      parameters:
+        - name: trackingNumber
+          type: string
+          required: true
+          in: path
+          description: ''
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              trackSummary:
+                type: object
+                properties:
+                  trackingNumber:
+                    type: string
+                  eventDate:
+                    type: string
+                  eventTime:
+                    type: string
+                  statusCode:
+                    type: string
+                  summaryLine:
+                    type: string
+                  status:
+                    type: string
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        detail:
+                          type: string
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    description:
+                      type: string
+                    cause:
+                      type: string
+                    resolution:
+                      type: string
+                    context:
+                      type: string
+          description: Tracking summary
+          examples:
+            application/json:
+              trackSummary:
+                trackingNumber: ''
+                eventDate: ''
+                eventTime: ''
+                statusCode: ''
+                summaryLine: ''
+                status: ''
+                messages:
+                  - id: ''
+                    detail: ''
+              errors:
+                - code: ''
+                  description: ''
+                  cause: ''
+                  resolution: ''
+                  context: ''
+        '500':
+          description: ''
+          headers: {}
+          examples:
+            application/json:
+              httpCode: '500'
+              httpMessage: Bad Request
+              moreInformation: ''
+          schema:
+            type: object
+            properties:
+              httpCode:
+                type: string
+              httpMessage:
+                type: string
+              moreInformation:
+                type: string
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Get Single Item Summary
+security: []

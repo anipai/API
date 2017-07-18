@@ -1,0 +1,35 @@
+product: 1.0.0
+info:
+  title: Live Tracking Plan
+  version: '13'
+  description: This plan is for Royal Mail customers to subscribe to the Tracking APIs in the Live environment
+  name: live-tracking-plan
+apis:
+  tracking-api-live-soap:
+    $ref: tracking-api-live-soap_1-rev7.yaml
+  tracking-api-live-rest:
+    $ref: tracking-api-live-rest_1-rev10.yaml
+plans:
+  live-tracking-plan:
+    title: Live Tracking Plan
+    description: This plan is for Royal Mail customers to subscribe to the Tracking APIs in the Live environment
+    approval: true
+    apis:
+      tracking-api-live-soap:
+        operations:
+          - path: /getMultiItemSummary
+            operation: post
+          - path: /getProofOfDelivery
+            operation: post
+          - path: /getSingleItemHistory
+            operation: post
+          - path: /getSingleItemSummary
+            operation: post
+      tracking-api-live-rest:
+        operations:
+          - path: '/{trackingNumber}/proofOfDelivery'
+            operation: get
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/summary'
+            operation: get

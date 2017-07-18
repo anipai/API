@@ -1,0 +1,32 @@
+product: 1.0.0
+info:
+  title: Test V1 Online Postage Plan
+  version: '1'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Online Postage APIs
+  name: test-v1-online-postage-plan
+apis:
+  online-postage-api-v1-soap:
+    $ref: online-postage-api-v1-soap_1.2.4-rev5.yaml
+plans:
+  test-v1-online-postage-plan:
+    title: Test V1 Online Postage Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using the Online Postage APIs
+    approval: true
+    rate-limit:
+      hard-limit: true
+      value: 1/1second
+    apis:
+      online-postage-api-v1-soap:
+        operations:
+          - path: /createPostage
+            operation: post
+          - path: /getCountries
+            operation: post
+          - path: /getPostageServiceDetails
+            operation: post
+          - path: /getServicesByCountry
+            operation: post
+          - path: /getStatus
+            operation: post
+          - path: /spoilPostage
+            operation: post

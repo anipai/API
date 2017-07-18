@@ -1,0 +1,29 @@
+product: 1.0.0
+info:
+  title: Live V1 Shipping Plan
+  version: '3'
+  description: This plan is for Royal Mail customers to subscribe to version 1 of the Shipping API in the Live environment
+  name: live-v1-shipping-plan
+apis:
+  shipping-api-v1-live-soap:
+    $ref: shipping-api-v1-live-soap_1-rev1.yaml
+plans:
+  live-v1-shipping-plan:
+    title: Live V1 Shipping Plan
+    description: This plan is for Royal Mail customers to subscribe to version 1 of the Shipping API in the Live environment
+    approval: true
+    apis:
+      shipping-api-v1-live-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /updateShipment
+            operation: post

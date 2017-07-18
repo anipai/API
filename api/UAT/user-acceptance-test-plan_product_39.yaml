@@ -1,0 +1,119 @@
+product: 1.0.0
+info:
+  title: User Acceptance Test plan
+  version: '39'
+  description: This plan will be published on the UAT environment. APIs may be added to this plan once they have been signed off by a Tester. Royal Mail UAT will access this plan via the UAT environment portal.
+  name: user-acceptance-test-plan
+apis:
+  local-collect-api-soap:
+    $ref: local-collect-api-soap_2.4.1-rev27.yaml
+  shipping-api-v1-soap:
+    $ref: shipping-api-v1-soap_1.0.1-rev14.yaml
+  shipping-api-v2-soap:
+    $ref: shipping-api-v2-soap_2.0.9-rev18.yaml
+  delivery-office-finder-api-rest:
+    $ref: delivery-office-finder-api-rest_1.0.0-rev40.yaml
+  tracking-api-soap:
+    $ref: tracking-api-soap_1.1.1-rev26.yaml
+  local-collect-api-rest:
+    $ref: local-collect-api-rest_2.4.1-rev42.yaml
+  tracking-api-rest:
+    $ref: tracking-api-rest_1.1.2-rev22.yaml
+  echo:
+    $ref: echo_1.0.0-rev3.yaml
+  online-postage-api-v1-soap:
+    $ref: online-postage-api-v1-soap_1.2.4-rev5.yaml
+plans:
+  user-acceptance-test-plan:
+    title: User Acceptance Test plan
+    description: This plan will be published on the UAT environment. APIs may be added to this plan once they have been signed off by a Tester. Royal Mail UAT will access this plan via the UAT environment portal.
+    approval: true
+    apis:
+      local-collect-api-soap:
+        operations:
+          - path: /SetLCDeliveryLocation
+            operation: post
+          - path: /GetLCDeliveryLocations
+            operation: post
+      shipping-api-v1-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /updateShipment
+            operation: post
+      shipping-api-v2-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printDocument
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /request1DRanges
+            operation: post
+          - path: /request2DItemIDRange
+            operation: post
+          - path: /updateShipment
+            operation: post
+      delivery-office-finder-api-rest:
+        operations:
+          - path: /
+            operation: get
+      tracking-api-soap:
+        operations:
+          - path: /getMultiItemSummary
+            operation: post
+          - path: /getProofOfDelivery
+            operation: post
+          - path: /getSingleItemHistory
+            operation: post
+          - path: /getSingleItemSummary
+            operation: post
+      local-collect-api-rest:
+        operations:
+          - path: '/{bookingReference}'
+            operation: put
+          - path: /
+            operation: get
+          - path: /geosearch
+            operation: get
+      tracking-api-rest:
+        operations:
+          - path: '/{trackingNumber}/proofOfDelivery'
+            operation: get
+          - path: '/{trackingNumber}/history'
+            operation: get
+          - path: '/{trackingNumber}/summary'
+            operation: get
+      echo:
+        operations:
+          - path: /get
+            operation: get
+      online-postage-api-v1-soap:
+        operations:
+          - path: /createPostage
+            operation: post
+          - path: /getCountries
+            operation: post
+          - path: /getPostageServiceDetails
+            operation: post
+          - path: /getServicesByCountry
+            operation: post
+          - path: /getStatus
+            operation: post
+          - path: /spoilPostage
+            operation: post

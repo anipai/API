@@ -1,0 +1,335 @@
+swagger: '2.0'
+info:
+  title: Local Collect API V2 (SOAP)
+  description: >-
+    Local Collect is a delivery enhancement to Royal Mail Tracked & Special
+    Delivery Guaranteed products that enables customers to benefit from ‘Click
+    and Collect’ options by having their parcels delivered to participating Post
+    Offices and Royal Mail enquiry offices. The Local Collect API allows
+    customers to retrieve an up-to-date list of Post Offices and Royal Mail
+    Enquiry Offices, where the item can be held awaiting collection.
+
+
+
+    There are no costs to customers for using the Local Collect API services,
+    however development costs must be covered by the customer. Royal Mail will
+    not accept any responsibility for these development, implementation and
+    testing costs.
+  version: 1.0.0-rev20
+  x-ibm-name: local-collect-api-v2-soap
+basePath: /localcollect/v2
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Certificate Name:
+      description: Default Certificate Name
+      encoded: false
+      value: 'Onboarding, Pre-Prod (Test CA2)'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Local Collect Endpoint:
+      description: This is the Local Collect end point
+      encoded: false
+      value: 'https://sit-api.royalmail.com/localcollect/v2'
+  catalogs: {}
+  externalDocs: []
+  attachments: []
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: local-collect-api-v2-soap_1.0.0-rev20.zip
+    service: LocalCollectServicev2_0
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - getLocations
+              execute:
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: 'https://api.royalmail.com/localcollect/v2'
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client Secret:
+    description: ''
+    in: header
+    name: X-IBM-Client-Secret
+    type: apiKey
+  Client ID:
+    type: apiKey
+    name: X-IBM-Client-Id
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /getLocations:
+    post:
+      description: ''
+      operationId: getLocations
+      summary: null
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><v3:integrationHeader
+              xmlns:v3="http://www.royalmailgroup.com/integration/core/V3">
+
+                <!--Optional:-->
+
+                <dateTime>2008-09-29T01:49:45</dateTime>
+
+                <!--Optional:-->
+
+                <version>1000.00</version>
+
+                <identification>
+
+                  <!--Optional:-->
+
+                  <endUserId>string</endUserId>
+
+                  <!--Optional:-->
+
+                  <clientId>string</clientId>
+
+                  <applicationId>string</applicationId>
+
+                  <!--Optional:-->
+
+                  <intermediaryId>string</intermediaryId>
+
+                  <transactionId>string</transactionId>
+
+                </identification>
+
+                <!--Optional:-->
+
+                <debugAudit>
+
+                  <!--Optional:-->
+
+                  <testFlag>true</testFlag>
+
+                  <!--Optional:-->
+
+                  <debugFlag>true</debugFlag>
+
+                  <!--Optional:-->
+
+                  <performanceFlag>true</performanceFlag>
+
+                  <!--Optional:-->
+
+                  <messageAuditFlag>true</messageAuditFlag>
+
+                </debugAudit>
+
+              </v3:integrationHeader></SOAP-ENV:Header><SOAP-ENV:Body><v2:getLocationsReques
+               xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0">
+
+                <!--You have a CHOICE of the next 2 items at this level-->
+
+                <postCode>string</postCode>
+
+                <geoLocation>
+
+                  <latitude>1000.00</latitude>
+
+                  <longitude>1000.00</longitude>
+
+                </geoLocation>
+
+                <!--Optional:-->
+
+                <locationType>Enquiry Office</locationType>
+
+                <!--Optional:-->
+
+                <radius>20</radius>
+
+              </v2:getLocationsRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations'
+        soap-operation: '{http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0}getLocationsRequest'
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v2:getLocationsResponse
+              xmlns:v2="http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0">
+
+                <!--Optional:-->
+
+                <locations>
+
+                  <!--0 to 20 repetitions:-->
+
+                  <location>
+
+                    <organisationName>string</organisationName>
+
+                    <locationName>string</locationName>
+
+                    <addressLine1>string</addressLine1>
+
+                    <!--Optional:-->
+
+                    <addressLine2>string</addressLine2>
+
+                    <!--Optional:-->
+
+                    <addressLine3>string</addressLine3>
+
+                    <!--Optional:-->
+
+                    <city>string</city>
+
+                    <!--Optional:-->
+
+                    <county>string</county>
+
+                    <postcode>string</postcode>
+
+                    <!--1 to 7 repetitions:-->
+
+                    <openingHours>
+
+                      <dayOfWeek>Friday</dayOfWeek>
+
+                      <openingTime>06:36:28</openingTime>
+
+                      <closingTime>18:44:14</closingTime>
+
+                      <!--Optional:-->
+
+                      <lunchHours>
+
+                        <lunchClosingTime>05:36:46+00:00</lunchClosingTime>
+
+                        <lunchOpeningTime>01:02:49+00:00</lunchOpeningTime>
+
+                      </lunchHours>
+
+                    </openingHours>
+
+                    <geoLocation>
+
+                      <latitude>1000.00</latitude>
+
+                      <longitude>1000.00</longitude>
+
+                    </geoLocation>
+
+                    <distance>100</distance>
+
+                    <!--Optional:-->
+
+                    <facilities>
+
+                      <customerParkingIndicator>true</customerParkingIndicator>
+
+                      <disabilityIndicator>false</disabilityIndicator>
+
+                    </facilities>
+
+                    <locationType>Enquiry Office</locationType>
+
+                  </location>
+
+                </locations>
+
+                <!--Optional:-->
+
+                <integrationFooter>
+
+                  <!--Optional:-->
+
+                  <errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <error>
+
+                      <errorCode>string</errorCode>
+
+                      <errorDescription>string</errorDescription>
+
+                      <!--Optional:-->
+
+                      <errorCause>string</errorCause>
+
+                      <!--Optional:-->
+
+                      <errorResolution>string</errorResolution>
+
+                      <!--Optional:-->
+
+                      <errorContext>string</errorContext>
+
+                    </error>
+
+                  </errors>
+
+                  <!--Optional:-->
+
+                  <warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <warning>
+
+                      <warningCode>string</warningCode>
+
+                      <warningDescription>string</warningDescription>
+
+                      <!--Optional:-->
+
+                      <warningCause>string</warningCause>
+
+                      <!--Optional:-->
+
+                      <warningResolution>string</warningResolution>
+
+                      <!--Optional:-->
+
+                      <warningContext>string</warningContext>
+
+                    </warning>
+
+                  </warnings>
+
+                </integrationFooter>
+
+              </v2:getLocationsResponse>
+      security:
+        - Client ID: []
+security: []

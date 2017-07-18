@@ -1,0 +1,3918 @@
+swagger: '2.0'
+info:
+  title: Online Postage API LIVE (SOAP)
+  description: "The Online Postage API provides any Royal Mail approved third party Marketplace website the ability to print their own postage labels. The API provides the functionality to obtain a country list for a given carrier, obtain terms and conditions for the mail services, obtain the postage price for an individual item, obtain the postage for an individual mail item and spoil (cancel) that unused postage.\n \nThis service is only available to Royal Mail approved third party Marketplace websites. Using the Online Postage API will require development costs that will be covered by the third party developing the solution. Royal Mail will not accept any responsibility for these development, implementation and testing costs.\n \nCustomers who are interested should contact their Royal Mail account handler to check eligibility."
+  version: 1-rev3
+  x-ibm-name: online-postage-api-live-soap
+basePath: /onlinepostage/v1
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    OLP Endpoint:
+      description: OLP Endpoint
+      encoded: false
+      value: 'https://testapi.royalmail.com:28654/OnlinePostage'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    OLP LIVE Endpoint:
+      description: ''
+      encoded: false
+      value: 'https://api.royalmail.com:28654/OnlinePostage'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: RMG Online Postage API (SOAP) Technical User Guide
+      description: ''
+      id: 566589aa0cf20c0b5585e7b5
+    - title: RMG Online Postage (SOAP) API Sample Data Set
+      description: ''
+      id: 566589e10cf20c0b5585e7bd
+    - title: Online Postage API Reference Data
+      description: ''
+      id: 56658a000cf20c0b5585e7c3
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: online-postage-api-live-soap_1-rev3.zip
+    service: OnlinePostageService
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - createPostage
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - getCountries
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 2
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - getPostageServiceDetails
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 3
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - getServicesByCountry
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 4
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - getStatus
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 5
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+            - operations:
+                - spoilPostage
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 6
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(OLP LIVE Endpoint)
+                    tls-profile: 55fa95140cf2d7f58fccdece
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /createPostage:
+    post:
+      description: "The service provides the postage for an individual postage item. \ncreatePostage is called after a successful getPostageServiceDetails, passing the price and postage details obtained."
+      tags: []
+      operationId: createPostage
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:createPostage
+              xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeader
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><createPostageRequest>
+
+                <createPostageList>
+
+                  <!--Zero or more repetitions:-->
+
+                  <postageServiceStructure>
+
+                    <postageIdentifier>string</postageIdentifier>
+
+                    <postageName>string</postageName>
+
+                    <postageCarrier>string</postageCarrier>
+
+                    <postageSize>
+
+                      <postageSizeCode>
+
+                        <!--Optional:-->
+
+                        <identifier>string</identifier>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </postageSizeCode>
+
+                    </postageSize>
+
+                    <postagePrice>
+
+                      <!--Optional:-->
+
+                      <totalPrice>
+
+                        <creditIndicator>false</creditIndicator>
+
+                        <currency>
+
+                          <currencyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </currencyCode>
+
+                        </currency>
+
+                        <value>1000.00</value>
+
+                      </totalPrice>
+
+                      <!--Optional:-->
+
+                      <basePrice>
+
+                        <creditIndicator>true</creditIndicator>
+
+                        <currency>
+
+                          <currencyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </currencyCode>
+
+                        </currency>
+
+                        <value>1000.00</value>
+
+                      </basePrice>
+
+                      <!--Optional:-->
+
+                      <discounts>
+
+                        <!--Zero or more repetitions:-->
+
+                        <discountStructure>
+
+                          <name>string</name>
+
+                          <amount>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </amount>
+
+                        </discountStructure>
+
+                      </discounts>
+
+                      <!--Optional:-->
+
+                      <taxes>
+
+                        <!--Zero or more repetitions:-->
+
+                        <taxStructure>
+
+                          <name>string</name>
+
+                          <type>
+
+                            <taxCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </taxCode>
+
+                          </type>
+
+                          <value>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </value>
+
+                        </taxStructure>
+
+                      </taxes>
+
+                      <!--Optional:-->
+
+                      <options>
+
+                        <!--Zero or more repetitions:-->
+
+                        <serviceOptionsPriceDetail>
+
+                          <name>string</name>
+
+                          <price>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </price>
+
+                          <inputValue>1000.00</inputValue>
+
+                        </serviceOptionsPriceDetail>
+
+                      </options>
+
+                    </postagePrice>
+
+                    <forms>
+
+                      <!--Zero or more repetitions:-->
+
+                      <form>
+
+                        <type>string</type>
+
+                        <description>string</description>
+
+                        <required>true</required>
+
+                        <rangeFrom>1000.00</rangeFrom>
+
+                        <rangeTo>1000.00</rangeTo>
+
+                      </form>
+
+                    </forms>
+
+                    <termsAndConditions>
+
+                      <!--Zero or more repetitions:-->
+
+                      <termAndCondition>
+
+                        <title>string</title>
+
+                        <text>
+
+                          <!--Zero or more repetitions:-->
+
+                          <text>string</text>
+
+                        </text>
+
+                      </termAndCondition>
+
+                    </termsAndConditions>
+
+                    <serviceDimensionRules>
+
+                      <!--Optional:-->
+
+                      <maxLength>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxLength>
+
+                      <!--Optional:-->
+
+                      <maxWidth>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxWidth>
+
+                      <!--Optional:-->
+
+                      <maxHeight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxHeight>
+
+                      <!--Optional:-->
+
+                      <maxGirth>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxGirth>
+
+                    </serviceDimensionRules>
+
+                    <serviceWeightRules>
+
+                      <!--Optional:-->
+
+                      <maxWeight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxWeight>
+
+                    </serviceWeightRules>
+
+                    <parcelWeight>
+
+                      <!--Optional:-->
+
+                      <weight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </weight>
+
+                    </parcelWeight>
+
+                    <parcelDimension>
+
+                      <!--Optional:-->
+
+                      <height>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </height>
+
+                      <!--Optional:-->
+
+                      <width>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </width>
+
+                      <!--Optional:-->
+
+                      <length>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </length>
+
+                    </parcelDimension>
+
+                    <parcelPostcode>string</parcelPostcode>
+
+                    <senderContactDetails>
+
+                      <!--Optional:-->
+
+                      <fullName>string</fullName>
+
+                      <!--Optional:-->
+
+                      <baseAddress>
+
+                        <!--Zero or more repetitions:-->
+
+                        <addressUsageType>
+
+                          <addressUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </addressUsageCode>
+
+                        </addressUsageType>
+
+                        <!--Optional:-->
+
+                        <domesticIndicator>true</domesticIndicator>
+
+                        <!--Optional:-->
+
+                        <buildingName>string</buildingName>
+
+                        <!--Optional:-->
+
+                        <buildingNumber>100</buildingNumber>
+
+                        <addressLine1>string</addressLine1>
+
+                        <!--Optional:-->
+
+                        <addressLine2>string</addressLine2>
+
+                        <!--Optional:-->
+
+                        <addressLine3>string</addressLine3>
+
+                        <!--Optional:-->
+
+                        <addressLine4>string</addressLine4>
+
+                        <!--Optional:-->
+
+                        <stateOrProvince>
+
+                          <stateOrProvinceCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </stateOrProvinceCode>
+
+                        </stateOrProvince>
+
+                        <!--Optional:-->
+
+                        <postTown>string</postTown>
+
+                        <!--Optional:-->
+
+                        <county>
+
+                          <countyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countyCode>
+
+                        </county>
+
+                        <!--Optional:-->
+
+                        <postcode>string</postcode>
+
+                        <!--Optional:-->
+
+                        <country>
+
+                          <countryCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countryCode>
+
+                        </country>
+
+                        <!--Optional:-->
+
+                        <status>
+
+                          <status>
+
+                            <statusCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </statusCode>
+
+                          </status>
+
+                          <validFrom>2018-11-01T00:36:46-05:00</validFrom>
+
+                          <!--Optional:-->
+
+                          <validTo>2013-05-21T20:02:49-05:00</validTo>
+
+                        </status>
+
+                        <!--Optional:-->
+
+                        <audit>
+
+                          <lastUpdateDate>2002-11-05T02:01:03-06:00</lastUpdateDate>
+
+                          <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                        </audit>
+
+                      </baseAddress>
+
+                      <!--Optional:-->
+
+                      <telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <!--Optional:-->
+
+                        <countryCode>100</countryCode>
+
+                        <!--Optional:-->
+
+                        <areaCode>100</areaCode>
+
+                        <!--Optional:-->
+
+                        <telephoneNumber>100</telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <extensionNumber>100</extensionNumber>
+
+                        <!--Optional:-->
+
+                        <speedDialNumber>100</speedDialNumber>
+
+                      </telephoneNumber>
+
+                      <!--Optional:-->
+
+                      <emailAddress>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <electronicAddress>string</electronicAddress>
+
+                      </emailAddress>
+
+                    </senderContactDetails>
+
+                    <recipientContactDetails>
+
+                      <!--Optional:-->
+
+                      <fullName>string</fullName>
+
+                      <!--Optional:-->
+
+                      <baseAddress>
+
+                        <!--Zero or more repetitions:-->
+
+                        <addressUsageType>
+
+                          <addressUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </addressUsageCode>
+
+                        </addressUsageType>
+
+                        <!--Optional:-->
+
+                        <domesticIndicator>false</domesticIndicator>
+
+                        <!--Optional:-->
+
+                        <buildingName>string</buildingName>
+
+                        <!--Optional:-->
+
+                        <buildingNumber>100</buildingNumber>
+
+                        <addressLine1>string</addressLine1>
+
+                        <!--Optional:-->
+
+                        <addressLine2>string</addressLine2>
+
+                        <!--Optional:-->
+
+                        <addressLine3>string</addressLine3>
+
+                        <!--Optional:-->
+
+                        <addressLine4>string</addressLine4>
+
+                        <!--Optional:-->
+
+                        <stateOrProvince>
+
+                          <stateOrProvinceCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </stateOrProvinceCode>
+
+                        </stateOrProvince>
+
+                        <!--Optional:-->
+
+                        <postTown>string</postTown>
+
+                        <!--Optional:-->
+
+                        <county>
+
+                          <countyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countyCode>
+
+                        </county>
+
+                        <!--Optional:-->
+
+                        <postcode>string</postcode>
+
+                        <!--Optional:-->
+
+                        <country>
+
+                          <countryCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countryCode>
+
+                        </country>
+
+                        <!--Optional:-->
+
+                        <status>
+
+                          <status>
+
+                            <statusCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </statusCode>
+
+                          </status>
+
+                          <validFrom>2016-01-01T13:07:42</validFrom>
+
+                          <!--Optional:-->
+
+                          <validTo>2012-01-07T13:42:56</validTo>
+
+                        </status>
+
+                        <!--Optional:-->
+
+                        <audit>
+
+                          <lastUpdateDate>2014-10-27T04:44:59</lastUpdateDate>
+
+                          <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                        </audit>
+
+                      </baseAddress>
+
+                      <!--Optional:-->
+
+                      <telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <!--Optional:-->
+
+                        <countryCode>100</countryCode>
+
+                        <!--Optional:-->
+
+                        <areaCode>100</areaCode>
+
+                        <!--Optional:-->
+
+                        <telephoneNumber>100</telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <extensionNumber>100</extensionNumber>
+
+                        <!--Optional:-->
+
+                        <speedDialNumber>100</speedDialNumber>
+
+                      </telephoneNumber>
+
+                      <!--Optional:-->
+
+                      <emailAddress>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <electronicAddress>string</electronicAddress>
+
+                      </emailAddress>
+
+                    </recipientContactDetails>
+
+                    <postageServiceOptions>
+
+                      <!--Zero or more repetitions:-->
+
+                      <postageServiceOption>
+
+                        <name>string</name>
+
+                        <inputValue>1000.00</inputValue>
+
+                        <description>string</description>
+
+                      </postageServiceOption>
+
+                    </postageServiceOptions>
+
+                    <postageAddOnProducts>
+
+                      <!--Zero or more repetitions:-->
+
+                      <addOnProduct>
+
+                        <productId>string</productId>
+
+                        <productName>string</productName>
+
+                        <skuName>string</skuName>
+
+                        <skuId>string</skuId>
+
+                        <price>
+
+                          <creditIndicator>false</creditIndicator>
+
+                          <currency>
+
+                            <currencyCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </currencyCode>
+
+                          </currency>
+
+                          <value>1000.00</value>
+
+                        </price>
+
+                        <description>string</description>
+
+                        <selected>false</selected>
+
+                        <priceStructure>
+
+                          <basePrice>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </basePrice>
+
+                          <discounts>
+
+                            <name>string</name>
+
+                            <amount>
+
+                              <creditIndicator>false</creditIndicator>
+
+                              <currency>
+
+                                <currencyCode>
+
+                                  <!--Optional:-->
+
+                                  <identifier>string</identifier>
+
+                                  <!--Optional:-->
+
+                                  <code>string</code>
+
+                                  <!--Optional:-->
+
+                                  <name>string</name>
+
+                                  <!--Optional:-->
+
+                                  <description>string</description>
+
+                                </currencyCode>
+
+                              </currency>
+
+                              <value>1000.00</value>
+
+                            </amount>
+
+                          </discounts>
+
+                        </priceStructure>
+
+                      </addOnProduct>
+
+                    </postageAddOnProducts>
+
+                    <trackingIndicator>string</trackingIndicator>
+
+                    <watermarkIndicator>string</watermarkIndicator>
+
+                    <ppiIndicator>string</ppiIndicator>
+
+                    <fimBarIndicator>string</fimBarIndicator>
+
+                  </postageServiceStructure>
+
+                </createPostageList>
+
+                <genericRequestStructure>
+
+                  <carrier>string</carrier>
+
+                </genericRequestStructure>
+
+              </createPostageRequest></urn:createPostage></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getCountries:
+    post:
+      description: "The service allows a third party to request a list of countries supported by a given carrier. \nThis method should only be called once per day, the results can be cached and used during that day."
+      tags: []
+      operationId: getCountries
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:getCountries
+              xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeader
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><carrier>string</carrier></urn:getCountries></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getPostageServiceDetails:
+    post:
+      description: "The service provides the postage price for one or more individual items. \ngetPostageServiceDetails should be called for every label created to obtain the price for a given service by passing the size and weight of the package. "
+      tags: []
+      operationId: getPostageServiceDetails
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:getPostageServiceDetail
+               xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeade
+               xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><postageServicesRequest>
+
+                <postageServicesRequest>
+
+                  <!--Zero or more repetitions:-->
+
+                  <postageServiceStructure>
+
+                    <postageIdentifier>string</postageIdentifier>
+
+                    <postageName>string</postageName>
+
+                    <postageCarrier>string</postageCarrier>
+
+                    <postageSize>
+
+                      <postageSizeCode>
+
+                        <!--Optional:-->
+
+                        <identifier>string</identifier>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </postageSizeCode>
+
+                    </postageSize>
+
+                    <postagePrice>
+
+                      <!--Optional:-->
+
+                      <totalPrice>
+
+                        <creditIndicator>false</creditIndicator>
+
+                        <currency>
+
+                          <currencyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </currencyCode>
+
+                        </currency>
+
+                        <value>1000.00</value>
+
+                      </totalPrice>
+
+                      <!--Optional:-->
+
+                      <basePrice>
+
+                        <creditIndicator>true</creditIndicator>
+
+                        <currency>
+
+                          <currencyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </currencyCode>
+
+                        </currency>
+
+                        <value>1000.00</value>
+
+                      </basePrice>
+
+                      <!--Optional:-->
+
+                      <discounts>
+
+                        <!--Zero or more repetitions:-->
+
+                        <discountStructure>
+
+                          <name>string</name>
+
+                          <amount>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </amount>
+
+                        </discountStructure>
+
+                      </discounts>
+
+                      <!--Optional:-->
+
+                      <taxes>
+
+                        <!--Zero or more repetitions:-->
+
+                        <taxStructure>
+
+                          <name>string</name>
+
+                          <type>
+
+                            <taxCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </taxCode>
+
+                          </type>
+
+                          <value>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </value>
+
+                        </taxStructure>
+
+                      </taxes>
+
+                      <!--Optional:-->
+
+                      <options>
+
+                        <!--Zero or more repetitions:-->
+
+                        <serviceOptionsPriceDetail>
+
+                          <name>string</name>
+
+                          <price>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </price>
+
+                          <inputValue>1000.00</inputValue>
+
+                        </serviceOptionsPriceDetail>
+
+                      </options>
+
+                    </postagePrice>
+
+                    <forms>
+
+                      <!--Zero or more repetitions:-->
+
+                      <form>
+
+                        <type>string</type>
+
+                        <description>string</description>
+
+                        <required>true</required>
+
+                        <rangeFrom>1000.00</rangeFrom>
+
+                        <rangeTo>1000.00</rangeTo>
+
+                      </form>
+
+                    </forms>
+
+                    <termsAndConditions>
+
+                      <!--Zero or more repetitions:-->
+
+                      <termAndCondition>
+
+                        <title>string</title>
+
+                        <text>
+
+                          <!--Zero or more repetitions:-->
+
+                          <text>string</text>
+
+                        </text>
+
+                      </termAndCondition>
+
+                    </termsAndConditions>
+
+                    <serviceDimensionRules>
+
+                      <!--Optional:-->
+
+                      <maxLength>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxLength>
+
+                      <!--Optional:-->
+
+                      <maxWidth>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxWidth>
+
+                      <!--Optional:-->
+
+                      <maxHeight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxHeight>
+
+                      <!--Optional:-->
+
+                      <maxGirth>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxGirth>
+
+                    </serviceDimensionRules>
+
+                    <serviceWeightRules>
+
+                      <!--Optional:-->
+
+                      <maxWeight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </maxWeight>
+
+                    </serviceWeightRules>
+
+                    <parcelWeight>
+
+                      <!--Optional:-->
+
+                      <weight>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </weight>
+
+                    </parcelWeight>
+
+                    <parcelDimension>
+
+                      <!--Optional:-->
+
+                      <height>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </height>
+
+                      <!--Optional:-->
+
+                      <width>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </width>
+
+                      <!--Optional:-->
+
+                      <length>
+
+                        <unitOfMeasure>
+
+                          <unitOfMeasureCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </unitOfMeasureCode>
+
+                        </unitOfMeasure>
+
+                        <value>1.5E2</value>
+
+                      </length>
+
+                    </parcelDimension>
+
+                    <parcelPostcode>string</parcelPostcode>
+
+                    <senderContactDetails>
+
+                      <!--Optional:-->
+
+                      <fullName>string</fullName>
+
+                      <!--Optional:-->
+
+                      <baseAddress>
+
+                        <!--Zero or more repetitions:-->
+
+                        <addressUsageType>
+
+                          <addressUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </addressUsageCode>
+
+                        </addressUsageType>
+
+                        <!--Optional:-->
+
+                        <domesticIndicator>true</domesticIndicator>
+
+                        <!--Optional:-->
+
+                        <buildingName>string</buildingName>
+
+                        <!--Optional:-->
+
+                        <buildingNumber>100</buildingNumber>
+
+                        <addressLine1>string</addressLine1>
+
+                        <!--Optional:-->
+
+                        <addressLine2>string</addressLine2>
+
+                        <!--Optional:-->
+
+                        <addressLine3>string</addressLine3>
+
+                        <!--Optional:-->
+
+                        <addressLine4>string</addressLine4>
+
+                        <!--Optional:-->
+
+                        <stateOrProvince>
+
+                          <stateOrProvinceCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </stateOrProvinceCode>
+
+                        </stateOrProvince>
+
+                        <!--Optional:-->
+
+                        <postTown>string</postTown>
+
+                        <!--Optional:-->
+
+                        <county>
+
+                          <countyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countyCode>
+
+                        </county>
+
+                        <!--Optional:-->
+
+                        <postcode>string</postcode>
+
+                        <!--Optional:-->
+
+                        <country>
+
+                          <countryCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countryCode>
+
+                        </country>
+
+                        <!--Optional:-->
+
+                        <status>
+
+                          <status>
+
+                            <statusCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </statusCode>
+
+                          </status>
+
+                          <validFrom>2018-11-01T00:36:46-05:00</validFrom>
+
+                          <!--Optional:-->
+
+                          <validTo>2013-05-21T20:02:49-05:00</validTo>
+
+                        </status>
+
+                        <!--Optional:-->
+
+                        <audit>
+
+                          <lastUpdateDate>2002-11-05T02:01:03-06:00</lastUpdateDate>
+
+                          <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                        </audit>
+
+                      </baseAddress>
+
+                      <!--Optional:-->
+
+                      <telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <!--Optional:-->
+
+                        <countryCode>100</countryCode>
+
+                        <!--Optional:-->
+
+                        <areaCode>100</areaCode>
+
+                        <!--Optional:-->
+
+                        <telephoneNumber>100</telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <extensionNumber>100</extensionNumber>
+
+                        <!--Optional:-->
+
+                        <speedDialNumber>100</speedDialNumber>
+
+                      </telephoneNumber>
+
+                      <!--Optional:-->
+
+                      <emailAddress>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <electronicAddress>string</electronicAddress>
+
+                      </emailAddress>
+
+                    </senderContactDetails>
+
+                    <recipientContactDetails>
+
+                      <!--Optional:-->
+
+                      <fullName>string</fullName>
+
+                      <!--Optional:-->
+
+                      <baseAddress>
+
+                        <!--Zero or more repetitions:-->
+
+                        <addressUsageType>
+
+                          <addressUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </addressUsageCode>
+
+                        </addressUsageType>
+
+                        <!--Optional:-->
+
+                        <domesticIndicator>false</domesticIndicator>
+
+                        <!--Optional:-->
+
+                        <buildingName>string</buildingName>
+
+                        <!--Optional:-->
+
+                        <buildingNumber>100</buildingNumber>
+
+                        <addressLine1>string</addressLine1>
+
+                        <!--Optional:-->
+
+                        <addressLine2>string</addressLine2>
+
+                        <!--Optional:-->
+
+                        <addressLine3>string</addressLine3>
+
+                        <!--Optional:-->
+
+                        <addressLine4>string</addressLine4>
+
+                        <!--Optional:-->
+
+                        <stateOrProvince>
+
+                          <stateOrProvinceCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </stateOrProvinceCode>
+
+                        </stateOrProvince>
+
+                        <!--Optional:-->
+
+                        <postTown>string</postTown>
+
+                        <!--Optional:-->
+
+                        <county>
+
+                          <countyCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countyCode>
+
+                        </county>
+
+                        <!--Optional:-->
+
+                        <postcode>string</postcode>
+
+                        <!--Optional:-->
+
+                        <country>
+
+                          <countryCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </countryCode>
+
+                        </country>
+
+                        <!--Optional:-->
+
+                        <status>
+
+                          <status>
+
+                            <statusCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </statusCode>
+
+                          </status>
+
+                          <validFrom>2016-01-01T13:07:42</validFrom>
+
+                          <!--Optional:-->
+
+                          <validTo>2012-01-07T13:42:56</validTo>
+
+                        </status>
+
+                        <!--Optional:-->
+
+                        <audit>
+
+                          <lastUpdateDate>2014-10-27T04:44:59</lastUpdateDate>
+
+                          <lastUpdateUserIdentifier>string</lastUpdateUserIdentifier>
+
+                        </audit>
+
+                      </baseAddress>
+
+                      <!--Optional:-->
+
+                      <telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <!--Optional:-->
+
+                        <countryCode>100</countryCode>
+
+                        <!--Optional:-->
+
+                        <areaCode>100</areaCode>
+
+                        <!--Optional:-->
+
+                        <telephoneNumber>100</telephoneNumber>
+
+                        <!--Optional:-->
+
+                        <extensionNumber>100</extensionNumber>
+
+                        <!--Optional:-->
+
+                        <speedDialNumber>100</speedDialNumber>
+
+                      </telephoneNumber>
+
+                      <!--Optional:-->
+
+                      <emailAddress>
+
+                        <!--Optional:-->
+
+                        <contactMethod>
+
+                          <contactMethodCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactMethodCode>
+
+                        </contactMethod>
+
+                        <!--Optional:-->
+
+                        <contacUusage>
+
+                          <contactUsageCode>
+
+                            <!--Optional:-->
+
+                            <identifier>string</identifier>
+
+                            <!--Optional:-->
+
+                            <code>string</code>
+
+                            <!--Optional:-->
+
+                            <name>string</name>
+
+                            <!--Optional:-->
+
+                            <description>string</description>
+
+                          </contactUsageCode>
+
+                        </contacUusage>
+
+                        <electronicAddress>string</electronicAddress>
+
+                      </emailAddress>
+
+                    </recipientContactDetails>
+
+                    <postageServiceOptions>
+
+                      <!--Zero or more repetitions:-->
+
+                      <postageServiceOption>
+
+                        <name>string</name>
+
+                        <inputValue>1000.00</inputValue>
+
+                        <description>string</description>
+
+                      </postageServiceOption>
+
+                    </postageServiceOptions>
+
+                    <postageAddOnProducts>
+
+                      <!--Zero or more repetitions:-->
+
+                      <addOnProduct>
+
+                        <productId>string</productId>
+
+                        <productName>string</productName>
+
+                        <skuName>string</skuName>
+
+                        <skuId>string</skuId>
+
+                        <price>
+
+                          <creditIndicator>false</creditIndicator>
+
+                          <currency>
+
+                            <currencyCode>
+
+                              <!--Optional:-->
+
+                              <identifier>string</identifier>
+
+                              <!--Optional:-->
+
+                              <code>string</code>
+
+                              <!--Optional:-->
+
+                              <name>string</name>
+
+                              <!--Optional:-->
+
+                              <description>string</description>
+
+                            </currencyCode>
+
+                          </currency>
+
+                          <value>1000.00</value>
+
+                        </price>
+
+                        <description>string</description>
+
+                        <selected>false</selected>
+
+                        <priceStructure>
+
+                          <basePrice>
+
+                            <creditIndicator>true</creditIndicator>
+
+                            <currency>
+
+                              <currencyCode>
+
+                                <!--Optional:-->
+
+                                <identifier>string</identifier>
+
+                                <!--Optional:-->
+
+                                <code>string</code>
+
+                                <!--Optional:-->
+
+                                <name>string</name>
+
+                                <!--Optional:-->
+
+                                <description>string</description>
+
+                              </currencyCode>
+
+                            </currency>
+
+                            <value>1000.00</value>
+
+                          </basePrice>
+
+                          <discounts>
+
+                            <name>string</name>
+
+                            <amount>
+
+                              <creditIndicator>false</creditIndicator>
+
+                              <currency>
+
+                                <currencyCode>
+
+                                  <!--Optional:-->
+
+                                  <identifier>string</identifier>
+
+                                  <!--Optional:-->
+
+                                  <code>string</code>
+
+                                  <!--Optional:-->
+
+                                  <name>string</name>
+
+                                  <!--Optional:-->
+
+                                  <description>string</description>
+
+                                </currencyCode>
+
+                              </currency>
+
+                              <value>1000.00</value>
+
+                            </amount>
+
+                          </discounts>
+
+                        </priceStructure>
+
+                      </addOnProduct>
+
+                    </postageAddOnProducts>
+
+                    <trackingIndicator>string</trackingIndicator>
+
+                    <watermarkIndicator>string</watermarkIndicator>
+
+                    <ppiIndicator>string</ppiIndicator>
+
+                    <fimBarIndicator>string</fimBarIndicator>
+
+                  </postageServiceStructure>
+
+                </postageServicesRequest>
+
+                <genericRequestStructure>
+
+                  <carrier>string</carrier>
+
+                </genericRequestStructure>
+
+                <serviceRequestStructure>
+
+                  <validatePrepayBalance>false</validatePrepayBalance>
+
+                  <accountHolderIndicator>string</accountHolderIndicator>
+
+                  <subscriptionNumber>string</subscriptionNumber>
+
+                </serviceRequestStructure>
+
+              </postageServicesRequest></urn:getPostageServiceDetails></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getServicesByCountry:
+    post:
+      description: >-
+        The service returns a list of mail service including their details
+        (T&C's) for a given country.
+
+        getServicesByCountry should be called once per day for all the listed
+        countries in the getCountries call and used during that day. This call
+        will return the terms and conditions, prohibitions, restrictions and
+        notifications of the services for a given country.
+      tags: []
+      operationId: getServicesByCountry
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:getServicesByCountr
+               xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeade
+               xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><carrier>string</carrier><countryCode>
+
+                <!--Optional:-->
+
+                <identifier>string</identifier>
+
+                <!--Optional:-->
+
+                <code>string</code>
+
+                <!--Optional:-->
+
+                <name>string</name>
+
+                <!--Optional:-->
+
+                <description>string</description>
+
+              </countryCode></urn:getServicesByCountry></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getStatus:
+    post:
+      description: "The service provides a message on the status of the service. \ngetStatus should be used for determining the service availability and change status notifications."
+      tags: []
+      operationId: getStatus
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:getStatus
+              xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeader
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><statusRequest>
+
+                <applicationId>string</applicationId>
+
+                <service>string</service>
+
+                <serviceMethod>string</serviceMethod>
+
+              </statusRequest></urn:getStatus></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /spoilPostage:
+    post:
+      description: "The service supports the cancellation or spoiling of an individual postage item. \nIf timeouts, errors or refunds are required spoilPostage is called with the indicia and transaction identifiers used during the createPostage call."
+      tags: []
+      operationId: spoilPostage
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><oas:Security
+              xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+                <!--You may enter ANY elements at this point-->
+
+                <AnyElement/>
+
+              </oas:Security></SOAP-ENV:Header><SOAP-ENV:Body><urn:spoilPostage
+              xmlns:urn="http://www.royalmailgroup.com/api/onlinePostage/V1"><integrationHeader
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-28T20:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:testFlag>true</v1:testFlag>
+
+                <!--Optional:-->
+
+                <v1:debugFlag>true</v1:debugFlag>
+
+              </integrationHeader><spoilPostageRequest>
+
+                <postageSpoilList>
+
+                  <!--1 or more repetitions:-->
+
+                  <postageToSpoil>
+
+                    <indiciaIDOrTrackingNo>string</indiciaIDOrTrackingNo>
+
+                    <postageCarrier>string</postageCarrier>
+
+                    <spoilInitiator>string</spoilInitiator>
+
+                    <spoil>false</spoil>
+
+                    <spoilReason>string</spoilReason>
+
+                  </postageToSpoil>
+
+                </postageSpoilList>
+
+                <genericRequestStructure>
+
+                  <carrier>string</carrier>
+
+                </genericRequestStructure>
+
+              </spoilPostageRequest></urn:spoilPostage></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: ''
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <integrationFooter
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:errors>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:error>
+
+                    <v1:errorCode>string</v1:errorCode>
+
+                    <v1:errorDescription>string</v1:errorDescription>
+
+                    <!--Optional:-->
+
+                    <v1:errorCause>string</v1:errorCause>
+
+                    <!--Optional:-->
+
+                    <v1:errorResolution>string</v1:errorResolution>
+
+                    <!--Optional:-->
+
+                    <v1:errorContext>string</v1:errorContext>
+
+                  </v1:error>
+
+                </v1:errors>
+
+                <!--Optional:-->
+
+                <v1:warnings>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:warning>
+
+                    <v1:warningCode>string</v1:warningCode>
+
+                    <v1:warningDescription>string</v1:warningDescription>
+
+                    <!--Optional:-->
+
+                    <v1:warningCause>string</v1:warningCause>
+
+                    <!--Optional:-->
+
+                    <v1:warningResolution>string</v1:warningResolution>
+
+                    <!--Optional:-->
+
+                    <v1:warningContext>string</v1:warningContext>
+
+                  </v1:warning>
+
+                </v1:warnings>
+
+              </integrationFooter>
+      security:
+        - Client ID: []
+          Client Secret: []
+security: []

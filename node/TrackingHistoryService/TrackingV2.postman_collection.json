@@ -1,0 +1,45 @@
+{
+	"variables": [],
+	"info": {
+		"name": "TrackingV2",
+		"_postman_id": "1f706698-0d5e-1352-c263-d3c066f7d115",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POC3 node js App",
+			"request": {
+				"url": "http://localhost:{{port}}/api/autherrors1?startTime=2017-01-20T14:00:00&endTime=2017-01-20T14:15:00&noOfCalls=10&uriSegment=signature",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YW5pcnVkZGhhLnBhaUByb3lhbG1haWwuY29tOkphbnVhcnkwMSE=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Call node js api to get 404 calls"
+			},
+			"response": []
+		},
+		{
+			"name": "IBM REST api",
+			"request": {
+				"url": "https://eu.apiconnect.ibmcloud.com/v1/orgs/55a900b10cf272a4b3015a7a/environments/55f16d010cf2fae1b6b74fec/events?before=2017-01-20T14:15:00&after=2017-01-20T14:00:00&limit=10",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YXBpbWFuYWdlci9hdmlrLnNlbmd1cHRhQHJveWFsbWFpbC5jb206VzFlbGNvbWUx",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

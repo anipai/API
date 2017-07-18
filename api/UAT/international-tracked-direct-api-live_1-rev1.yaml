@@ -1,0 +1,839 @@
+swagger: '2.0'
+info:
+  title: International Tracked Direct API LIVE
+  description: >-
+    International Tracked Direct API V1 provides the integration method to Royal
+    Mail business customers for using Royal Mail's international tracked direct
+    service. This API offers the capability of creation and cancellation of an
+    international shipment, getting bag label(s) and manifest and tracking
+    international tracked direct shipments.
+
+
+
+    Built on industry standards, International Tracked Direct API V1 provides
+    a simple and low cost method for customers to integrate with Royal Mail, and
+    allows them to get international shipping quickly.
+
+
+
+    There are no costs to customers for using the International Tracked Direct
+    API V1, however customers’ own development costs must be covered by the
+    customer developing the solution. Royal Mail will not accept any
+    responsibility for these development, implementation and testing costs.
+
+
+
+    Customers should address initial enquiries regarding development of systems
+    for these purposes to their account handler.
+  version: 1-rev1
+  x-ibm-name: international-tracked-direct-api-live
+basePath: /international/shipment/v1
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Tracking SSL Profile:
+      description: SSL profile of the underlying IEDE API
+      encoded: false
+      value: Live (CA2)
+    activity.log.level:
+      description: What to log for activity logging
+      encoded: false
+      value: payload
+    error.log.level:
+      description: What to log for error logging
+      encoded: false
+      value: payload
+    IEDE Endpoint:
+      description: 'IEDE API endpoint '
+      encoded: false
+      value: 'https://live-api.royalmail.com/international/shipment/v1'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: RMG International Tracked Direct API(REST) Technical User Guide
+      description: ''
+      id: 582460740cf255ef30c3511c
+    - title: International Tracked Direct API SampleData
+      description: ''
+      id: 582460750cf255ef30c35122
+    - title: International Tracked Direct API XSDs
+      description: ''
+      id: 582460780cf255ef30c35128
+  gateway: datapower-gateway
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - verb: get
+                  path: /
+              execute:
+                - invoke:
+                    timeout: 60
+                    verb: GET
+                    target-url: 'https://sit-api.royalmail.com/international/shipment/v1'
+                    tls-profile: 55c6336f0cf245294215d997
+                    title: HTTP GET Operation 4
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                    output: response1
+                - activity-log:
+                    content: payload
+                    error-content: payload
+                    title: Activity Log 7
+                - map:
+                    inputs:
+                      in1:
+                        variable: response1.body
+                        schema:
+                          type: object
+                          properties:
+                            trackingResponse:
+                              type: object
+                              properties:
+                                integrationHeader:
+                                  type: object
+                                  properties:
+                                    dateTime:
+                                      type: string
+                                    applicationId:
+                                      type: string
+                                    transactionId:
+                                      type: string
+                                trackingNumber:
+                                  type: string
+                                events:
+                                  type: object
+                                  properties:
+                                    event:
+                                      type: object
+                                      properties:
+                                        eventDateTime:
+                                          type: string
+                                        eventDescription:
+                                          type: string
+                                        eventCode:
+                                          type: string
+                                        eventType:
+                                          type: string
+                                integrationFooter:
+                                  type: object
+                                  properties:
+                                    errors:
+                                      type: string
+                                      xml:
+                                        namespace: ''
+                                    warnings:
+                                      type: string
+                                      xml:
+                                        namespace: ''
+                              xml:
+                                namespace: 'http://www.royalmailgroup.com/api/international/shipment/V1'
+                                prefix: p0
+                        content: application/xml
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            trackingResponse:
+                              type: object
+                              properties:
+                                integrationHeader:
+                                  type: object
+                                  properties:
+                                    dateTime:
+                                      type: string
+                                    applicationId:
+                                      type: string
+                                    transactionId:
+                                      type: string
+                                trackingNumber:
+                                  type: string
+                                events:
+                                  type: object
+                                  properties:
+                                    event:
+                                      type: object
+                                      properties:
+                                        eventDateTime:
+                                          type: string
+                                        eventDescription:
+                                          type: string
+                                        eventCode:
+                                          type: string
+                                        eventType:
+                                          type: string
+                                integrationFooter:
+                                  type: object
+                                  properties:
+                                    errors:
+                                      type: string
+                                      xml:
+                                        namespace: ''
+                                    warnings:
+                                      type: string
+                                      xml:
+                                        namespace: ''
+                              xml:
+                                namespace: 'http://www.royalmailgroup.com/api/international/shipment/V1'
+                                prefix: p0
+                        content: application/xml
+                      out2:
+                        variable: message.status.code
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 200
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                    actions:
+                      - set: out1.trackingResponse.trackingNumber
+                        from: '#/in1.trackingResponse.trackingNumber'
+                      - set: out1.trackingResponse.integrationHeader.dateTime
+                        from: '#/in1.trackingResponse.integrationHeader.dateTime'
+                      - set: out1.trackingResponse.integrationHeader.applicationId
+                        from: '#/in1.trackingResponse.integrationHeader.applicationId'
+                      - set: out1.trackingResponse.integrationHeader.transactionId
+                        from: '#/in1.trackingResponse.integrationHeader.transactionId'
+                      - set: out1.trackingResponse.integrationFooter.errors
+                        from: '#/in1.trackingResponse.integrationFooter.errors'
+                      - set: out1.trackingResponse.integrationFooter.warnings
+                        from: '#/in1.trackingResponse.integrationFooter.warnings'
+                      - set: out1.trackingResponse.events.event.eventDateTime
+                        from: '#/in1.trackingResponse.events.event.eventDateTime'
+                      - set: out1.trackingResponse.events.event.eventDescription
+                        from: '#/in1.trackingResponse.events.event.eventDescription'
+                      - set: out1.trackingResponse.events.event.eventCode
+                        from: '#/in1.trackingResponse.events.event.eventCode'
+                      - set: out1.trackingResponse.events.event.eventType
+                        from: '#/in1.trackingResponse.events.event.eventType'
+                      - set: out2
+                        default: 200
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: delete
+                  path: '/{trackingNumber}/cancelshipment'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            cancelShipmentRequest:
+                              type: object
+                              properties:
+                                integrationHeader:
+                                  type: object
+                                  properties:
+                                    dateTime:
+                                      type: string
+                                      default: $(system.datetime)
+                                    applicationId:
+                                      type: string
+                                      default: $(request.headers.x-rmg-application-id)
+                                    transactionId:
+                                      type: string
+                                      default: $(request.headers.x-rmg-transaction-id)
+                                cancel:
+                                  type: object
+                                  properties:
+                                    trackingNumber:
+                                      type: string
+                              xml:
+                                namespace: 'http://www.royalmailgroup.com/api/international/shipment/V1'
+                                prefix: p0
+                        content: application/xml
+                      out2:
+                        variable: parameters
+                        schema:
+                          type: object
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            x-rmg-application-id:
+                              type: string
+                            x-rmg-transaction-id:
+                              type: string
+                    actions:
+                      - set: out1.cancelShipmentRequest.integrationHeader.dateTime
+                        default: $(system.datetime)
+                      - set: out1.cancelShipmentRequest.integrationHeader.applicationId
+                        default: $(request.headers.x-rmg-application-id)
+                      - set: out1.cancelShipmentRequest.integrationHeader.transactionId
+                        default: $(request.headers.x-rmg-transaction-id)
+                      - set: out1.cancelShipmentRequest.cancel.trackingNumber
+                        from: '#/in1.trackingNumber'
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(IEDE Endpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: HTTP POST Operation 4
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log 2
+            - operations:
+                - verb: get
+                  path: '/{trackingNumber}/history'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            trackingNumber:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            trackingRequest:
+                              type: object
+                              properties:
+                                integrationHeader:
+                                  type: object
+                                  properties:
+                                    dateTime:
+                                      type: string
+                                      default: $(system.datetime)
+                                    applicationId:
+                                      type: string
+                                      default: $(request.headers.x-rmg-application-id)
+                                    transactionId:
+                                      type: string
+                                      default: $(request.headers.x-rmg-transaction-id)
+                                trackingNumber:
+                                  type: string
+                              xml:
+                                namespace: 'http://www.royalmailgroup.com/api/international/shipment/V1'
+                                prefix: p0
+                        content: application/xml
+                      out2:
+                        variable: parameters
+                        schema:
+                          type: object
+                      out3:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            x-rmg-application-id:
+                              type: string
+                            x-rmg-transaction-id:
+                              type: string
+                    actions:
+                      - set: out1.trackingRequest.trackingNumber
+                        from: '#/in1.trackingNumber'
+                      - set: out1.trackingRequest.integrationHeader.dateTime
+                        default: $(system.datetime)
+                      - set: out1.trackingRequest.integrationHeader.applicationId
+                        default: $(request.headers.x-rmg-application-id)
+                      - set: out1.trackingRequest.integrationHeader.transactionId
+                        default: $(request.headers.x-rmg-transaction-id)
+                    options:
+                      inlineNamespaces: false
+                - invoke:
+                    timeout: 60
+                    verb: POST
+                    target-url: $(IEDE Endpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: HTTP POST Operation 6
+                    stop-on-error:
+                      - ConnectionError
+                      - OperationError
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log 6
+            - operations:
+                - verb: post
+                  path: /bagcontent
+              execute:
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(IEDE Endpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: PROXY
+            - operations:
+                - verb: post
+                  path: /createshipment
+              execute:
+                - activity-log:
+                    content: $(activity.log.level)
+                    error-content: $(error.log.level)
+                    title: Activity Log 3
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(IEDE Endpoint)
+                    tls-profile: $(Tracking SSL Profile)
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+paths:
+  /createshipment:
+    post:
+      description: Creates an international tracked direct shipment in the system and returns a final mile carrier label.  Shipment stays in unprocessed state until confirmed by CreateBag operation.
+      tags: []
+      parameters:
+        - schema:
+            example: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:createShipmentRequest
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_BIG.xsd ">
+
+                <ns:integrationHeader>
+
+                  <ns:dateTime>2001-12-31T12:00:00</ns:dateTime>
+
+                  <ns:applicationId>0703386001</ns:applicationId>
+
+                  <ns:transactionId>BCMYH-ZOOFY-XPRKB-FKCCT-TTURS-ZN</ns:transactionId>
+
+                </ns:integrationHeader>
+
+                <ns:shipment>
+
+                  <ns:shipper>
+
+                    <ns:companyName>INTERSOFT</ns:companyName>
+
+                    <ns:addressLine1>THE MILL STUDIO</ns:addressLine1>
+
+                    <ns:addressLine2>HORTON ROAD</ns:addressLine2>
+
+                    <ns:addressLine3></ns:addressLine3>
+
+                    <ns:city>STANWELL MOOR</ns:city>
+
+                    <ns:county>MIDX</ns:county>
+
+                    <ns:countryCode>GB</ns:countryCode>
+
+                    <ns:postCode>TW19 6BJ</ns:postCode>
+
+                    <ns:contactName>ARNOLD</ns:contactName>
+
+                    <ns:phoneNumber>017536892921234567891</ns:phoneNumber>
+
+                    <ns:vatNumber>GB123456912345678</ns:vatNumber>
+
+                    <ns:emailAddress>SUPPORT@INTERSOFT.CO.UK</ns:emailAddress>
+
+                    <ns:reference>INPSAUSSSYD</ns:reference>
+
+                    <ns:departmentCode></ns:departmentCode>
+
+                  </ns:shipper>
+
+                  <ns:destination>
+
+                    <ns:companyName>SSYD INPS COMPANY</ns:companyName>
+
+                    <ns:addressLine1>11 Town Terrace</ns:addressLine1>
+
+                    <ns:addressLine2></ns:addressLine2>
+
+                    <ns:addressLine3></ns:addressLine3>
+
+                    <ns:city>Glenmore Park</ns:city>
+
+                    <ns:county>NSW</ns:county>
+
+                    <ns:countryCode>AU</ns:countryCode>
+
+                    <ns:postCode>2745</ns:postCode>
+
+                    <ns:contactName>ARNOLD</ns:contactName>
+
+                    <ns:phoneNumber>1545554455</ns:phoneNumber>
+
+                    <ns:vatNumber>GB123456912345678</ns:vatNumber>
+
+                    <ns:emailAddress>arnold.christian@intersoft.co.uk</ns:emailAddress>
+
+                  </ns:destination>
+
+                  <ns:shipmentDetail>
+
+                    <ns:shipmentDate>2011-07-14</ns:shipmentDate>
+
+                    <ns:serviceCode>INPS</ns:serviceCode>
+
+                    <ns:totalPieces>1</ns:totalPieces>
+
+                    <ns:totalWeight>5</ns:totalWeight>
+
+                    <ns:weightUOM>K</ns:weightUOM>
+
+                    <ns:dimensions>
+
+                      <ns:uom>C</ns:uom>
+
+                      <ns:length>20</ns:length>
+
+                      <ns:width>20</ns:width>
+
+                      <ns:height>20</ns:height>
+
+                    </ns:dimensions>
+
+                    <ns:contentTypeCode>NDX</ns:contentTypeCode>
+
+                    <ns:descriptionOfGoods>SKIN CARE</ns:descriptionOfGoods>
+
+                    <ns:declaredCurrencyValue>80.33</ns:declaredCurrencyValue>
+
+                    <ns:declaredCurrencyCode>GBP</ns:declaredCurrencyCode>
+
+                    <ns:incotermsCode>DDU</ns:incotermsCode>
+
+                    <ns:itemDetail>
+
+                      <ns:hsCode>999999999</ns:hsCode>
+
+                      <ns:description>FOREO LUNA MINI</ns:description>
+
+                      <ns:quantity>1</ns:quantity>
+
+                      <ns:currencyValue>52.33</ns:currencyValue>
+
+                      <ns:countryOfOrigin>GB</ns:countryOfOrigin>
+
+                      <ns:sku></ns:sku>
+
+                      <ns:netWeight>1</ns:netWeight>
+
+                    </ns:itemDetail>
+
+                  </ns:shipmentDetail>
+
+                </ns:shipment>
+
+              </ns:createShipmentRequest>
+          description: ''
+          name: body
+          in: body
+      responses:
+        '200':
+          schema: {}
+          description: ''
+          examples:
+            application/xml: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:createShipmentResponse
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_BIG.xsd ">
+
+                <ns:integrationHeader>
+
+                  <ns:dateTime>2001-12-31T12:00:00</ns:dateTime>
+
+                  <ns:applicationId>ns:applicationId</ns:applicationId>
+
+                  <ns:transactionId>ns:transactionId</ns:transactionId>
+
+                </ns:integrationHeader>
+
+                <ns:completedShipment>
+
+                  <ns:trackingNumber>ns:trackingNumber</ns:trackingNumber>
+
+                  <ns:carrierCode>ns:carrierCode</ns:carrierCode>
+
+                  <ns:labelImage>MA==</ns:labelImage>
+
+                  <ns:labelImageFormat>PDF</ns:labelImageFormat>
+
+                  <ns:globalTrackingURL>ns:globalTrackingURL</ns:globalTrackingURL>
+
+                  <ns:localTrackingURL>ns:localTrackingURL</ns:localTrackingURL>
+
+                </ns:completedShipment>
+
+                <ns:integrationFooter>
+
+                  <errors/>
+
+                  <warnings/>
+
+                </ns:integrationFooter>
+
+              </ns:createShipmentResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Creates an international tracked direct shipment in the system and returns a final mile carrier label.  Shipment stays in unprocessed state until confirmed by CreateBag operation.
+  '/{trackingNumber}/cancelshipment':
+    delete:
+      description: Cancels a shipment which has yet not been confirmed.
+      tags: []
+      parameters:
+        - description: ''
+          name: trackingNumber
+          type: string
+          required: true
+          in: path
+      responses:
+        '200':
+          schema: {}
+          description: ''
+          examples:
+            application/xml: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:cancelShipmentResponse
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_BIG.xsd ">
+
+                <ns:integrationHeader>
+
+                  <ns:dateTime>2001-12-31T12:00:00</ns:dateTime>
+
+                  <ns:applicationId>ns:applicationId</ns:applicationId>
+
+                  <ns:transactionId>ns:transactionId</ns:transactionId>
+
+                </ns:integrationHeader>
+
+                <ns:cancelled>
+
+                  <ns:trackingNumber>ns:trackingNumber</ns:trackingNumber>
+
+                </ns:cancelled>
+
+                <ns:integrationFooter>
+
+                  <errors/>
+
+                  <warnings/>
+
+                </ns:integrationFooter>
+
+              </ns:cancelShipmentResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Cancels a shipment which has yet not been confirmed.
+  /bagcontent:
+    post:
+      description: Confirms the list of shipments created by createShipment operation. This will put the shipments in the ‘processed’ state in the system and returns the bag label and manifest for the shipments
+      tags: []
+      parameters:
+        - schema:
+            example: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:createBagRequest
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_APIM.xsd ">
+
+                <ns:bagContent>
+
+                  <ns:confirmType>2</ns:confirmType>
+
+                  <ns:carrierCode>SSYD</ns:carrierCode>
+
+                  <ns:trackingNumber>TES100644101000930203</ns:trackingNumber>
+
+                </ns:bagContent>
+
+                <ns:numberOfBagLabels>1</ns:numberOfBagLabels>
+
+                <ns:labelType>PDF</ns:labelType>
+
+              </ns:createBagRequest>
+          description: ''
+          name: body
+          in: body
+      responses:
+        '200':
+          schema: {}
+          description: ''
+          examples:
+            application/xml: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:createBagResponse
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_BIG.xsd ">
+
+                <ns:integrationHeader>
+
+                  <ns:dateTime>2001-12-31T12:00:00</ns:dateTime>
+
+                  <ns:applicationId>ns:applicationId</ns:applicationId>
+
+                  <ns:transactionId>ns:transactionId</ns:transactionId>
+
+                </ns:integrationHeader>
+
+                <ns:bagDetail>
+
+                  <ns:manifestImage>MA==</ns:manifestImage>
+
+                  <ns:bagLabelImage>MA==</ns:bagLabelImage>
+
+                  <ns:bagId>ns:bagId</ns:bagId>
+
+                </ns:bagDetail>
+
+                <ns:integrationFooter>
+
+                  <errors/>
+
+                  <warnings/>
+
+                </ns:integrationFooter>
+
+              </ns:createBagResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Processed state in the system and returns the bag label and manifest for the shipments
+  '/{trackingNumber}/history':
+    get:
+      description: Retrieves full tracking history of a confirmed shipment
+      tags: []
+      parameters:
+        - description: ''
+          name: trackingNumber
+          type: string
+          required: true
+          in: path
+      responses:
+        '200':
+          schema: {}
+          description: ''
+          examples:
+            application/xml: >-
+              <?xml version="1.0" encoding="UTF-8"?>
+
+              <ns:trackingResponse
+              xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1"
+              xmlns:int="http://www.royalmailgroup.com/integration/core/V3"
+              xmlns:ns="http://www.royalmailgroup.com/api/international/shipment/V1"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.royalmailgroup.com/api/international/shipment/V1
+              InternationalShippingAPI_V1_BIG.xsd ">
+
+                <ns:integrationHeader>
+
+                  <ns:dateTime>2001-12-31T12:00:00</ns:dateTime>
+
+                  <ns:applicationId>ns:applicationId</ns:applicationId>
+
+                  <ns:transactionId>ns:transactionId</ns:transactionId>
+
+                </ns:integrationHeader>
+
+                <ns:trackingNumber>ns:trackingNumber</ns:trackingNumber>
+
+                <ns:events>
+
+                  <ns:event>
+
+                    <ns:eventDateTime>2001-12-31T12:00:00</ns:eventDateTime>
+
+                    <ns:eventDescription>ns:eventDescription</ns:eventDescription>
+
+                    <ns:eventCode>ns:eventCode</ns:eventCode>
+
+                    <ns:eventType>ns:eventType</ns:eventType>
+
+                  </ns:event>
+
+                </ns:events>
+
+                <ns:integrationFooter>
+
+                  <errors/>
+
+                  <warnings/>
+
+                </ns:integrationFooter>
+
+              </ns:trackingResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+      summary: Retrieves full tracking history of a confirmed shipment
+security: []

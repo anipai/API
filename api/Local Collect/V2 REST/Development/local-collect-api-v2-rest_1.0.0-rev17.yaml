@@ -1,0 +1,2258 @@
+swagger: '2.0'
+info:
+  version: 1.0.0-rev17
+  title: Local Collect API V2 (REST)
+  description: >-
+    Local Collect is a delivery enhancement to Royal Mail Tracked & Special
+    Delivery Guaranteed products that enables customers to benefit from ‘Click
+    and Collect’ options by having their parcels delivered to participating Post
+    Offices and Royal Mail enquiry offices. The Local Collect API allows
+    customers to retrieve an up-to-date list of Post Offices and Royal Mail
+    Enquiry Offices, where the item can be held awaiting collection.
+
+
+
+    There are no costs to customers for using the Local Collect API services,
+    however development costs must be covered by the customer. Royal Mail will
+    not accept any responsibility for these development, implementation and
+    testing costs.
+  x-ibm-name: local-collect-api-v2-rest
+basePath: /localcollect/v2/locations
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  testable: true
+  phase: realized
+  cors:
+    enabled: true
+  gateway: datapower-gateway
+  assembly:
+    execute:
+      - activity-log:
+          content: $(Activity Log Level)
+          error-content: $(Error Log Level)
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - verb: get
+                  path: '/{postcode}'
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            postcode:
+                              type: string
+                              name: postcode
+                            radius:
+                              type: string
+                              name: radius
+                            type:
+                              type: string
+                              name: type
+                          title: in1
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                header1:
+                                  type: object
+                                  properties:
+                                    integrationHeader:
+                                      type: object
+                                      properties:
+                                        identification:
+                                          type: object
+                                          properties:
+                                            applicationId:
+                                              type: string
+                                              default: $(client.app.id)
+                                              name: applicationId
+                                            transactionId:
+                                              type: string
+                                              default: >-
+                                                $(request.headers.x-global-transaction-id)
+                                              name: transactionId
+                                          xml:
+                                            namespace: ''
+                                          name: identification
+                                      xml:
+                                        namespace: >-
+                                          http://www.royalmailgroup.com/integration/core/V3
+                                        prefix: p2
+                                      name: integrationHeader
+                                  xml:
+                                    name: Header
+                                  name: header1
+                                Body:
+                                  type: object
+                                  properties:
+                                    getLocationsRequest:
+                                      type: object
+                                      properties:
+                                        postCode:
+                                          type: string
+                                          xml:
+                                            namespace: ''
+                                          name: postCode
+                                        locationType:
+                                          type: string
+                                          xml:
+                                            namespace: ''
+                                          name: locationType
+                                        radius:
+                                          type: number
+                                          format: float
+                                          xml:
+                                            namespace: ''
+                                          default: 2
+                                          name: radius
+                                      xml:
+                                        namespace: >-
+                                          http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0
+                                        prefix: p0
+                                      name: getLocationsRequest
+                                  name: Body
+                              name: Envelope
+                          title: out1
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: text/xml; charset="UTF-8"
+                              name: Content-Type
+                            SOAPAction:
+                              type: string
+                              default: >-
+                                "http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations"
+                              name: SOAPAction
+                          title: out2
+                    actions:
+                      - set: >-
+                          out1.Envelope.header1.integrationHeader.identification.applicationId
+                        default: $(client.app.id)
+                      - set: >-
+                          out1.Envelope.header1.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: out2.Content-Type
+                        default: text/xml; charset="UTF-8"
+                      - set: out2.SOAPAction
+                        default: >-
+                          "http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations"
+                    options:
+                      inlineNamespaces: false
+            - operations:
+                - verb: get
+                  path: /geo/spatial
+              execute:
+                - map:
+                    inputs:
+                      in1:
+                        variable: request.parameters
+                        schema:
+                          type: object
+                          properties:
+                            latitude:
+                              type: string
+                            longitude:
+                              type: string
+                            radius:
+                              type: string
+                            type:
+                              type: string
+                    outputs:
+                      out1:
+                        variable: message.body
+                        schema:
+                          type: object
+                          properties:
+                            Envelope:
+                              type: object
+                              xml:
+                                prefix: soap11-env
+                                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                              properties:
+                                header1:
+                                  type: object
+                                  properties:
+                                    integrationHeader:
+                                      type: object
+                                      properties:
+                                        identification:
+                                          type: object
+                                          properties:
+                                            applicationId:
+                                              type: string
+                                              default: $(client.app.id)
+                                            transactionId:
+                                              type: string
+                                              default: >-
+                                                $(request.headers.x-global-transaction-id)
+                                          xml:
+                                            namespace: ''
+                                      xml:
+                                        namespace: >-
+                                          http://www.royalmailgroup.com/integration/core/V3
+                                        prefix: p2
+                                  xml:
+                                    name: Header
+                                Body:
+                                  type: object
+                                  properties:
+                                    getLocationsRequest:
+                                      type: object
+                                      properties:
+                                        geoLocation:
+                                          type: object
+                                          properties:
+                                            latitude:
+                                              type: number
+                                              format: float
+                                            longitude:
+                                              type: number
+                                              format: float
+                                          xml:
+                                            namespace: ''
+                                        locationType:
+                                          type: string
+                                          xml:
+                                            namespace: ''
+                                        radius:
+                                          type: number
+                                          format: float
+                                          xml:
+                                            namespace: ''
+                                      xml:
+                                        namespace: >-
+                                          http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0
+                                        prefix: p0
+                        content: application/xml
+                      out2:
+                        variable: message.headers
+                        schema:
+                          type: object
+                          properties:
+                            Content-Type:
+                              type: string
+                              default: text/xml; charset="UTF-8"
+                            SOAPAction:
+                              type: string
+                              default: >-
+                                "http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations"
+                    actions:
+                      - set: out1.Envelope.Body.getLocationsRequest.locationType
+                        from: '#/in1.type'
+                      - set: out1.Envelope.Body.getLocationsRequest.radius
+                        from: '#/in1.radius'
+                        value: apim.v4.toNumber($(1))
+                      - set: >-
+                          out1.Envelope.header1.integrationHeader.identification.applicationId
+                        default: $(client.app.id)
+                      - set: >-
+                          out1.Envelope.header1.integrationHeader.identification.transactionId
+                        default: $(request.headers.x-global-transaction-id)
+                      - set: >-
+                          out1.Envelope.Body.getLocationsRequest.geoLocation.latitude
+                        from: '#/in1.latitude'
+                        value: apim.v4.toNumber($(1))
+                      - set: >-
+                          out1.Envelope.Body.getLocationsRequest.geoLocation.longitude
+                        from: '#/in1.longitude'
+                        value: apim.v4.toNumber($(1))
+                      - set: out2.Content-Type
+                        default: text/xml; charset="UTF-8"
+                      - set: out2.SOAPAction
+                        default: >-
+                          "http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations"
+                    options:
+                      inlineNamespaces: false
+      - invoke:
+          timeout: 60
+          verb: POST
+          target-url: $(Local Collect Endpoint)
+          tls-profile: $(certificate name)
+          stop-on-error:
+            - ConnectionError
+            - OperationError
+            - SOAPError
+          output: response1
+      - map:
+          inputs:
+            in1:
+              variable: response1.body
+              schema:
+                type: object
+                properties:
+                  Envelope:
+                    type: object
+                    xml:
+                      prefix: soap11-env
+                      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+                    properties:
+                      header1:
+                        type: object
+                        properties:
+                          integrationHeader:
+                            type: object
+                            properties:
+                              dateTime:
+                                type: string
+                                xml:
+                                  namespace: ''
+                              version:
+                                type: number
+                                format: float
+                                xml:
+                                  namespace: ''
+                              identification:
+                                type: object
+                                properties:
+                                  endUserId:
+                                    type: string
+                                  clientId:
+                                    type: string
+                                  applicationId:
+                                    type: string
+                                  intermediaryId:
+                                    type: string
+                                  transactionId:
+                                    type: string
+                                xml:
+                                  namespace: ''
+                              debugAudit:
+                                type: object
+                                properties:
+                                  testFlag:
+                                    type: string
+                                  debugFlag:
+                                    type: string
+                                  performanceFlag:
+                                    type: string
+                                  messageAuditFlag:
+                                    type: string
+                                xml:
+                                  namespace: ''
+                            xml:
+                              namespace: >-
+                                http://www.royalmailgroup.com/integration/core/V3
+                              prefix: p1
+                        xml:
+                          name: Header
+                      Body:
+                        type: object
+                        properties:
+                          getLocationsResponse:
+                            type: object
+                            properties:
+                              locations:
+                                type: object
+                                properties:
+                                  location:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        organisationName:
+                                          type: string
+                                        locationName:
+                                          type: string
+                                        addressLine1:
+                                          type: string
+                                        addressLine2:
+                                          type: string
+                                        addressLine3:
+                                          type: string
+                                        city:
+                                          type: string
+                                        county:
+                                          type: string
+                                        postcode:
+                                          type: string
+                                        openingHours:
+                                          type: array
+                                          items:
+                                            type: object
+                                            properties:
+                                              dayOfWeek:
+                                                type: string
+                                              openingTime:
+                                                type: string
+                                              closingTime:
+                                                type: string
+                                              lunchHours:
+                                                type: object
+                                                properties:
+                                                  lunchClosingTime:
+                                                    type: string
+                                                  lunchOpeningTime:
+                                                    type: string
+                                        geoLocation:
+                                          type: object
+                                          properties:
+                                            latitude:
+                                              type: number
+                                              format: float
+                                            longitude:
+                                              type: number
+                                              format: float
+                                        distance:
+                                          type: number
+                                          format: float
+                                        facilities:
+                                          type: object
+                                          properties:
+                                            customerParkingIndicator:
+                                              type: string
+                                            disabilityIndicator:
+                                              type: string
+                                        locationType:
+                                          type: string
+                                xml:
+                                  namespace: ''
+                              integrationFooter:
+                                type: object
+                                properties:
+                                  errors:
+                                    type: object
+                                    properties:
+                                      error:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            errorCode:
+                                              type: string
+                                            errorDescription:
+                                              type: string
+                                            errorCause:
+                                              type: string
+                                            errorResolution:
+                                              type: string
+                                            errorContext:
+                                              type: string
+                                  warnings:
+                                    type: object
+                                    properties:
+                                      warning:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            warningCode:
+                                              type: string
+                                            warningDescription:
+                                              type: string
+                                            warningCause:
+                                              type: string
+                                            warningResolution:
+                                              type: string
+                                            warningContext:
+                                              type: string
+                                xml:
+                                  namespace: ''
+                            xml:
+                              namespace: >-
+                                http://www.royalmailgroup.com/API/LocalCollect/schema/V2.0
+                              prefix: p0
+                          Fault:
+                            type: object
+                            properties:
+                              faultcode:
+                                type: string
+                                enum:
+                                  - VersionMismatch
+                                  - MustUnderstand
+                                  - Client
+                                  - Server
+                              faultstring:
+                                type: string
+                              faultactor:
+                                type: string
+                              detail:
+                                type: object
+                                properties:
+                                  exceptionDetails:
+                                    type: object
+                                    properties:
+                                      exceptionApplicationId:
+                                        type: string
+                                        xml:
+                                          namespace: ''
+                                      exceptionTransactionId:
+                                        type: string
+                                        xml:
+                                          namespace: ''
+                                      exceptionCode:
+                                        type: string
+                                        xml:
+                                          namespace: ''
+                                      exceptionText:
+                                        type: string
+                                        xml:
+                                          namespace: ''
+                                    xml:
+                                      namespace: >-
+                                        http://www.royalmailgroup.com/integration/core/V3
+                                      prefix: p2
+              content: application/xml
+          outputs:
+            out1:
+              variable: message.body
+              schema:
+                type: object
+                properties:
+                  locations:
+                    type: object
+                    properties:
+                      location:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            organisationName:
+                              type: string
+                            locationName:
+                              type: string
+                            addressLine1:
+                              type: string
+                            addressLine2:
+                              type: string
+                            addressLine3:
+                              type: string
+                            city:
+                              type: string
+                            county:
+                              type: string
+                            postcode:
+                              type: string
+                            openingHours:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  dayOfWeek:
+                                    type: string
+                                  openingTime:
+                                    type: string
+                                  closingTime:
+                                    type: string
+                                  lunchHours:
+                                    type: object
+                                    properties:
+                                      lunchClosingTime:
+                                        type: string
+                                      lunchOpeningTime:
+                                        type: string
+                            facilities:
+                              type: object
+                              properties:
+                                customerParkingIndicator:
+                                  type: string
+                                disabilityIndicator:
+                                  type: string
+                            geoLocation:
+                              type: object
+                              properties:
+                                latitude:
+                                  type: string
+                                longitude:
+                                  type: string
+                            distance:
+                              type: string
+                            locationType:
+                              type: string
+              content: application/json
+            out2:
+              variable: message.status.code
+              schema:
+                type: integer
+                format: int32
+                default: 200
+            out3:
+              variable: message.headers
+              schema:
+                type: object
+            fault:
+              schema:
+                $ref: '#/definitions/errorResponse'
+              variable: message.body
+            warning:
+              schema:
+                $ref: '#/definitions/warningResponse'
+              variable: message.body
+          actions:
+            - create: out1.locations.location
+              foreach: '#/in1.Envelope.Body.getLocationsResponse.locations.location'
+              from: '#/in1.Envelope.Body.getLocationsResponse.locations.location'
+              actions:
+                - set: organisationName
+                  from: organisationName
+                - set: locationName
+                  from: locationName
+                - set: addressLine1
+                  from: addressLine1
+                - set: addressLine2
+                  from: addressLine2
+                - set: addressLine3
+                  from: addressLine3
+                - set: city
+                  from: city
+                - set: county
+                  from: county
+                - set: postcode
+                  from: postcode
+                - create: openingHours
+                  foreach: openingHours
+                  from: openingHours
+                  actions:
+                    - set: dayOfWeek
+                      from: dayOfWeek
+                    - set: openingTime
+                      from: openingTime
+                    - set: closingTime
+                      from: closingTime
+                    - set: lunchHours.lunchClosingTime
+                      from: lunchHours.lunchClosingTime
+                    - set: lunchHours.lunchOpeningTime
+                      from: lunchHours.lunchOpeningTime
+                - set: distance
+                  from: distance
+                  value: apim.v4.toString($(1))
+                - set: locationType
+                  from: locationType
+                - set: facilities.customerParkingIndicator
+                  from: facilities.customerParkingIndicator
+                - set: facilities.disabilityIndicator
+                  from: facilities.disabilityIndicator
+                - set: geoLocation.latitude
+                  from: geoLocation.latitude
+                  value: apim.v4.toString($(1))
+                - set: geoLocation.longitude
+                  from: geoLocation.longitude
+                  value: apim.v4.toString($(1))
+            - set: out2
+              default: 200
+            - set: fault.code
+              from:
+                - >-
+                  in1.Envelope.Body.getLocationsResponse.integrationFooter.errors.error.errorCode
+                - in1.Envelope.Body.Fault.detail.exceptionDetails.exceptionCode
+            - set: fault.description
+              from:
+                - >-
+                  in1.Envelope.Body.getLocationsResponse.integrationFooter.errors.error.errorDescription
+                - in1.Envelope.Body.Fault.detail.exceptionDetails.exceptionText
+            - set: fault.cause
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.errors.error.errorCause
+            - set: fault.resolution
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.errors.error.errorResolution
+            - set: fault.context
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.errors.error.errorContext
+            - set: warning.code
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.warnings.warning.warningCode
+            - set: warning.description
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.warnings.warning.warningDescription
+            - set: warning.cause
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.warnings.warning.warningCause
+            - set: warning.resolution
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.warnings.warning.warningResolution
+            - set: warning.context
+              from: >-
+                in1.Envelope.Body.getLocationsResponse.integrationFooter.warnings.warning.warningContext
+          options:
+            inlineNamespaces: false
+  targets:
+    LocalCollectServicev2_0:
+      swagger: '2.0'
+      info:
+        title: LocalCollectServicev2_0
+        description: ''
+        x-ibm-name: localcollectservicev20-1
+        version: 1.0.0
+      schemes:
+        - https
+      basePath: /LocalCollectServicev2_0
+      produces:
+        - application/xml
+      consumes:
+        - text/xml
+      securityDefinitions:
+        clientID:
+          type: apiKey
+          name: X-IBM-Client-Id
+          in: header
+          description: ''
+      security:
+        - clientID: []
+      x-ibm-configuration:
+        type: wsdl
+        wsdl-definition:
+          wsdl: 57bc66e40cf24c8d0c58b7c4
+          service: LocalCollectServicev2_0
+          port: LocalCollectPortv2_0
+          soap-version: '1.1'
+        assembly:
+          execute:
+            - proxy:
+                title: proxy
+                target-url: 'https://api.royalmail.com/localcollect/v2'
+        gateway: datapower-gateway
+        enforced: true
+        testable: true
+        phase: realized
+        cors:
+          enabled: true
+      paths:
+        /getLocations:
+          post:
+            summary: Operation getLocations
+            description: ''
+            operationId: getLocations
+            parameters:
+              - in: body
+                name: body
+                required: true
+                schema:
+                  $ref: >-
+                    #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsInput
+            responses:
+              '500':
+                description: ''
+                schema:
+                  $ref: >-
+                    #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsFault
+              default:
+                description: ''
+                schema:
+                  $ref: >-
+                    #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsOutput
+            x-ibm-soap:
+              soap-action: >-
+                http://royalmail.com/LocalCollectInterfacev3_0/getLocalCollectLocations
+              soap-operation: >-
+                {http://www.royalmailgroup.com/API/LocalCollect/V2.0}getLocations
+      definitions:
+        wsSecurityHeader:
+          xml:
+            namespace: >-
+              http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+            prefix: wsse
+          type: object
+          properties:
+            UsernameToken:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Password:
+                  type: string
+        getLocationsInput:
+          type: object
+          properties:
+            Envelope:
+              xml:
+                prefix: soap-env
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+              type: object
+              properties:
+                Header:
+                  $ref: >-
+                    #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsHeader
+                Body:
+                  type: object
+                  properties:
+                    getLocationsRequest:
+                      $ref: >-
+                        #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsRequest
+          example: >-
+            <soap-env:Envelope
+            xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+
+             <soap-env:Header>
+
+              <wsse:wsSecurityHeader
+            xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+
+               <UsernameToken>
+
+                <Username>string</Username>
+
+                <Password>string</Password>
+
+               </UsernameToken>
+
+              </wsse:wsSecurityHeader>
+
+              <int:integrationHeader
+            xmlns:int="http://www.royalmailgroup.com/integration/core/V3">
+
+               <dateTime>2016-04-18T14:07:37</dateTime>
+
+               <version>string</version>
+
+               <identification>
+
+                <endUserId>string</endUserId>
+
+                <clientId>string</clientId>
+
+                <applicationId>string</applicationId>
+
+                <intermediaryId>string</intermediaryId>
+
+                <transactionId>string</transactionId>
+
+               </identification>
+
+               <debugAudit>
+
+                <testFlag>true</testFlag>
+
+                <debugFlag>true</debugFlag>
+
+                <performanceFlag>true</performanceFlag>
+
+                <messageAuditFlag>true</messageAuditFlag>
+
+               </debugAudit>
+
+              </int:integrationHeader>
+
+             </soap-env:Header>
+
+             <soap-env:Body>
+
+              <messages:getLocations
+            xmlns:messages="http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0">
+
+               <locationType>string</locationType>
+
+               <radius>string</radius>
+
+               <postCode>string</postCode>
+
+               <geoLocation>
+
+                <latitude>string</latitude>
+
+                <longitude>string</longitude>
+
+               </geoLocation>
+
+              </messages:getLocations>
+
+             </soap-env:Body>
+
+            </soap-env:Envelope>
+        getLocationsOutput:
+          type: object
+          properties:
+            Envelope:
+              xml:
+                prefix: soap-env
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+              type: object
+              properties:
+                Body:
+                  type: object
+                  properties:
+                    getLocationsResponse:
+                      $ref: >-
+                        #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocationsResponse
+          example: >-
+            <soap-env:Envelope
+            xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+
+             <soap-env:Body>
+
+              <messages:getLocationsResponse
+            xmlns:messages="http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0">
+
+               <locations>
+
+                <location><!-- between zero and 20 repetitions of this element
+            -->
+
+                 <organisationName>string</organisationName>
+
+                 <locationName>string</locationName>
+
+                 <addressLine1>string</addressLine1>
+
+                 <addressLine2>string</addressLine2>
+
+                 <addressLine3>string</addressLine3>
+
+                 <city>string</city>
+
+                 <county>string</county>
+
+                 <postcode>string</postcode>
+
+                 <openingHours><!-- mandatory --><!-- between 1 and 7 repetitions
+            of this element -->
+
+                  <dayOfWeek>string</dayOfWeek>
+
+                  <openingTime>string</openingTime>
+
+                  <closingTime>string</closingTime>
+
+                  <lunchHours>
+
+                   <lunchClosingTime>string</lunchClosingTime>
+
+                   <lunchOpeningTime>string</lunchOpeningTime>
+
+                  </lunchHours>
+
+                 </openingHours>
+
+                 <geoLocation>
+
+                  <latitude>string</latitude>
+
+                  <longitude>string</longitude>
+
+                 </geoLocation>
+
+                 <distance>3</distance>
+
+                 <facilities>
+
+                  <customerParkingIndicator>true</customerParkingIndicator>
+
+                  <disabilityIndicator>true</disabilityIndicator>
+
+                 </facilities>
+
+                 <locationType>string</locationType>
+
+                </location>
+
+               </locations>
+
+               <integrationFooter>
+
+                <errors>
+
+                 <error><!-- between zero and unlimited repetitions of this
+            element -->
+
+                  <errorCode>string</errorCode>
+
+                  <errorDescription>string</errorDescription>
+
+                  <errorCause>string</errorCause>
+
+                  <errorResolution>string</errorResolution>
+
+                  <errorContext>string</errorContext>
+
+                 </error>
+
+                </errors>
+
+                <warnings>
+
+                 <warning><!-- between zero and unlimited repetitions of this
+            element -->
+
+                  <warningCode>string</warningCode>
+
+                  <warningDescription>string</warningDescription>
+
+                  <warningCause>string</warningCause>
+
+                  <warningResolution>string</warningResolution>
+
+                  <warningContext>string</warningContext>
+
+                 </warning>
+
+                </warnings>
+
+               </integrationFooter>
+
+              </messages:getLocationsResponse>
+
+             </soap-env:Body>
+
+            </soap-env:Envelope>
+        getLocationsHeader:
+          type: object
+          properties:
+            wsSecurityHeader:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/wsSecurityHeader
+            integrationHeader:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/integrationHeader
+        getLocationsFault:
+          type: object
+          properties:
+            Envelope:
+              xml:
+                prefix: soap-env
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+              type: object
+              properties:
+                Fault:
+                  type: object
+                  properties:
+                    getLocalCollectFault:
+                      $ref: >-
+                        #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/getLocalCollectLocationsFault
+        getLocationsRequest:
+          xml:
+            namespace: 'http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0'
+            prefix: messages
+          type: object
+          properties:
+            locationType:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/locationType
+            radius:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/radius
+            postCode:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/postcode
+            geoLocation:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/geoSpatialPosition
+          description: "The element represents the Local Collect request object. The request consists of choice of either a valid UK post code or a lat and long representing the search location.\n\t\t\tThe request allows the caller to restrict the look up by a search radius and a location type.\n\t\t\tThe search radius is the radius from the centre of the look up post code\n\t\t\tThe location type allows the retailer to restrict the data returned from the api. e.g. only return POL or EO data.;\npostCode: Warning: CHOICE element;\ngeoLocation: Warning: CHOICE element"
+          example: >-
+            <messages:getLocations
+            xmlns:messages="http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0"
+            xmlns:ns1="http://www.royalmailgroup.com/API/LocalCollect/types/V2.0">
+
+             <locationType>string</locationType>
+
+             <radius>string</radius>
+
+             <postCode>string</postCode>
+
+             <geoLocation>
+
+              <latitude>string</latitude>
+
+              <longitude>string</longitude>
+
+             </geoLocation>
+
+            </messages:getLocations>
+        getLocationsResponse:
+          xml:
+            namespace: 'http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0'
+            prefix: messages
+          type: object
+          properties:
+            locations:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/locations
+            integrationFooter:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/integrationFooter
+          description: "The element represents the Local Collect response object. The location response consists of 2 parts.\n\t\t\tThe first part is the integration footer consisting or errors/warnings\n\t\t\tThe second part consists of an array of address elements representing the local collect offices."
+          example: >-
+            <messages:getLocationsResponse
+            xmlns:messages="http://www.royalmailgroup.com/API/LocalCollect/messages/V2.0"
+            xmlns:ns1="http://www.royalmailgroup.com/API/LocalCollect/types/V2.0"
+            xmlns:int="http://www.royalmailgroup.com/integration/core/V3">
+
+             <locations>
+
+              <location><!-- between zero and 20 repetitions of this element -->
+
+               <organisationName>string</organisationName>
+
+               <locationName>string</locationName>
+
+               <addressLine1>string</addressLine1>
+
+               <addressLine2>string</addressLine2>
+
+               <addressLine3>string</addressLine3>
+
+               <city>string</city>
+
+               <county>string</county>
+
+               <postcode>string</postcode>
+
+               <openingHours><!-- mandatory --><!-- between 1 and 7 repetitions
+            of this element -->
+
+                <dayOfWeek>string</dayOfWeek>
+
+                <openingTime>string</openingTime>
+
+                <closingTime>string</closingTime>
+
+                <lunchHours>
+
+                 <lunchClosingTime>string</lunchClosingTime>
+
+                 <lunchOpeningTime>string</lunchOpeningTime>
+
+                </lunchHours>
+
+               </openingHours>
+
+               <geoLocation>
+
+                <latitude>string</latitude>
+
+                <longitude>string</longitude>
+
+               </geoLocation>
+
+               <distance>3</distance>
+
+               <facilities>
+
+                <customerParkingIndicator>true</customerParkingIndicator>
+
+                <disabilityIndicator>true</disabilityIndicator>
+
+               </facilities>
+
+               <locationType>string</locationType>
+
+              </location>
+
+             </locations>
+
+             <integrationFooter>
+
+              <errors>
+
+               <error><!-- between zero and unlimited repetitions of this element
+            -->
+
+                <errorCode>string</errorCode>
+
+                <errorDescription>string</errorDescription>
+
+                <errorCause>string</errorCause>
+
+                <errorResolution>string</errorResolution>
+
+                <errorContext>string</errorContext>
+
+               </error>
+
+              </errors>
+
+              <warnings>
+
+               <warning><!-- between zero and unlimited repetitions of this
+            element -->
+
+                <warningCode>string</warningCode>
+
+                <warningDescription>string</warningDescription>
+
+                <warningCause>string</warningCause>
+
+                <warningResolution>string</warningResolution>
+
+                <warningContext>string</warningContext>
+
+               </warning>
+
+              </warnings>
+
+             </integrationFooter>
+
+            </messages:getLocationsResponse>
+        getLocalCollectLocationsFault:
+          xml:
+            namespace: 'http://www.royalmailgroup.com/integration/core/V3'
+            prefix: int
+          type: object
+          properties:
+            exceptionApplicationId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/applicationId
+            exceptionTransactionId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/transactionId
+            exceptionCode:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/errorCode
+            exceptionText:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+          description: RMG SOAP fault structure to be contained within 'detail' element
+          example: >-
+            <int:getLocalCollectLocationsFault
+            xmlns:int="http://www.royalmailgroup.com/integration/core/V3">
+
+             <exceptionApplicationId>string</exceptionApplicationId>
+
+             <exceptionTransactionId>string</exceptionTransactionId>
+
+             <exceptionCode>string</exceptionCode>
+
+             <exceptionText>string</exceptionText>
+
+            </int:getLocalCollectLocationsFault>
+        integrationHeader:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            dateTime:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/dateTime
+            version:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/decimal
+            identification:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identificationStructure
+            debugAudit:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/debugAuditStructure
+          description: >-
+            Common integration header definition;
+
+            dateTime: Date timestamp associated with when the data was
+            generated, sent or received;
+
+            version: Version of the service;
+
+            identification: Identification details associated with the Service
+            Requestor or Service Provider;
+
+            debugAudit: Flags used to assist with troubleshooting, problem
+            determination and to allow the performance and data exchanges
+            between systems to be tracked and audited.
+        locationType:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          enum:
+            - Post Office
+            - Enquiry Office
+        radius:
+          xml:
+            namespace: ''
+            prefix: ''
+          minimum: 0
+          exclusiveMinimum: true
+          maximum: 20
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/integer
+        postcode:
+          xml:
+            namespace: ''
+            prefix: ''
+          pattern: '[a-zA-Z][0-9a-zA-Z]+\s?[0-9a-zA-Z]*'
+          maxLength: 8
+          minLength: 5
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/string
+        geoSpatialPosition:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            latitude:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/geoSpatial
+            longitude:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/geoSpatial
+        locations:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            location:
+              type: array
+              items:
+                $ref: >-
+                  #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/address
+              maxItems: 20
+        integrationFooter:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            errors:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/errorStructure
+            warnings:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/warningStructure
+          description: Common integration footer definition
+        applicationId:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            For a request, this is the ID of the Service Requester calling the
+            service, unique when combined with the TransactionId. For the
+            response, this is the ID of the Service Provider, unique when
+            combined with the TransactionId.
+          pattern: '[a-zA-Z0-9/\-]*'
+          maxLength: 50
+          minLength: 1
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+        transactionId:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            Id preserved throughout the lifespan of the transaction, unique when
+            combined with the applicationId and intermediaryId (if applicable).
+          pattern: '[a-zA-Z0-9/\-]*'
+          maxLength: 50
+          minLength: 1
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+        errorCode:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: Code associated with the error condition in the form ENNNN
+          pattern: '[E]{1}[0-9]{4}'
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+        description:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            A description is a sub-type of string and is statement in words that
+            gives an account or descriptive representation of a thing.
+            Descriptions are only editable via an admin function and are for
+            display and information purposes only for end users.
+          maxLength: 256
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/string
+        dateTime:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          description: >-
+            dateTime represents a period in time which could be a particular
+            month, day, and year at which some event happened or will happen but
+            also includes a breakdown of time using hours, minutes, seconds and
+            milliseconds. A dateTime stamp is a common use for this data type so
+            that a precise record of an event can be captured.
+          format: date-time
+        decimal:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          description: >-
+            A decimal data type represents a real number with every decimal
+            place indicating a multiple of a negative power of 10. It represents
+            non-repeating decimal fractions like 0.3 and -1.17 without rounding,
+            and gives the ability to do arithmetic on them.
+        identificationStructure:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            endUserId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+            clientId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+            applicationId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/applicationId
+            intermediaryId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/applicationId
+            transactionId:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/transactionId
+          description: >-
+            endUserId: User ID associated with the end user of the internal or
+            external organisation;
+
+            clientId: The ID of the Service Requester organisation or
+            sub-organisation calling the service.;
+
+            applicationId: The ID of the Service Requester system calling the
+            service, unique when combined with the transactionId.;
+
+            intermediaryId: Id associated with the Intermediary application (if
+            applicable).;
+
+            transactionId: Unique session id sent by the Service Requestor (for
+            the request) or returned by the Service Provider (for the response)
+        debugAuditStructure:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            testFlag:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+            debugFlag:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+            performanceFlag:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+            messageAuditFlag:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+          description: >-
+            testFlag: Flag which can be used to test that the exposed service is
+            available. It is not expected that this flag will be used under
+            normal BAU service operation;
+
+            debugFlag: Flag which can be used to allow any messages to be
+            dynamically debugged. It is not expected that this flag will be used
+            under normal BAU service operation;
+
+            performanceFlag: Flag which can be used to track the performance of
+            the service between systems (entry time, exit time, latency etc);
+
+            messageAuditFlag: Flag used to audit message exchanges between
+            systems
+        integer:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: number
+          description: >-
+            An integer is a whole number (not a fraction) that can be positive,
+            negative, or zero. Unlike floats, integers cannot have decimal
+            places.
+        string:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          description: Simple set of alphanumeric characters.
+          maxLength: 4000
+        geoSpatial:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            A decimal data type representing Latitude and Longitude data. The
+            format of decimal 10,7 was chosen as a generic representation which
+            facilities conversion between geospatial systems
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/decimal
+        address:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            organisationName:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/longName
+            locationName:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/longName
+            addressLine1:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            addressLine2:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            addressLine3:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            city:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/shortName
+            county:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/shortName
+            postcode:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/postcode
+            openingHours:
+              type: array
+              items:
+                $ref: >-
+                  #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/openingTime
+              maxItems: 7
+              minItems: 1
+            geoLocation:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/geoSpatialPosition
+            distance:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/integer
+            facilities:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/facilities
+            locationType:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/locationType
+          description: "The address element contains the address details for the local collect office. The main attributes of the address are\r\n\t\t\t<br>Organisation Name\t- This is either Post Office Limited or Royal Mail Ltd</br>\r\n\t\t\t<br>Location Name \t\t- This is the store name</br>\r\n\t\t\t<br>Address Line 1\t\t- This is first line of the address</br>\r\n\t\t\t<br>Post Code \t\t\t- This is the post code of the local collect location</br>\r\n\t\t\t<br>Opening Hours \t\t- Is an array of 7 elements, one for each day of the week. The element provides the day of the week, the opening time, closing time and mid day opening and closing hours.</br>\r\n\t\t\t<br>Geo Location\t\t- This is the latitude and longitude of the local collect office</br>\n\t\t\t<br>Distance\t\t\t- This is the distance of the local collect office from the search location</br>\n\t\t\t<br>Facilities\t\t\t- This element provides details of the facilities available. e.g. car parking or disability access</br>\n\t\t\t<br>Location Type\t\t- This element provides details on the type of location. This is an enumeration. e.g. whether POL or EO"
+          required:
+            - openingHours
+        errorStructure:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            error:
+              type: array
+              items:
+                $ref: >-
+                  #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/errorDetail
+        warningStructure:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            warning:
+              type: array
+              items:
+                $ref: >-
+                  #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/warningDetail
+        identifier:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            An identifier is a sub-type of string which serves as a means of
+            identification for a particular thing; An identifier can be
+            associated with a name.
+          maxLength: 128
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/string
+        boolean:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: boolean
+          description: >-
+            Boolean, or boolean logic, is a subset of algebra used for creating
+            true/false statements. Boolean expressions use the operators AND,
+            OR, XOR, and NOT to compare values and return a true or false
+            result. Boolean values can also be referred to as 'flags'.
+        longName:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            A long name is a sub-type of string and is word or a combination of
+            words by which an organization, place, or thing, a body or class, or
+            any object of thought is designated, called, or known.
+          maxLength: 128
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/string
+        shortName:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: >-
+            A name is a sub-type of string and is word or a combination of words
+            by which a person, place, or thing, a body or class, or any object
+            of thought is designated, called, or known. short name is intended
+            for use with Reference data items
+          maxLength: 64
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/string
+        openingTime:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            dayOfWeek:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/dayOfWeek
+            openingTime:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/time
+            closingTime:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/time
+            lunchHours:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/lunchTime
+        facilities:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            customerParkingIndicator:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+            disabilityIndicator:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/boolean
+        errorDetail:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            errorCode:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/errorCode
+            errorDescription:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            errorCause:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            errorResolution:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            errorContext:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+          description: >-
+            errorCode: Code associated with the error condition;
+
+            errorDescription: Description of the error condition;
+
+            errorCause: Cause of the business error (if known);
+
+            errorResolution: Description of the resolution and action required
+            to correct the error;
+
+            errorContext: Context of the business error, e.g. client or server
+        warningDetail:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            warningCode:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/warningCode
+            warningDescription:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            warningCause:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            warningResolution:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+            warningContext:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/description
+          description: >-
+            warningCode: Code associated with the warning;
+
+            warningDescription: Description of the warning;
+
+            warningCause: Cause of the warning (if known);
+
+            warningResolution: Description of the resolution and action required
+            to correct the warning;
+
+            warningContext: Context of the warning, e.g. client or server
+        dayOfWeek:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          enum:
+            - Monday
+            - Tuesday
+            - Wednesday
+            - Thursday
+            - Friday
+            - Saturday
+            - Sunday
+        time:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: string
+          description: >-
+            time is a unit of measure to record hours, minutes, seconds and
+            milliseconds.
+        lunchTime:
+          xml:
+            namespace: ''
+            prefix: ''
+          type: object
+          properties:
+            lunchClosingTime:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/time
+            lunchOpeningTime:
+              $ref: >-
+                #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/time
+        warningCode:
+          xml:
+            namespace: ''
+            prefix: ''
+          description: Code associated with the warning condition in the form WNNNN
+          pattern: '[W]{1}[0-9]{4}'
+          $ref: >-
+            #/x-ibm-configuration/targets/LocalCollectServicev2_0/definitions/identifier
+  properties:
+    certificate name:
+      description: Default Certificate Name
+      encoded: false
+      value: test-certificate-13101152
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Local Collect Endpoint:
+      description: Local Collect V2 endpoint
+      encoded: false
+      value: 'https://pp-api.royalmail.com/localcollect/v2'
+  catalogs: {}
+  externalDocs: []
+  attachments: []
+tags: []
+definitions:
+  locationResponse:
+    type: object
+    properties:
+      locations:
+        type: array
+        items:
+          $ref: '#/definitions/location'
+      warnings:
+        type: array
+        items:
+          $ref: '#/definitions/warningResponse'
+  location:
+    type: object
+    properties:
+      organisationName:
+        type: string
+      locationName:
+        type: string
+      addressLine1:
+        type: string
+      addressLine2:
+        type: string
+      addressLine3:
+        type: string
+      city:
+        type: string
+      county:
+        type: string
+      postcode:
+        type: string
+      openingHours:
+        type: array
+        items:
+          $ref: '#/definitions/openingHours'
+      geoLocation:
+        $ref: '#/definitions/geoLocation'
+      distance:
+        type: integer
+      facilities:
+        $ref: '#/definitions/facilities'
+      locationType:
+        type: string
+        pattern: Enquiry Office|Post Office
+    additionalProperties: true
+  facilities:
+    type: object
+    properties:
+      customerParkingIndicator:
+        type: boolean
+      disabilityIndicator:
+        type: boolean
+  geoLocation:
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: float
+      longitude:
+        type: number
+        format: float
+  openingHours:
+    type: object
+    properties:
+      dayOfWeek:
+        type: string
+      openingTime:
+        type: string
+      closingTime:
+        type: string
+      lunchHours:
+        $ref: '#/definitions/lunchHours'
+  lunchHours:
+    type: object
+    properties:
+      lunchOpening:
+        type: string
+      lunchClosing:
+        type: string
+  errorResponse:
+    type: object
+    properties:
+      code:
+        type: number
+      status:
+        type: number
+      description:
+        type: string
+      cause:
+        type: string
+      resolution:
+        type: string
+      context:
+        type: string
+  warningResponse:
+    type: object
+    properties:
+      code:
+        type: number
+      description:
+        type: string
+      cause:
+        type: string
+      resolution:
+        type: string
+      context:
+        type: string
+securityDefinitions:
+  CLIENT_ID:
+    type: apiKey
+    name: X-IBM-Client-Id
+    in: header
+paths:
+  '/{postcode}':
+    get:
+      description: >-
+        Gets Local Collect `POL or EO Branch` objects.Mandatory path param
+        postCode determinesthe epicentre of the search radius
+      tags: []
+      parameters:
+        - name: postcode
+          type: string
+          required: true
+          in: path
+          description: ''
+        - description: Radius in miles. Max 10.
+          name: radius
+          required: false
+          type: string
+          in: query
+          default: '{radius}'
+        - description: '''Post Office'' or ''Enquiry Office'''
+          name: type
+          required: false
+          type: string
+          in: query
+          default: '{type}'
+      responses:
+        '200':
+          description: Successful response
+          schema: {}
+          examples:
+            application/json:
+              locations:
+                location:
+                  - organisationName: Post Office Corp
+                    locationName: Branch Name1
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    city: city
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Mondayish
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    facilities:
+                      customerParkingIndicator: 'true'
+                      disabilityIndicator: 'true'
+                    geoLocation:
+                      latitude: '10'
+                      longitude: '10'
+                    distance: '1'
+                    locationType: Post Office
+                  - organisationName: Post Office Ltd
+                    locationName: Branch Name2
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Monday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    geoLocation:
+                      latitude: '11'
+                      longitude: '10'
+                    distance: '2'
+                    locationType: Post Office
+                  - organisationName: Post Office Ltd
+                    locationName: Branch Name3
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Monday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    facilities:
+                      customerParkingIndicator: 'true'
+                      disabilityIndicator: 'true'
+                    geoLocation:
+                      latitude: '12'
+                      longitude: '10'
+                    distance: '3'
+                    locationType: Post Office
+        '400':
+          description: Bad Request. Probably malformed request
+          schema:
+            $ref: '#/definitions/errorResponse'
+          examples:
+            application/json:
+              faultcode: Client
+              faultstring: Invalid Request
+              faultactor: W000001-747-MULTIPLE
+              detail:
+                exceptionTransactionId: f3eed6d6-bc69-4295-a3a1-b3869165a464
+                exceptionCode: E0004
+                exceptionText: Failed Schema Validation
+        '401':
+          description: Authorisation failure
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too many requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema: {}
+          examples:
+            application/json:
+              code: '2'
+              status: Invalid
+              description: All wrong
+              cause: some cause
+              resolution: some resoltion
+              context: context
+        '504':
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/errorResponse'
+      security:
+        - CLIENT_ID: []
+      summary: ''
+  /geo/spatial:
+    get:
+      description: >-
+        This operation provides the location based on the latitude and longitude
+        which are part of the query parameters
+      tags: []
+      parameters:
+        - default: '{radius}'
+          description: Search Radius in miles. Max 10.
+          name: radius
+          required: false
+          type: string
+          in: query
+        - default: '{longitude}'
+          description: Longitude. Can use float/decimal
+          name: longitude
+          required: false
+          type: string
+          in: query
+        - default: '{latitude}'
+          description: Latitude. Can use float/decimal
+          name: latitude
+          required: false
+          type: string
+          in: query
+        - default: '{type}'
+          description: '''Post Office'' or ''Enquiry Office'''
+          name: type
+          required: false
+          type: string
+          in: query
+      responses:
+        '200':
+          schema: {}
+          description: ''
+          examples:
+            application/json:
+              locations:
+                location:
+                  - organisationName: Post Office Corp
+                    locationName: Branch Name1
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    city: city
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Mondayish
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    facilities:
+                      customerParkingIndicator: 'true'
+                      disabilityIndicator: 'true'
+                    geoLocation:
+                      latitude: '10'
+                      longitude: '10'
+                    distance: '1'
+                    locationType: Post Office
+                  - organisationName: Post Office Ltd
+                    locationName: Branch Name2
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Monday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    geoLocation:
+                      latitude: '11'
+                      longitude: '10'
+                    distance: '2'
+                    locationType: Post Office
+                  - organisationName: Post Office Ltd
+                    locationName: Branch Name3
+                    addressLine1: Address1
+                    addressLine2: Address2
+                    county: Address5
+                    postcode: M11AD
+                    openingHours:
+                      - dayOfWeek: Monday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Tuesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Wednesday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Thursday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                      - dayOfWeek: Friday
+                        openingTime: '10:00:00'
+                        closingTime: '18:00:00'
+                        lunchHours:
+                          lunchClosingTime: '13:00:00'
+                          lunchOpeningTime: '13:30:00'
+                    facilities:
+                      customerParkingIndicator: 'true'
+                      disabilityIndicator: 'true'
+                    geoLocation:
+                      latitude: '12'
+                      longitude: '10'
+                    distance: '3'
+                    locationType: Post Office
+      security:
+        - CLIENT_ID: []
+      summary: Search By Geo Lookup
+security:
+  - {}

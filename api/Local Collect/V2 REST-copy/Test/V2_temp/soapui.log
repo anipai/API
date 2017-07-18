@@ -1,0 +1,355 @@
+2016-11-04 15:08:56,304 WARN  [SoapUI] Missing folder [/Users/avik__000/Documents/Royal Mail/Big/API/Local Collect/V2 REST/Test/V2_temp/ext] for external libraries
+2016-11-04 15:08:56,645 INFO  [DefaultSoapUICore] initialized soapui-settings from [/Users/avik__000/soapui-settings.xml]
+2016-11-04 15:08:56,671 INFO  [HttpClientSupport$Helper] Initializing KeyStore
+2016-11-04 15:08:57,219 ERROR [SoapUI] An error occurred [Probably bad JKS password: java.io.IOException: keystore password was incorrect], see error log for details
+2016-11-04 15:08:57,222 ERROR [errorlog] org.apache.commons.ssl.ProbablyBadPasswordException: Probably bad JKS password: java.io.IOException: keystore password was incorrect
+org.apache.commons.ssl.ProbablyBadPasswordException: Probably bad JKS password: java.io.IOException: keystore password was incorrect
+	at org.apache.commons.ssl.KeyStoreBuilder.tryJKS(KeyStoreBuilder.java:515)
+	at org.apache.commons.ssl.KeyStoreBuilder.parse(KeyStoreBuilder.java:374)
+	at org.apache.commons.ssl.KeyStoreBuilder.build(KeyStoreBuilder.java:112)
+	at org.apache.commons.ssl.KeyMaterial.<init>(KeyMaterial.java:179)
+	at org.apache.commons.ssl.KeyMaterial.<init>(KeyMaterial.java:170)
+	at org.apache.commons.ssl.KeyMaterial.<init>(KeyMaterial.java:160)
+	at org.apache.commons.ssl.KeyMaterial.<init>(KeyMaterial.java:64)
+	at org.apache.commons.ssl.KeyMaterial.<init>(KeyMaterial.java:114)
+	at com.eviware.soapui.impl.wsdl.support.http.HttpClientSupport$Helper.initSocketFactory(HttpClientSupport.java:301)
+	at com.eviware.soapui.impl.wsdl.support.http.HttpClientSupport$Helper.<init>(HttpClientSupport.java:200)
+	at com.eviware.soapui.impl.wsdl.support.http.HttpClientSupport.<clinit>(HttpClientSupport.java:70)
+	at com.eviware.soapui.DefaultSoapUICore.initSettings(DefaultSoapUICore.java:361)
+	at com.eviware.soapui.DefaultSoapUICore.init(DefaultSoapUICore.java:129)
+	at com.eviware.soapui.DefaultSoapUICore.<init>(DefaultSoapUICore.java:120)
+	at com.eviware.soapui.tools.AbstractSoapUIRunner.createSoapUICore(AbstractSoapUIRunner.java:218)
+	at com.eviware.soapui.tools.AbstractSoapUIRunner.run(AbstractSoapUIRunner.java:194)
+	at com.eviware.soapui.maven2.TestMojo.execute(TestMojo.java:117)
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:134)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:207)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:153)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:145)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:116)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:80)
+	at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build(SingleThreadedBuilder.java:51)
+	at org.apache.maven.lifecycle.internal.LifecycleStarter.execute(LifecycleStarter.java:128)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:307)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:193)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:106)
+	at org.apache.maven.cli.MavenCli.execute(MavenCli.java:863)
+	at org.apache.maven.cli.MavenCli.doMain(MavenCli.java:288)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:199)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced(Launcher.java:289)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launch(Launcher.java:229)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode(Launcher.java:415)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.main(Launcher.java:356)
+2016-11-04 15:08:58,930 INFO  [PluginManager] Adding plugin from [/Users/avik__000/.soapuios/plugins/soapui-swagger-plugin-2.2-dist.jar]
+2016-11-04 15:08:58,930 INFO  [PluginManager] Adding plugin from [/Users/avik__000/.soapuios/plugins/ready-mqtt-plugin-dist.jar]
+2016-11-04 15:09:00,267 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory], see error log for details
+2016-11-04 15:09:00,267 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:00,287 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory], see error log for details
+2016-11-04 15:09:00,287 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:00,299 INFO  [PluginManager] Adding plugin from [/Users/avik__000/.soapuios/plugins/ready-uxm-plugin-1.0.1-dist.jar]
+2016-11-04 15:09:00,469 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory], see error log for details
+2016-11-04 15:09:00,469 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:00,472 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory], see error log for details
+2016-11-04 15:09:00,472 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:01,100 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory], see error log for details
+2016-11-04 15:09:01,100 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:01,101 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory], see error log for details
+2016-11-04 15:09:01,101 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:01,105 INFO  [PluginManager] Adding plugin from [/Users/avik__000/.soapuios/plugins/readyapi-swaggerhub-plugin-1.0.jar]
+2016-11-04 15:09:01,496 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory], see error log for details
+2016-11-04 15:09:01,496 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoDiscoveryMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:01,500 ERROR [SoapUI] An error occurred [com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory], see error log for details
+2016-11-04 15:09:01,500 ERROR [errorlog] java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+java.lang.ClassNotFoundException: com.eviware.soapui.plugins.auto.factories.AutoImportMethodFactory
+	at org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy.loadClass(SelfFirstStrategy.java:50)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.unsynchronizedLoadClass(ClassRealm.java:271)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:247)
+	at org.codehaus.plexus.classworlds.realm.ClassRealm.loadClass(ClassRealm.java:239)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.eviware.soapui.plugins.LoaderBase.loadAutoFactories(LoaderBase.java:96)
+	at com.eviware.soapui.plugins.LoaderBase.loadFactories(LoaderBase.java:64)
+	at com.eviware.soapui.plugins.PluginLoader.loadPluginFactories(PluginLoader.java:129)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:92)
+	at com.eviware.soapui.plugins.PluginLoader.loadPlugin(PluginLoader.java:42)
+	at com.eviware.soapui.plugins.PluginManager.doInstallPlugin(PluginManager.java:136)
+	at com.eviware.soapui.plugins.PluginManager.access$600(PluginManager.java:38)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.computeSequentially(PluginManager.java:415)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:372)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:377)
+	at com.eviware.soapui.plugins.PluginManager$LoadPluginsTask.compute(PluginManager.java:360)
+	at java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:94)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+2016-11-04 15:09:01,504 INFO  [PluginManager] 4 plugins loaded in 2575 ms
+2016-11-04 15:09:01,504 INFO  [DefaultSoapUICore] All plugins loaded
+2016-11-04 15:09:01,845 WARN  [WsdlProject] Project 'Local Collect V2' is from a newer version (6.0.0) of SoapUI than this (5.2.1) and parts of it may be incompatible or incorrect. Saving this project with this version of SoapUI may cause it to function differently.
+2016-11-04 15:09:02,292 INFO  [WsdlProject] Loaded project from [file:/Users/avik__000/Documents/Royal%20Mail/Big/API/Local%20Collect/V2%20REST/Test/V2_temp/Local-Collect-V2-soapui-project.xml]
+2016-11-04 15:09:02,308 INFO  [SoapUITestCaseRunner] Running SoapUI tests in project [Local Collect V2]
+2016-11-04 15:09:02,316 INFO  [SoapUITestCaseRunner] Running Project [Local Collect V2], runType = SEQUENTIAL
+2016-11-04 15:09:02,348 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_AboveMaxRadius_PO]
+2016-11-04 15:09:02,370 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_AboveMaxRadius]
+2016-11-04 15:09:04,262 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status FAILED
+2016-11-04 15:09:04,262 ERROR [SoapUITestCaseRunner] ASSERTION FAILED -> Assertion failed for path [$.locations.location[0].openingHours[0].dayOfWeek] : IllegalArgumentException:Invalid JSON: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>Client</faultcode>
+         <faultstring>Invalid Request</faultstring>
+         <faultactor>XB62</faultactor>
+         <detail>
+            <exceptionTransactionId>12007351-2360-4069-ae01-a7182b342a6c</exceptionTransactionId>
+            <exceptionCode>E0004</exceptionCode>
+            <exceptionText>Failed Schema Validation</exceptionText>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>
+2016-11-04 15:09:04,263 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status FAILED
+2016-11-04 15:09:04,263 ERROR [SoapUITestCaseRunner] ASSERTION FAILED -> Assertion failed for path [$.locations.location[0].postcode] : IllegalArgumentException:Invalid JSON: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>Client</faultcode>
+         <faultstring>Invalid Request</faultstring>
+         <faultactor>XB62</faultactor>
+         <detail>
+            <exceptionTransactionId>12007351-2360-4069-ae01-a7182b342a6c</exceptionTransactionId>
+            <exceptionCode>E0004</exceptionCode>
+            <exceptionText>Failed Schema Validation</exceptionText>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>
+2016-11-04 15:09:04,263 ERROR [SoapUITestCaseRunner] V2 - GET_ByPostCode_AboveMaxRadius failed, exporting to [C:\MavenProjects\my-soapmvnappLocalCollectV2/TestSuite_Dev-V2__GET_ByPostCode_AboveMaxRadius_PO-V2__GET_ByPostCode_AboveMaxRadius-0-FAILED.txt]
+2016-11-04 15:09:04,268 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_AboveMaxRadius_PO], time taken: 1479ms, status: FAILED
+2016-11-04 15:09:04,275 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_NoClientID]
+2016-11-04 15:09:04,275 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_NoClientID]
+2016-11-04 15:09:04,385 WARN  [HttpClientSupport$SoapUIHttpClient] Authentication error: Unable to respond to any of these challenges: {default=WWW-Authenticate: default}
+2016-11-04 15:09:04,497 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Match] has status VALID
+2016-11-04 15:09:04,498 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_NoClientID], time taken: 106ms, status: FINISHED
+2016-11-04 15:09:04,499 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_BadClientID]
+2016-11-04 15:09:04,499 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_BadClientID]
+2016-11-04 15:09:04,543 WARN  [HttpClientSupport$SoapUIHttpClient] Authentication error: Unable to respond to any of these challenges: {default=WWW-Authenticate: default}
+2016-11-04 15:09:04,546 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Match] has status VALID
+2016-11-04 15:09:04,547 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Match 2] has status VALID
+2016-11-04 15:09:04,547 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_BadClientID], time taken: 42ms, status: FINISHED
+2016-11-04 15:09:04,547 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_NoClientSecret]
+2016-11-04 15:09:04,548 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_NoClientSecret]
+2016-11-04 15:09:05,763 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Match] has status FAILED
+2016-11-04 15:09:05,763 ERROR [SoapUITestCaseRunner] ASSERTION FAILED -> Comparison failed for path [$.httpMessage], expecting [Unauthorized], actual was [null]
+2016-11-04 15:09:05,763 ERROR [SoapUITestCaseRunner] V2 - GET_ByPostCode_NoClientSecret failed, exporting to [C:\MavenProjects\my-soapmvnappLocalCollectV2/TestSuite_Dev-V2__GET_ByPostCode_NoClientSecret-V2__GET_ByPostCode_NoClientSecret-0-FAILED.txt]
+2016-11-04 15:09:05,764 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_NoClientSecret], time taken: 1165ms, status: FAILED
+2016-11-04 15:09:05,766 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_BadClientSecret]
+2016-11-04 15:09:05,767 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_BadClientSecret]
+2016-11-04 15:09:05,878 WARN  [HttpClientSupport$SoapUIHttpClient] Authentication error: Unable to respond to any of these challenges: {default=WWW-Authenticate: default}
+2016-11-04 15:09:05,883 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Match] has status VALID
+2016-11-04 15:09:05,883 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_BadClientSecret], time taken: 106ms, status: FINISHED
+2016-11-04 15:09:05,883 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_6CharPC_PO]
+2016-11-04 15:09:05,884 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_6CharPC]
+2016-11-04 15:09:06,948 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:06,948 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:06,948 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_6CharPC_PO], time taken: 977ms, status: FINISHED
+2016-11-04 15:09:06,954 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_7CharPC_PO]
+2016-11-04 15:09:06,955 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_7CharPC]
+2016-11-04 15:09:18,192 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:18,192 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:18,192 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_7CharPC_PO], time taken: 11184ms, status: FINISHED
+2016-11-04 15:09:18,193 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_InvalidPostCode_PO]
+2016-11-04 15:09:18,193 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_InvalidPostCode]
+2016-11-04 15:09:18,419 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:18,419 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:18,419 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_InvalidPostCode_PO], time taken: 206ms, status: FINISHED
+2016-11-04 15:09:18,420 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_MaxLongitude_PO]
+2016-11-04 15:09:18,420 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_MaxLongitude]
+2016-11-04 15:09:18,780 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:18,780 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:18,781 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_MaxLongitude_PO], time taken: 345ms, status: FINISHED
+2016-11-04 15:09:18,781 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_MaxNEGeoSpatialValues_PO]
+2016-11-04 15:09:18,782 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_MaxNEGeoSpatialValues]
+2016-11-04 15:09:19,302 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:19,302 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:19,302 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_MaxNEGeoSpatialValues_PO], time taken: 506ms, status: FINISHED
+2016-11-04 15:09:19,303 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_MinRadius_PO]
+2016-11-04 15:09:19,303 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_MinRadius]
+2016-11-04 15:09:19,729 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:19,729 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:19,729 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_MinRadius_PO], time taken: 403ms, status: FINISHED
+2016-11-04 15:09:19,731 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByPostCode_MaxRadius_PO]
+2016-11-04 15:09:19,731 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByPostCode_MaxRadius]
+2016-11-04 15:09:19,962 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:19,962 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:19,962 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByPostCode_MaxRadius_PO], time taken: 218ms, status: FINISHED
+2016-11-04 15:09:19,963 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_MINSWGeoSpatialValues_PO]
+2016-11-04 15:09:19,963 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_MaxNEGeoSpatialValues]
+2016-11-04 15:09:20,170 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:20,170 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:20,170 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_MINSWGeoSpatialValues_PO], time taken: 194ms, status: FINISHED
+2016-11-04 15:09:20,171 INFO  [SoapUITestCaseRunner] Running SoapUI testcase [V2 - GET_ByGeoSpatial_MINSWGeoSpatialValues_EO]
+2016-11-04 15:09:20,171 INFO  [SoapUITestCaseRunner] running step [V2 - GET_ByGeoSpatial_MaxNEGeoSpatialValues]
+2016-11-04 15:09:22,437 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match] has status VALID
+2016-11-04 15:09:22,437 INFO  [SoapUITestCaseRunner] Assertion [JsonPath Existence Match 2] has status VALID
+2016-11-04 15:09:22,437 INFO  [SoapUITestCaseRunner] Finished running SoapUI testcase [V2 - GET_ByGeoSpatial_MINSWGeoSpatialValues_EO], time taken: 2250ms, status: FINISHED
+2016-11-04 15:09:22,440 INFO  [SoapUITestCaseRunner] Project [Local Collect V2] finished with status [FAILED] in 20117ms

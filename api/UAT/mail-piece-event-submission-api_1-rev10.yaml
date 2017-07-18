@@ -1,0 +1,313 @@
+swagger: '2.0'
+info:
+  title: Mail Piece Event Submission API
+  description: >-
+    The Mail Piece Event Submission API provides an external interface for
+    partner postal operators to submit tracking event messages for Royal Mail
+    products that are processed externally.
+
+
+
+    There are no costs using the Mail Piece Event Submission API, however
+    development costs must be covered by the partner postal operator. Royal Mail
+    will not accept any responsibility for these development, implementation and
+    testing costs.
+  version: 1-rev10
+  x-ibm-name: mail-piece-event-submission-api
+basePath: /mailpieces/events/v1
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    Activity Log Level:
+      description: ''
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: ''
+      encoded: false
+      value: payload
+    MPE Endpoint:
+      description: ''
+      encoded: false
+      value: 'https://pp-api.royalmail.com/MPEAPIService/v1'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: RMG Mail Piece Event API(SOAP) Sample Data Set
+      description: ''
+      id: 5829b45c0cf2ccfbcbdd6c98
+    - title: RMG Mail Piece Event API SOAP Technical User Guide
+      description: ''
+      id: 5829b4d10cf2ccfbcbdd7053
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: mail-piece-event-submission-api_1-rev10.wsdl
+    service: MPE-APIService
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - PostMPETracks
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(MPE Endpoint)
+                    tls-profile: 55c6336f0cf245294215d997
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /PostMPETracks:
+    post:
+      description: Allows consumers to send Mail Piece Event tracking messages to Royal Mail processing systems.
+      tags: []
+      operationId: PostMPETracks
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header><v1:integrationHeader
+              xmlns:v1="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v1:dateTime>2008-09-29T01:49:45</v1:dateTime>
+
+                <!--Optional:-->
+
+                <v1:version>1000.00</v1:version>
+
+                <v1:identification>
+
+                  <!--Optional:-->
+
+                  <v1:endUserId>string</v1:endUserId>
+
+                  <!--Optional:-->
+
+                  <v1:clientId>string</v1:clientId>
+
+                  <v1:applicationId>string</v1:applicationId>
+
+                  <!--Optional:-->
+
+                  <v1:intermediaryId>string</v1:intermediaryId>
+
+                  <v1:transactionId>string</v1:transactionId>
+
+                </v1:identification>
+
+                <!--Optional:-->
+
+                <v1:debugAudit>
+
+                  <!--Optional:-->
+
+                  <v1:testFlag>true</v1:testFlag>
+
+                  <!--Optional:-->
+
+                  <v1:debugFlag>true</v1:debugFlag>
+
+                  <!--Optional:-->
+
+                  <v1:performanceFlag>true</v1:performanceFlag>
+
+                  <!--Optional:-->
+
+                  <v1:messageAuditFlag>true</v1:messageAuditFlag>
+
+                </v1:debugAudit>
+
+              </v1:integrationHeader></SOAP-ENV:Header><SOAP-ENV:Body><v1:PostMPETracksReques
+               xmlns:v1="http://www.royalmailgroup.com/api/MPE-API/V1"
+              xmlns:v11="http://www.royalmailgroup.com/api/ExternalMPE/V1">
+
+                <v11:MPE-BarcodeScanList>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v11:MPE-BarcodeScan>
+
+                    <!--Optional:-->
+
+                    <v11:Operator>
+
+                      <!--Optional:-->
+
+                      <v11:ID>100</v11:ID>
+
+                      <!--Optional:-->
+
+                      <v11:Name>string</v11:Name>
+
+                    </v11:Operator>
+
+                    <!--Optional:-->
+
+                    <v11:EventCode>string</v11:EventCode>
+
+                    <!--Optional:-->
+
+                    <v11:EventDescription>string</v11:EventDescription>
+
+                    <!--Optional:-->
+
+                    <v11:EventTimestamp>2008-09-29T01:49:45</v11:EventTimestamp>
+
+                    <!--Optional:-->
+
+                    <v11:Barcode>
+
+                      <!--Optional:-->
+
+                      <v11:OneDBarcode>string</v11:OneDBarcode>
+
+                      <!--Optional:-->
+
+                      <v11:TwoDBarcode>string</v11:TwoDBarcode>
+
+                    </v11:Barcode>
+
+                    <!--Optional:-->
+
+                    <v11:ProofOfDelivery>
+
+                      <!--Optional:-->
+
+                      <v11:svg height="3" width="3">
+
+                        <!--1 or more repetitions:-->
+
+                        <v11:polyline style="string" points="string"/>
+
+                      </v11:svg>
+
+                      <!--Optional:-->
+
+                      <v11:ImageURL>string</v11:ImageURL>
+
+                    </v11:ProofOfDelivery>
+
+                  </v11:MPE-BarcodeScan>
+
+                </v11:MPE-BarcodeScanList>
+
+              </v1:PostMPETracksRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'http://www.royalmailgroup.com/api/MPE-API/V1/PostMPETracks'
+        soap-operation: '{http://www.royalmailgroup.com/api/MPE-API/V1}PostMPETracksRequest'
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v1:PostMPETracksResponse
+              xmlns:v1="http://www.royalmailgroup.com/api/MPE-API/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <!--Optional:-->
+
+                <v11:integrationFooter>
+
+                  <!--Optional:-->
+
+                  <v11:errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:error>
+
+                      <v11:errorCode>string</v11:errorCode>
+
+                      <v11:errorDescription>string</v11:errorDescription>
+
+                      <!--Optional:-->
+
+                      <v11:errorCause>string</v11:errorCause>
+
+                      <!--Optional:-->
+
+                      <v11:errorResolution>string</v11:errorResolution>
+
+                      <!--Optional:-->
+
+                      <v11:errorContext>string</v11:errorContext>
+
+                    </v11:error>
+
+                  </v11:errors>
+
+                  <!--Optional:-->
+
+                  <v11:warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:warning>
+
+                      <v11:warningCode>string</v11:warningCode>
+
+                      <v11:warningDescription>string</v11:warningDescription>
+
+                      <!--Optional:-->
+
+                      <v11:warningCause>string</v11:warningCause>
+
+                      <!--Optional:-->
+
+                      <v11:warningResolution>string</v11:warningResolution>
+
+                      <!--Optional:-->
+
+                      <v11:warningContext>string</v11:warningContext>
+
+                    </v11:warning>
+
+                  </v11:warnings>
+
+                </v11:integrationFooter>
+
+              </v1:PostMPETracksResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+security: []

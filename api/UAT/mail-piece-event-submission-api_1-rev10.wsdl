@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="MPE-APIService" targetNamespace="http://www.royalmailgroup.com/api/MPE-API/V1" xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1" xmlns:flt="http://www.royalmailgroup.com/integration/faultExt/V1" xmlns:int="http://www.royalmailgroup.com/integration/core/V1" xmlns:mpe="http://www.royalmailgroup.com/api/ExternalMPE/V1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.royalmailgroup.com/api/MPE-API/V1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<wsdl:documentation>Version 1.0.0</wsdl:documentation>
+	<wsdl:types>
+		<!-- Include the Service Specific Schema -->
+		<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.royalmailgroup.com/api/MPE-API/V1" version="1.0" xmlns="http://www.royalmailgroup.com/api/MPE-API/V1" xmlns:int="http://www.royalmailgroup.com/integration/core/V1" xmlns:mpe="http://www.royalmailgroup.com/api/ExternalMPE/V1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://www.royalmailgroup.com/api/ExternalMPE/V1"/>
+			<xs:import namespace="http://www.royalmailgroup.com/integration/core/V1"/>
+			<xs:complexType name="PostMPETracksRequest_TYPE">
+				<xs:sequence>
+					<xs:element ref="mpe:MPE-BarcodeScanList"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="PostMPETracksRequest" type="PostMPETracksRequest_TYPE"/>
+			<xs:complexType name="PostMPETracksResponse_TYPE">
+				<xs:sequence>
+					<xs:element minOccurs="0" ref="int:integrationFooter"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="PostMPETracksResponse" type="PostMPETracksResponse_TYPE"/>
+		</xs:schema>
+		<!-- Include the Data Schema -->
+		<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.royalmailgroup.com/api/ExternalMPE/V1" xmlns="http://www.royalmailgroup.com/api/ExternalMPE/V1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:complexType name="MPE-BarcodeScanList">
+				<xs:annotation>
+					<xs:documentation>A list of one or many MPE-BarcodeScan elements.</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="MPE-BarcodeScan" type="MPE-BarcodeScan"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="MPE-BarcodeScan">
+				<xs:annotation>
+					<xs:documentation>Captures a Mail Piece Event Barcode scan with associated metadata. </xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element maxOccurs="1" minOccurs="0" name="Operator">
+						<xs:annotation>
+							<xs:documentation>The postal operator that captured the Mail Piece Event.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element maxOccurs="1" minOccurs="0" name="ID" type="xs:integer">
+									<xs:annotation>
+										<xs:documentation>The ID of the postal operator.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element maxOccurs="1" minOccurs="0" name="Name" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>The name of the postal operator.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" name="EventCode" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Code denoting the type of Mail Piece Event that has been captured.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" name="EventDescription" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>A description of the Mail Piece Event that has been captured.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" name="EventTimestamp" type="xs:dateTime">
+						<xs:annotation>
+							<xs:documentation>The date and time at which the Mail Piece Event was captured.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" name="Barcode">
+						<xs:annotation>
+							<xs:documentation>Each Mail Piece should carry Barcodes which contain information about the item. All items should carry a One Dimensional Barcode and more recent items may also have a Two Dimensional barcode containing additional information.  </xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element maxOccurs="1" minOccurs="0" name="OneDBarcode" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>String representation of a UPU S10 Barcode.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element maxOccurs="1" minOccurs="0" name="TwoDBarcode" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>String representation of a 2 dimensional RMG B4AP Barcode.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" name="ProofOfDelivery">
+						<xs:annotation>
+							<xs:documentation>This element will be used to carry Proof of Delivery evidence. This may be in the form of an embedded SVG image or a url to an external image. </xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element maxOccurs="1" minOccurs="0" name="svg">
+									<xs:annotation>
+										<xs:documentation>W3C Scalable Vector Graphics object.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element maxOccurs="unbounded" name="polyline">
+												<xs:annotation>
+													<xs:documentation>W3C SVG Polyline element,  an image constructed from multiple straight lines. </xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:attribute name="style" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>The style attribute is used to define CSS properties for the polyline.</xs:documentation>
+														</xs:annotation>
+													</xs:attribute>
+													<xs:attribute name="points" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>A list of points that form the image, consisting of comma separated pairs of x/y coordinates, each pair separated by a space. eg. points="0,0 40,25 60,40"</xs:documentation>
+														</xs:annotation>
+													</xs:attribute>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attribute name="height" type="xs:int">
+											<xs:annotation>
+												<xs:documentation>Specifies the height of the SVG image.</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+										<xs:attribute name="width" type="xs:int">
+											<xs:annotation>
+												<xs:documentation>Specifies the width of the SVG image.</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:complexType>
+								</xs:element>
+								<xs:element maxOccurs="1" minOccurs="0" name="ImageURL" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>A URL that identifes the location of an external image resource.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="MPE-BarcodeScanList" type="MPE-BarcodeScanList">
+				<xs:annotation>
+					<xs:documentation>A list of one or many MPE-BarcodeScan elements. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:schema>
+		<!-- Include the RMG Standard Schemas -->
+		<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.royalmailgroup.com/integration/core/V1" version="2.0" xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1" xmlns:int="http://www.royalmailgroup.com/integration/core/V1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://www.royalmailgroup.com/cm/rmDatatypes/V1"/>
+			<!-- Define elements used for Integration Header definition -->
+			<xs:simpleType name="applicationId">
+				<xs:annotation>
+					<xs:documentation>For a request, this is the ID of the Service
+						Requester calling the service, unique when combined with the
+						TransactionId. For the response, this is the ID of the Service
+						Provider, unique when combined with the TransactionId.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="dt:identifier">
+					<xs:maxLength value="50"/>
+					<xs:whiteSpace value="preserve"/>
+					<xs:minLength value="1"/>
+					<xs:pattern value="[a-zA-Z0-9/\-]*"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="transactionId">
+				<xs:annotation>
+					<xs:documentation>Id preserved throughout the lifespan of the
+						transaction, unique when combined with the applicationId and
+						intermediaryId (if applicable).</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="dt:identifier">
+					<xs:maxLength value="50"/>
+					<xs:whiteSpace value="preserve"/>
+					<xs:minLength value="1"/>
+					<xs:pattern value="[a-zA-Z0-9/\-]*"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="identificationStructure">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="endUserId" nillable="false" type="dt:identifier">
+						<xs:annotation>
+							<xs:documentation>User ID associated with the end user of the
+								internal or external organisation</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="clientId" nillable="false" type="dt:identifier">
+						<xs:annotation>
+							<xs:documentation>The ID of the Service Requester organisation or
+								sub-organisation calling the service.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="applicationId" type="int:applicationId">
+						<xs:annotation>
+							<xs:documentation>The ID of the Service Requester system calling
+								the service, unique when combined with the transactionId.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="intermediaryId" nillable="false" type="int:applicationId">
+						<xs:annotation>
+							<xs:documentation>Id associated with the Intermediary application
+								(if applicable).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="transactionId" type="int:transactionId">
+						<xs:annotation>
+							<xs:documentation>Unique session id sent by the Service Requestor
+								(for the request) or returned by the Service Provider (for the
+								response)</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="debugAuditStructure">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="testFlag" type="dt:boolean">
+						<xs:annotation>
+							<xs:documentation>Flag which can be used to test that the exposed
+								service is available. It is not expected that this flag will be
+								used under normal BAU service operation</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="debugFlag" type="dt:boolean">
+						<xs:annotation>
+							<xs:documentation>Flag which can be used to allow any messages to
+								be dynamically debugged. It is not expected that this flag will
+								be used under normal BAU service operation</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="performanceFlag" type="dt:boolean">
+						<xs:annotation>
+							<xs:documentation>Flag which can be used to track the performance
+								of the service between systems (entry time, exit time, latency
+								etc)</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="messageAuditFlag" type="dt:boolean">
+						<xs:annotation>
+							<xs:documentation>Flag used to audit message exchanges between
+								systems</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="integrationHeader">
+				<xs:annotation>
+					<xs:documentation>Common integration header definition
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="dateTime" nillable="false" type="dt:dateTime">
+						<xs:annotation>
+							<xs:documentation>Date timestamp associated with when the data
+								was generated, sent or received</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="version" type="dt:decimal">
+						<xs:annotation>
+							<xs:documentation>Version of the service</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="identification" type="int:identificationStructure">
+						<xs:annotation>
+							<xs:documentation>Identification details associated with the
+								Service Requestor or Service Provider</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="debugAudit" type="int:debugAuditStructure">
+						<xs:annotation>
+							<xs:documentation>Flags used to assist with troubleshooting,
+								problem determination and to allow the performance and data
+								exchanges between systems to be tracked and audited.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<!-- Define elements used for Integration Footer definition -->
+			<xs:simpleType name="errorCode">
+				<xs:annotation>
+					<xs:documentation>Code associated with the error condition in the
+						form ENNNN</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="dt:identifier">
+					<xs:pattern value="[E]{1}[0-9]{4}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="warningCode">
+				<xs:annotation>
+					<xs:documentation>Code associated with the warning condition in the
+						form WNNNN</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="dt:identifier">
+					<xs:pattern value="[W]{1}[0-9]{4}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="errorDetail">
+				<xs:sequence>
+					<xs:element name="errorCode" type="int:errorCode">
+						<xs:annotation>
+							<xs:documentation>Code associated with the error condition
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="errorDescription" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Description of the error condition
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="errorCause" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Cause of the business error (if known)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="errorResolution" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Description of the resolution and action
+								required to correct the error</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="errorContext" nillable="true" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Context of the business error, e.g. client or
+								server</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="errorStructure">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="error" type="int:errorDetail"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="warningDetail">
+				<xs:sequence>
+					<xs:element name="warningCode" type="int:warningCode">
+						<xs:annotation>
+							<xs:documentation>Code associated with the warning
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="warningDescription" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Description of the warning</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="warningCause" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Cause of the warning (if known)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="warningResolution" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Description of the resolution and action
+								required to correct the warning</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="warningContext" nillable="true" type="dt:description">
+						<xs:annotation>
+							<xs:documentation>Context of the warning, e.g. client or server
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="warningStructure">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="warning" type="int:warningDetail"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="integrationFooter">
+				<xs:annotation>
+					<xs:documentation>Common integration footer definition
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="errors" type="int:errorStructure"/>
+					<xs:element minOccurs="0" name="warnings" type="int:warningStructure"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="integrationHeader" type="int:integrationHeader"/>
+			<xs:element name="integrationFooter" type="int:integrationFooter"/>
+		</xs:schema>
+		<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.royalmailgroup.com/integration/faultExt/V1" version="1.0" xmlns:dt="http://www.royalmailgroup.com/cm/rmDatatypes/V1" xmlns:flt="http://www.royalmailgroup.com/integration/faultExt/V1" xmlns:int="http://www.royalmailgroup.com/integration/core/V1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://www.royalmailgroup.com/integration/core/V1"/>
+			<xs:import namespace="http://www.royalmailgroup.com/cm/rmDatatypes/V1"/>
+			<xs:complexType name="exceptionDetails">
+				<xs:annotation>
+					<xs:documentation>Fault reporting structure</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="exceptionTransactionId" type="int:transactionId"/>
+					<xs:element name="exceptionCode" type="int:errorCode"/>
+					<xs:element name="exceptionText" type="dt:description"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="exceptionDetails" type="flt:exceptionDetails"/>
+		</xs:schema>
+		<xs:schema targetNamespace="http://www.royalmailgroup.com/cm/rmDatatypes/V1" version="V1.4" xmlns="http://www.royalmailgroup.com/cm/rmDatatypes/V1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:simpleType name="description">
+				<xs:annotation>
+					<xs:documentation>A description is a sub-type of string and is
+						statement in words that gives an account or descriptive
+						representation of a thing. Descriptions are only editable via an
+						admin function and are for display and information purposes only
+						for end users.</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="256"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="shortName">
+				<xs:annotation>
+					<xs:documentation>A name is a sub-type of string and is word or a
+						combination of words by which a person, place, or thing, a body or
+						class, or any object of thought is designated, called, or known.
+						short name is intended for use with Reference data items
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="64"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="document">
+				<xs:annotation>
+					<xs:documentation>Used in the digital representation of documents
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:base64Binary"/>
+			</xs:simpleType>
+			<xs:simpleType name="string">
+				<xs:annotation>
+					<xs:documentation>Simple set of alphanumeric characters.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="4000"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="image">
+				<xs:annotation>
+					<xs:documentation>Used in the digital representation of Images
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:base64Binary"/>
+			</xs:simpleType>
+			<xs:simpleType name="identifier">
+				<xs:annotation>
+					<xs:documentation>An identifier is a sub-type of string which
+						serves as a means of identification for a particular thing; An
+						identifier can be associated with a name. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="128"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="longDescription">
+				<xs:annotation>
+					<xs:documentation>A long description is a sub-type of string and is
+						a longer version of a description (see definition of description)
+						and is used to expand a description. Descriptions are only
+						editable via an admin function and are for display and information
+						purposes only for end users.</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="512"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="boolean">
+				<xs:annotation>
+					<xs:documentation>Boolean, or boolean logic, is a subset of algebra
+						used for creating true/false statements. Boolean expressions use
+						the operators AND, OR, XOR, and NOT to compare values and return a
+						true or false result. Boolean values can also be referred to as
+						'flags'. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:boolean"/>
+			</xs:simpleType>
+			<xs:simpleType name="shortDescription">
+				<xs:annotation>
+					<xs:documentation>A short description is a sub-type of string and
+						is a shorter version of a description (see definition of
+						description) and is used to summarise a longer description.
+						Descriptions are only editable via an admin function and are for
+						display and information purposes only for end users
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="128"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="twoDBbarcode">
+				<xs:annotation>
+					<xs:documentation>Used in the digital representation of 2D Barcodes
+						### DO NOT USE - superceded by twoDBarcode ###</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:base64Binary"/>
+			</xs:simpleType>
+			<xs:simpleType name="name">
+				<xs:annotation>
+					<xs:documentation>A name is a sub-type of string and is word or a
+						combination of words by which a person, place, or thing, a body or
+						class, or any object of thought is designated, called, or known.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="64"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="comment">
+				<xs:annotation>
+					<xs:documentation>A comment is a sub-type of string which can be
+						used as a note intended as an explanation, illustration,
+						instruction, capture of an interaction or an annotation. This is
+						free format text which can be input by the end user.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="4000"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="time">
+				<xs:annotation>
+					<xs:documentation>time is a unit of measure to record hours,
+						minutes, seconds and milliseconds. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:time"/>
+			</xs:simpleType>
+			<xs:simpleType name="date">
+				<xs:annotation>
+					<xs:documentation>A date represents a period in time which could be
+						a particular month, day, and year at which some event happened or
+						will happen. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:date"/>
+			</xs:simpleType>
+			<xs:simpleType name="decimal">
+				<xs:annotation>
+					<xs:documentation>A decimal data type represents a real number with
+						every decimal place indicating a multiple of a negative power of
+						10. It represents non-repeating decimal fractions like 0.3 and
+						-1.17 without rounding, and gives the ability to do arithmetic on
+						them.</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:decimal"/>
+			</xs:simpleType>
+			<xs:simpleType name="longName">
+				<xs:annotation>
+					<xs:documentation>A long name is a sub-type of string and is word
+						or a combination of words by which an organization, place, or
+						thing, a body or class, or any object of thought is designated,
+						called, or known.</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="128"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="float">
+				<xs:annotation>
+					<xs:documentation>A float describes a data type for representing an
+						approximation to real numbers in a way that can support a wide
+						range of values. The numbers are, in general, represented
+						approximately to a fixed number of significant digits (the
+						mantissa) and scaled using an exponent. The base for the scaling
+						is normally 2, 10 or 16.
+						For example, the numbers 5.5, 0.001, and -2,345.6789 are floating
+						point numbers. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:float"/>
+			</xs:simpleType>
+			<xs:simpleType name="integer">
+				<xs:annotation>
+					<xs:documentation>An integer is a whole number (not a fraction)
+						that can be positive, negative, or zero. Unlike floats, integers
+						cannot have decimal places.</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:integer"/>
+			</xs:simpleType>
+			<xs:simpleType name="ordinal">
+				<xs:annotation>
+					<xs:documentation>A number indicating a position as in a sequence
+						number. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:integer"/>
+			</xs:simpleType>
+			<xs:simpleType name="dateTime">
+				<xs:annotation>
+					<xs:documentation>dateTime represents a period in time which could
+						be a particular month, day, and year at which some event happened
+						or will happen but also includes a breakdown of time using hours,
+						minutes, seconds and milliseconds. A dateTime stamp is a common
+						use for this data type so that a precise record of an event can be
+						captured.  </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:dateTime"/>
+			</xs:simpleType>
+			<xs:simpleType name="geoSpatial">
+				<xs:annotation>
+					<xs:documentation>A decimal data type representing Latitude and
+						Longitude data. The format of decimal 10,7 was chosen as a generic
+						representation which facilities conversion between geospatial
+						systems</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:decimal">
+					<xs:fractionDigits value="7"/>
+					<xs:totalDigits value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="twoDBarcode">
+				<xs:annotation>
+					<xs:documentation>Used in the digital representation of 2D Barcodes
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:base64Binary"/>
+			</xs:simpleType>
+			<xs:simpleType name="cardinal">
+				<xs:annotation>
+					<xs:documentation>A number indicating a whole number amount as in a
+						count of items. </xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:integer"/>
+			</xs:simpleType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="IntegrationHeader">
+		<wsdl:part element="int:integrationHeader" name="intHeader"/>
+	</wsdl:message>
+	<wsdl:message name="PostMPETracks_InputMessage">
+		<wsdl:part element="tns:PostMPETracksRequest" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="PostMPETracks_OutputMessage">
+		<wsdl:part element="tns:PostMPETracksResponse" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="faultResponse">
+		<wsdl:part element="flt:exceptionDetails" name="parameters"/>
+	</wsdl:message>
+	<wsdl:portType name="MPE-APIServicePortType">
+		<wsdl:operation name="PostMPETracks">
+			<wsdl:documentation>Allows consumers to send Mail Piece Event tracking messages to Royal Mail processing systems.</wsdl:documentation>
+			<wsdl:input message="tns:PostMPETracks_InputMessage" name="PostMPETracksRequest"/>
+			<wsdl:output message="tns:PostMPETracks_OutputMessage" name="PostMPETracksResponse"/>
+			<wsdl:fault message="tns:faultResponse" name="faultResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MPE-APIServiceSoap11Binding" type="tns:MPE-APIServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="PostMPETracks">
+			<soap:operation soapAction="http://www.royalmailgroup.com/api/MPE-API/V1/PostMPETracks" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+				<soap:header message="tns:IntegrationHeader" part="intHeader" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+				<soap:header message="tns:IntegrationHeader" part="intHeader" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="faultResponse">
+				<soap:fault name="faultResponse" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MPE-APIService">
+		<wsdl:port binding="tns:MPE-APIServiceSoap11Binding" name="MPE-APIServiceHttpSoap11Endpoint">
+			<soap:address location="TBC"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

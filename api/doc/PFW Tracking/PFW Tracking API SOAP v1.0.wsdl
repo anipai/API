@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:pt="urn:royalmail/ParcelTracking/2003/06/23" xmlns:s0="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tv11="http://xmllib.intranet.point/trackingv11.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:royalmail/ParcelTracking/2003/06/23">
+	<wsdl:types xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+			<xs:element name="TrackingEnquiry">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="0" name="SearchField" type="xs:string"/>
+						<xs:element maxOccurs="1" minOccurs="0" name="DatePosted" type="xs:string"/>
+						<xs:element maxOccurs="1" minOccurs="0" name="CustomerNo" type="xs:string"/>
+						<xs:element maxOccurs="1" minOccurs="0" name="IntInbound" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TrackingEnquiryResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TrackingEnquiryResult" maxOccurs="1">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="pt:Response"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="urn:royalmail/ParcelTracking/2003/06/23">
+			<xs:simpleType name="oracleDateTime">
+				<xs:restriction base="xs:string">
+					<xs:length value="26"/>
+					<xs:pattern value="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-([0-1][0-9]|2[0-3]).[0-5][0-9].[0-5][0-9].[0-9]{6}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="DateSentFormat">
+				<xs:restriction base="xs:string">
+					<xs:length value="19"/>
+					<xs:pattern value="(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-[0-9]{4} ([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="DateSentCommonData">
+				<xs:restriction base="xs:string">
+					<xs:length value="19"/>
+					<xs:pattern value="(0[0-9]|1[012])-(0[0-9]|[12][0-9]|3[01])-[0-9]{4} ([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="consignmentOrParcelNumber">
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0"/>
+					<xs:maxLength value="35"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="AccountNumber">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContractNumber">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductCode" type="xs:string"/>
+			<xs:element name="Response">
+				<xs:annotation>
+					<xs:documentation>Response to a tracking request - root object</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="TrackResponse">
+							<xs:annotation>
+								<xs:documentation>Valid response to a tracking request</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" name="CommonData">
+										<xs:annotation>
+											<xs:documentation>Identifier and attribute data common to consignment, parcel or item</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element minOccurs="0" name="DelAd" type="pt:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Delivery address,Proprietary Consignia address label format </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element minOccurs="0" name="CollAd" type="pt:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Collection address Dervied from Contract. Proprietary Consignia address label format</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element minOccurs="0" name="AltAd" type="pt:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Alternative delivery Address. Proprietor Consignia address Label format</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element maxOccurs="10" minOccurs="0" name="LinkCons">
+													<xs:annotation>
+														<xs:documentation>Linked Consignment information to be used in subsequent enquires</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:attribute name="LinkConsId" type="xs:integer" use="optional">
+															<xs:annotation>
+																<xs:documentation>Unique ID allocated by POISE for this linked consignment</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="Id" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="Creation" type="xs:dateTime" use="optional">
+															<xs:annotation>
+																<xs:documentation>Time and Date that the item was created in the Poise Database</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="ODS" type="xs:dateTime" use="optional">
+															<xs:annotation>
+																<xs:documentation>Time and Date that this record was transferred to ODS within POISE</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="Id" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SendRef" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Senders Reference</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="CustNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Owner of the contract</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Cont" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Contract upon which item/consigment has been posted</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Service" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The basic service upon which the item/consignment was posted e.g Parcelforce 24</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Prod" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The particular product in relation to the underlying service e.g Res Delivery Afternoon 24 or retail PF 24, which are both, based on the Parcelforce 24 Service</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemAdv" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Number of items advised (may be for collection or in the case of larger customers these could be loaded into containers.) i.e. based on pre-advice.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemCol" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Actual number of items in the consigment based on consignments/parcels tracked in the system.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemDel" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Number of items delivered</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ForeignId" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Originating Foreign label for inbound international items </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="RecNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the person/business to which the consignment/parcel/packet was addressed.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Brand" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Brand, Initially this will be either PE for Parcelforce tracks and RM for RoyalMail </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SpeclInst" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Any Special Instructions associated to the item/consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Origin" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Country of origin for inbound international items.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ExpectDelDate" type="xs:date" use="optional">
+												<xs:annotation>
+													<xs:documentation>Expected delivery date for this item/consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ExpectDelTime" type="xs:time" use="optional">
+												<xs:annotation>
+													<xs:documentation>Expected Delivery Time for this Item/Consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="DateSent" type="pt:DateSentCommonData" use="optional">
+												<xs:annotation>
+													<xs:documentation>Time and Date that the consignment was despatched from the customer </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element maxOccurs="999" minOccurs="0" name="Item">
+										<xs:annotation>
+											<xs:documentation>Parcel or item against which events occured</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element maxOccurs="unbounded" minOccurs="0" name="Event">
+													<xs:annotation>
+														<xs:documentation>Events that have happened to the item</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:attribute name="EvntLoc" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The location at which the event was recorded.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntDes" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>Event description in narrative form derived from reference data.
+																Note: Location will now be held as a separate event attribute in EvntLoc</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntCode" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Code reference of the event</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntTime" type="xs:time" use="required">
+															<xs:annotation>
+																<xs:documentation>The time the event occurred</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntDate" type="xs:date" use="required">
+															<xs:annotation>
+																<xs:documentation>The date the event occurred</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntInst" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Optional Instructions for end user, i.e Call this number</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="ItemId" type="xs:string" use="required"/>
+											<xs:attribute name="Signatory" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the signatory for this item</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SigKey" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Signature Key used to identify the signature image relevant to this item</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Status" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Current status of the item as held by the responding tracking repository,
+													e.g. delivered, in transit, held</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element maxOccurs="999" minOccurs="0" name="SigImage">
+										<xs:annotation>
+											<xs:documentation>Signiture Image In SVG format</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:choice>
+												<xs:element name="CompDataStr" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Image as compressed data string</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ImgURL" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>URL Pointer to image file</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:choice>
+											<xs:attribute name="SigKey" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Signature Key used to identify the signature image relevant to an item/items</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SndRefResponse">
+							<xs:annotation>
+								<xs:documentation>Valid response to a senders reference request.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element maxOccurs="999" name="SndRefDetail">
+										<xs:annotation>
+											<xs:documentation>Information for each consignment, package or parcel against a senders reference request.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Id" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="RecNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the person/business to which the consignment/parcel/packet was addressed.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Cont" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Contract under which the consignment, Parcel or item was sent.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ErrorResponse">
+							<xs:annotation>
+								<xs:documentation>If an error occurs, then this element is returned instead of a TrackResponse</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:attribute name="Id" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Item or Consignment Label Identifier</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Des" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Error description</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Error" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Error Code</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Brand" type="xs:string" use="required">
+									<xs:annotation>
+										<xs:documentation>Brand, Initially this will be either PE for Parcelforce tracks and RM for RoyalMail </xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="EvntInst" type="xs:string" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="AddressInfo">
+				<xs:annotation>
+					<xs:documentation>Address Information</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="AddLabel">
+						<xs:annotation>
+							<xs:documentation>Proprietary address label format from POL</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:minLength value="1"/>
+								<xs:maxLength value="818"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="PoCde">
+						<xs:annotation>
+							<xs:documentation>Postcode for international items</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string"/>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="Cntry" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Country for international items</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ParcelTrackingEnquiry">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="TrackRequest">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Parameters">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="SearchType">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:enumeration value="AUTHQ"/>
+															<xs:enumeration value="QFC"/>
+															<xs:enumeration value="QBSR"/>
+															<xs:enumeration value="QBPT"/>
+															<xs:enumeration value="QBAN"/>
+															<xs:enumeration value="QBMT"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element minOccurs="0" name="MaxConsignments">
+													<xs:simpleType>
+														<xs:restriction base="xs:short">
+															<xs:minInclusive value="1"/>
+															<xs:maxInclusive value="16000"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element minOccurs="0" name="SearchValue" type="pt:consignmentOrParcelNumber"/>
+												<xs:element minOccurs="0" name="CustNum">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element minOccurs="0" name="Creation" type="pt:oracleDateTime"/>
+												<xs:element minOccurs="0" name="ODS" type="pt:oracleDateTime"/>
+												<xs:element minOccurs="0" name="StartDate" type="pt:oracleDateTime"/>
+												<xs:element minOccurs="0" name="EndDate" type="pt:oracleDateTime"/>
+												<xs:element minOccurs="0" name="AccountsForAuthentication">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" name="AccountForAuthentication">
+																<xs:complexType>
+																	<xs:all>
+																		<xs:element ref="pt:ContractNumber"/>
+																		<xs:element ref="pt:AccountNumber"/>
+																	</xs:all>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+													<xs:unique name="uniqueAccountNumberForAuthentication">
+														<xs:selector xpath="AccountForAuthentication"/>
+														<xs:field xpath="AccountNumber"/>
+													</xs:unique>
+												</xs:element>
+												<xs:element minOccurs="0" name="ProductCodes">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" ref="pt:ProductCode"/>
+														</xs:sequence>
+													</xs:complexType>
+													<xs:unique name="uniqueProductCode">
+														<xs:selector xpath="ProductCode"/>
+														<xs:field xpath="."/>
+													</xs:unique>
+												</xs:element>
+												<xs:element minOccurs="0" name="Identifiers">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" name="Identifier" type="pt:consignmentOrParcelNumber"/>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element minOccurs="0" name="AccountNumbers">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" ref="pt:AccountNumber"/>
+														</xs:sequence>
+													</xs:complexType>
+													<xs:unique name="uniqueAccountNumber">
+														<xs:selector xpath="AccountNumber"/>
+														<xs:field xpath="."/>
+													</xs:unique>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ParcelTrackingEnquiryResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ParcelTrackingEnquiryResult">
+							<xs:complexType>
+								<xs:choice>
+									<xs:element maxOccurs="unbounded" ref="pt:Response"/>
+									<xs:element name="TrackResponse">
+										<xs:complexType>
+											<xs:choice>
+												<xs:element name="Consignments">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" name="Consignment">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="Number" type="pt:consignmentOrParcelNumber"/>
+																		<xs:element name="DateSent" type="pt:DateSentFormat"/>
+																		<xs:element name="Parcels" nillable="true">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element maxOccurs="unbounded" minOccurs="0" name="Parcel">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="Number" type="pt:consignmentOrParcelNumber"/>
+																								<xs:element name="Status" type="xs:string"/>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Customers">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element maxOccurs="unbounded" name="Customer">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element ref="pt:AccountNumber"/>
+																		<xs:element name="Status">
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:enumeration value="Y"/>
+																					<xs:enumeration value="N"/>
+																					<xs:enumeration value="T"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:element>
+																		<xs:element minOccurs="0" name="Contracts">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element maxOccurs="unbounded" name="Contract">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element ref="pt:ContractNumber"/>
+																								<xs:element name="Status">
+																									<xs:simpleType>
+																										<xs:restriction base="xs:string">
+																											<xs:enumeration value="Y"/>
+																											<xs:enumeration value="T"/>
+																										</xs:restriction>
+																									</xs:simpleType>
+																								</xs:element>
+																								<xs:element name="Products">
+																									<xs:complexType>
+																										<xs:sequence>
+																											<xs:element maxOccurs="unbounded" minOccurs="0" name="Product">
+																												<xs:complexType>
+																													<xs:sequence>
+																														<xs:element minOccurs="0" ref="pt:ProductCode"/>
+																														<xs:element minOccurs="0" name="Description">
+																															<xs:simpleType>
+																																<xs:restriction base="xs:string">
+																																	<xs:minLength value="1"/>
+																																	<xs:maxLength value="40"/>
+																																</xs:restriction>
+																															</xs:simpleType>
+																														</xs:element>
+																														<xs:element minOccurs="0" name="StructureNumber">
+																															<xs:simpleType>
+																																<xs:restriction base="xs:string">
+																																	<xs:minLength value="1"/>
+																																	<xs:maxLength value="40"/>
+																																</xs:restriction>
+																															</xs:simpleType>
+																														</xs:element>
+																													</xs:sequence>
+																												</xs:complexType>
+																											</xs:element>
+																										</xs:sequence>
+																									</xs:complexType>
+																									<xs:unique name="uniqueProduct">
+																										<xs:selector xpath="Product"/>
+																										<xs:field xpath="ProductCode"/>
+																									</xs:unique>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																			<xs:unique name="uniqueContract">
+																				<xs:selector xpath="Contract"/>
+																				<xs:field xpath="ContractNumber"/>
+																			</xs:unique>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+													<xs:unique name="uniqueCustomer">
+														<xs:selector xpath="Customer"/>
+														<xs:field xpath="AccountNumber"/>
+													</xs:unique>
+												</xs:element>
+											</xs:choice>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="MultipleTrackingResponses">
+										<xs:complexType>
+											<xs:choice>
+												<xs:element maxOccurs="unbounded" ref="tv11:Response"/>
+												<xs:element maxOccurs="unbounded" name="NoResponse">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="Identifier" type="pt:consignmentOrParcelNumber"/>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:choice>
+										</xs:complexType>
+									</xs:element>
+								</xs:choice>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://xmllib.intranet.point/trackingv11.xsd">
+			<xs:simpleType name="DateSentCommonData">
+				<xs:restriction base="xs:string">
+					<xs:length value="19"/>
+					<xs:pattern value="(0[0-9]|1[012])-(0[0-9]|[12][0-9]|3[01])-[0-9]{4} ([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="Response">
+				<xs:annotation>
+					<xs:documentation>Response to a tracking request - root object</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="TrackResponse">
+							<xs:annotation>
+								<xs:documentation>Valid response to a tracking request</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" name="CommonData">
+										<xs:annotation>
+											<xs:documentation>Identifier and attribute data common to consignment, parcel or item</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element minOccurs="0" name="DelAd" type="tv11:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Delivery address,Proprietary Consignia address label format </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element minOccurs="0" name="CollAd" type="tv11:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Collection address Dervied from Contract. Proprietary Consignia address label format</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element minOccurs="0" name="AltAd" type="tv11:AddressInfo">
+													<xs:annotation>
+														<xs:documentation>Alternative delivery Address. Proprietor Consignia address Label format</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element maxOccurs="10" minOccurs="0" name="LinkCons">
+													<xs:annotation>
+														<xs:documentation>Linked Consignment information to be used in subsequent enquires</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:attribute name="LinkConsId" type="xs:integer" use="optional">
+															<xs:annotation>
+																<xs:documentation>Unique ID allocated by POISE for this linked consignment</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="Id" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="Creation" type="xs:dateTime" use="optional">
+															<xs:annotation>
+																<xs:documentation>Time and Date that the item was created in the Poise Database</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="ODS" type="xs:dateTime" use="optional">
+															<xs:annotation>
+																<xs:documentation>Time and Date that this record was transferred to ODS within POISE</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="Id" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SendRef" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Senders Reference</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="CustNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Owner of the contract</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Cont" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Contract upon which item/consigment has been posted</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Service" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The basic service upon which the item/consignment was posted e.g Parcelforce 24</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Prod" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The particular product in relation to the underlying service e.g Res Delivery Afternoon 24 or retail PF 24, which are both, based on the Parcelforce 24 Service</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemAdv" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Number of items advised (may be for collection or in the case of larger customers these could be loaded into containers.) i.e. based on pre-advice.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemCol" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Actual number of items in the consigment based on consignments/parcels tracked in the system.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ItemDel" type="xs:integer" use="required">
+												<xs:annotation>
+													<xs:documentation>Number of items delivered</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ForeignId" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Originating Foreign label for inbound international items </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="RecNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the person/business to which the consignment/parcel/packet was addressed.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Brand" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Brand, Initially this will be either PE for Parcelforce tracks and RM for RoyalMail </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SpeclInst" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Any Special Instructions associated to the item/consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Origin" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Country of origin for inbound international items.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ExpectDelDate" type="xs:date" use="optional">
+												<xs:annotation>
+													<xs:documentation>Expected delivery date for this item/consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="ExpectDelTime" type="xs:time" use="optional">
+												<xs:annotation>
+													<xs:documentation>Expected Delivery Time for this Item/Consignment</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="DateSent" type="tv11:DateSentCommonData" use="optional">
+												<xs:annotation>
+													<xs:documentation>Time and Date that the consignment was despatched from the customer </xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element maxOccurs="999" minOccurs="0" name="Item">
+										<xs:annotation>
+											<xs:documentation>Parcel or item against which events occured</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element maxOccurs="unbounded" minOccurs="0" name="Event">
+													<xs:annotation>
+														<xs:documentation>Events that have happened to the item</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:attribute name="EvntLoc" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The location at which the event was recorded.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntDes" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>Event description in narrative form derived from reference data.
+																Note: Location will now be held as a separate event attribute in EvntLoc</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntCode" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Code reference of the event</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntTime" type="xs:time" use="required">
+															<xs:annotation>
+																<xs:documentation>The time the event occurred</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntDate" type="xs:date" use="required">
+															<xs:annotation>
+																<xs:documentation>The date the event occurred</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="EvntInst" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>Optional Instructions for end user, i.e Call this number</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="ItemId" type="xs:string" use="required"/>
+											<xs:attribute name="Signatory" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the signatory for this item</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="SigKey" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Signature Key used to identify the signature image relevant to this item</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Status" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Current status of the item as held by the responding tracking repository,
+													e.g. delivered, in transit, held</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element maxOccurs="999" minOccurs="0" name="SigImage">
+										<xs:annotation>
+											<xs:documentation>Signiture Image In SVG format</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:choice>
+												<xs:element name="CompDataStr" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Image as compressed data string</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ImgURL" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>URL Pointer to image file</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:choice>
+											<xs:attribute name="SigKey" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Signature Key used to identify the signature image relevant to an item/items</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SndRefResponse">
+							<xs:annotation>
+								<xs:documentation>Valid response to a senders reference request.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element maxOccurs="999" name="SndRefDetail">
+										<xs:annotation>
+											<xs:documentation>Information for each consignment, package or parcel against a senders reference request.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="Id" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Reference to Consignment, Parcel or package</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="RecNme" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>The name of the person/business to which the consignment/parcel/packet was addressed.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="Cont" type="xs:string" use="optional">
+												<xs:annotation>
+													<xs:documentation>Contract under which the consignment, Parcel or item was sent.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ErrorResponse">
+							<xs:annotation>
+								<xs:documentation>If an error occurs, then this element is returned instead of a TrackResponse</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:attribute name="Id" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Item or Consignment Label Identifier</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Des" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Error description</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Error" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>Error Code</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="Brand" type="xs:string" use="required">
+									<xs:annotation>
+										<xs:documentation>Brand, Initially this will be either PE for Parcelforce tracks and RM for RoyalMail </xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="EvntInst" type="xs:string" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="AddressInfo">
+				<xs:annotation>
+					<xs:documentation>Address Information</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="AddLabel">
+						<xs:annotation>
+							<xs:documentation>Proprietary address label format from POL</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:minLength value="1"/>
+								<xs:maxLength value="818"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="PoCde">
+						<xs:annotation>
+							<xs:documentation>Postcode for international items</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string"/>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="Cntry" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Country for international items</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="TrackingEnquirySoapIn">
+		<wsdl:part name="parameters" element="s0:TrackingEnquiry"/>
+	</wsdl:message>
+	<wsdl:message name="TrackingEnquirySoapOut">
+		<wsdl:part name="parameters" element="s0:TrackingEnquiryResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ParcelTrackingEnquirySoapIn">
+		<wsdl:part name="parameters" element="pt:ParcelTrackingEnquiry"/>
+	</wsdl:message>
+	<wsdl:message name="ParcelTrackingEnquirySoapOut">
+		<wsdl:part name="parameters" element="pt:ParcelTrackingEnquiryResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="ParcelTrackingServicePort">
+		<wsdl:operation name="TrackingEnquiry">
+			<wsdl:documentation>Provides the latest tracking information based on a Parcelforce Consignment number.</wsdl:documentation>
+			<wsdl:input message="pt:TrackingEnquirySoapIn"/>
+			<wsdl:output message="pt:TrackingEnquirySoapOut"/>
+		</wsdl:operation>
+		<wsdl:operation name="ParcelTrackingEnquiry">
+			<wsdl:documentation>Provides the latest tracking information for Parcelforce mail items based on a customer number (sender reference) and account information.</wsdl:documentation>
+			<wsdl:input message="pt:ParcelTrackingEnquirySoapIn"/>
+			<wsdl:output message="pt:ParcelTrackingEnquirySoapOut"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ParcelTrackingServiceSoapBinding" type="pt:ParcelTrackingServicePort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ParcelTrackingEnquiry">
+			<soap:operation soapAction="urn:royalmail/ParcelTracking/2003/06/23/ParcelTrackingEnquiry" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="TrackingEnquiry">
+			<soap:operation soapAction="http://tempuri.org/TrackingEnquiry" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ParcelTrackingService">
+		<wsdl:port name="ParcelTrackingServiceSoap" binding="pt:ParcelTrackingServiceSoapBinding">
+			<soap:address location="https://api.royalmail.net/parceltracking/v1"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

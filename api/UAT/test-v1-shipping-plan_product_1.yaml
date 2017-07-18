@@ -1,0 +1,29 @@
+product: 1.0.0
+info:
+  title: Test V1 Shipping Plan
+  version: '1'
+  description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using version 1 of the Shipping API
+  name: test-v1-shipping-plan
+apis:
+  shipping-api-v1-soap:
+    $ref: shipping-api-v1-soap_1.0.1-rev14.yaml
+plans:
+  test-v1-shipping-plan:
+    title: Test V1 Shipping Plan
+    description: This plan is for Royal Mail customers who are going through the Onboarding process in preparation for using version 1 of the Shipping API
+    approval: true
+    apis:
+      shipping-api-v1-soap:
+        operations:
+          - path: /cancelShipment
+            operation: post
+          - path: /createManifest
+            operation: post
+          - path: /createShipment
+            operation: post
+          - path: /printLabel
+            operation: post
+          - path: /printManifest
+            operation: post
+          - path: /updateShipment
+            operation: post

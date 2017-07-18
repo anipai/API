@@ -1,0 +1,21 @@
+product: 1.0.0
+info:
+  title: Live Parcel Tracking Plan
+  version: '6'
+  description: Live Parcel Tracking Plan - This plan will be used for PFW Tracking SOAP api Go Live
+  name: live-parcel-tracking-plan
+apis:
+  pfw-tracking-api-soap-live:
+    $ref: pfw-tracking-api-soap-live_1-rev5.yaml
+plans:
+  live-parcel-tracking-plan:
+    title: Live Parcel Tracking Plan
+    description: Live Parcel Tracking Plan - This plan will be used for PFW Tracking SOAP api Go Live
+    approval: true
+    apis:
+      pfw-tracking-api-soap-live:
+        operations:
+          - path: /ParcelTrackingEnquiry
+            operation: post
+          - path: /TrackingEnquiry
+            operation: post

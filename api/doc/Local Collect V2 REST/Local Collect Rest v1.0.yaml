@@ -1,0 +1,303 @@
+#    Version History
+#
+# version 		author 			changes
+# 0.1			Cliff Dias		Created
+# 0.5			Cliff Dias		Updated locationType data based on peer review
+# 0.6     		Cliff Dias		Updated end point to geo/spatial for 
+#the search by latitude and longitude
+# 1.0     		Cliff Dias		Final
+ 
+# Local Collect 2.0 REST Specification
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "2.0.0"
+  title: Local Collect REST API specification
+  description: This document provides the REST API specification for the 2.0 Local COllect REST API. The API consists of 2 operations - get location by post code and get location by geo location. The operations return a list of post office branches and enquiry offices sorted by distance.
+  
+#This is the base URL for the REST end point
+host: "api.royalmail.net"
+
+#This is the base URI for the operations supported by the API
+basePath: "/localcollect/v2/locations"
+
+schemes: 
+  - https
+
+produces: 
+  - application/json
+
+# Local Collect API paths
+paths:
+  # This is a path endpoint for the post code search.
+  /{postcode}:
+    # This is a HTTPs operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets Local Collect `POL or EO Branch` objects.
+        Mandatory path param postCode determines
+        the epicentre of the search for
+      # This is the array of GET operation parameters for the postcode search:
+      parameters:
+        # Post Code of the epicentre of the search radius
+        -
+          name: postcode
+          in: path
+          description: postcode of the epicentre of the search radius
+          required: true
+          type: string
+          pattern: "[a-zA-Z][0-9a-zA-Z]+\\s?[0-9a-zA-Z]*"
+        -
+        # search radius from the epicentre 
+          name: radius
+          in: query
+          default: 10
+          description: search radius from the post code specified
+          required: false
+          type: integer
+        -  
+        # optional location type 
+          name: locationtype
+          in: query
+          description: the location type to restrict the search to
+          required: false
+          type: string
+          pattern: "Enquiry Office|Post Office"
+          
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref : '#/definitions/locationResponse'
+        401:
+          description : Authorisation failure
+          schema:
+            $ref : '#/definitions/errorResponse'
+        400:
+          description : Bad Request. Probably malformed request
+          schema:
+            $ref : '#/definitions/errorResponse'
+        404:
+          description : Resource not found
+          schema:
+            $ref : '#/definitions/errorResponse'
+        429:
+          description : Too many requests
+          schema:
+            $ref : '#/definitions/errorResponse'			
+        500:
+          description : Internal Server Error
+          schema:
+            $ref : '#/definitions/errorResponse'
+        503:
+          description : Service Unavailable
+          schema:
+            $ref : '#/definitions/errorResponse'
+        504:
+          description : Gateway Timeout
+          schema:
+            $ref : '#/definitions/errorResponse'            
+  /geo/spatial : 
+    get : 
+      description : |
+        Gets Local Collect `POL or EO Branch` objects.
+        Mandatory latitude and longitude determines
+        the epicentre of the search radius
+      parameters:
+        -
+          name: latitude
+          in: query
+          description: latitude of the epicentre of the search radius
+          required: true
+          type: number
+          format: "float"  
+        -
+          name: longitude
+          in: query
+          description: longitude of the epicentre of the search radius
+          required: true
+          type: number
+          format: "float"
+        -
+        # search radius from the epicentre 
+          name: radius
+          in: query
+          default: 10
+          description: search radius from the post code specified
+          required: false
+          type: integer        
+          
+        -  
+        # optional location type 
+          name: locationtype
+          in: query
+          description: the location type to restrict the search to
+          required: false
+          type: string
+          pattern: "Enquiry Office|Post Office"
+          
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref : '#/definitions/locationResponse'
+        401:
+          description : Authorisation failure
+          schema:
+            $ref : '#/definitions/errorResponse'
+        400:
+          description : Bad Request. Probably malformed request
+          schema:
+            $ref : '#/definitions/errorResponse'
+        404:
+          description : Resource not found
+          schema:
+            $ref : '#/definitions/errorResponse'
+        429:
+          description : Too many requests
+          schema:
+            $ref : '#/definitions/errorResponse'			
+        500:
+          description : Internal Server Error
+          schema:
+            $ref : '#/definitions/errorResponse'
+        503:
+          description : Service Unavailable
+          schema:
+            $ref : '#/definitions/errorResponse'
+        504:
+          description : Gateway Timeout
+          schema:
+            $ref : '#/definitions/errorResponse'            
+securityDefinitions:
+  CLIENT_ID:
+    type: "apiKey"  
+    name: "X-IBM-Client-Id"
+    in: "header"
+
+
+  CLIENT_SECRET:   
+    type: "apiKey"
+    name: "X-IBM-Client-Secret"
+    in: "header"
+    
+security:
+- CLIENT_ID: []
+- CLIENT_SECRET: []
+
+definitions:
+  locationResponse:
+    type: object
+    properties :
+      locations :
+        type : array
+        items : 
+          $ref : '#/definitions/location'
+      warnings :
+        type : array
+        items :
+          $ref : '#/definitions/warningResponse'
+  location:
+    type: object
+    properties :
+        organisationName :
+            type : string
+        locationName :
+            type : string
+        addressLine1 :
+            type : string
+        addressLine2 :
+            type : string
+        addressLine3 :
+            type : string
+        city :
+            type : string
+        county :
+            type : string
+        postcode :
+            type : string
+        openingHours :
+          type : array
+          items :
+            $ref : '#/definitions/openingHours'
+        geoLocation :
+          $ref : '#/definitions/geoLocation'
+        distance:
+            type : integer
+        facilities:
+          $ref : '#/definitions/facilities' 
+        locationType : 
+            type : "string"
+            pattern : "Enquiry Office|Post Office"
+  facilities :
+    type : object
+    properties :
+      customerParkingIndicator :
+        type : boolean
+      disabilityIndicator :
+        type : boolean
+  geoLocation :
+    type : object
+    properties:
+      latitude : 
+        type : number
+        format : float
+      longitude : 
+        type : number
+        format : float
+  openingHours:
+    type : object
+    properties :
+      dayOfWeek:
+        type : string
+      openingTime:
+        type : string
+      closingTime:
+        type : string
+      lunchHours :
+          $ref : '#/definitions/lunchHours' 
+  lunchHours:
+    type : object
+    properties :
+      lunchOpening:
+        type : string
+      lunchClosing :
+        type : string		
+  errorResponse :
+    type : object
+    properties :
+      code : 
+        type : number
+      status : 
+        type : number
+      description :
+        type : string
+      cause :
+        type : string
+      resolution :
+        type : string
+      context :
+        type : string        
+  warningResponse :
+    type : object
+    properties :
+      code : 
+        type : number
+      description :
+        type : string
+      cause :
+        type : string
+      resolution :
+        type : string
+      context :
+        type : string        

@@ -1,0 +1,1079 @@
+swagger: '2.0'
+info:
+  title: Tracking API LIVE (SOAP)
+  description: "Tracking API provides the functionality to enquire on the tracking status of mail items. The API provides the latest tracking information for single and multiple mail items, the tracking history for a single mail item, and the proof of delivery information (minus the signature image) for a single mail item.\n \nThe API provides an alternative mechanism to using the track and trace function on the Royal Mail website (http://www.royalmail.com/track-trace). \n \nThere are no costs to customers for using the Tracking API services, however development costs must be covered by the customer. Royal Mail will not accept any responsibility for these development, implementation and testing costs.\n \nCustomers should address initial inquiries regarding development of systems for these purposes to their account handler."
+  version: 1-rev7
+  x-ibm-name: tracking-api-live-soap
+basePath: /tracking
+schemes:
+  - https
+x-ibm-configuration:
+  enforced: true
+  phase: realized
+  testable: true
+  cors:
+    enabled: true
+  properties:
+    tracking ssl profile:
+      description: SSL profile for underlying api endpoint
+      encoded: false
+      value: Live (CA2)
+    tracking endpoint:
+      description: This is the endpoint of the Tracking API
+      encoded: false
+      value: 'https://api.royalmail.com/tracking'
+    Activity Log Level:
+      description: 'What to log per api call. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    Error Log Level:
+      description: 'What to log per api error. Choices are none, activity, header, payload'
+      encoded: false
+      value: payload
+    tracking live endpoint:
+      description: ''
+      encoded: false
+      value: 'https://api.royalmail.com/tracking'
+  catalogs: {}
+  externalDocs: []
+  attachments:
+    - title: '  RMG Tracking API (SOAP) Technical User Guide'
+      description: ''
+      id: 56667cfd0cf223fe0519bc60
+    - title: RMG Tracking API (SOAP) Sample Data Set
+      description: ''
+      id: 56667b780cf223fe0519bbbb
+    - title: Tracking API Reference Data
+      description: ''
+      id: 56667b780cf223fe0519bbbf
+  gateway: datapower-gateway
+  type: wsdl
+  wsdl-definition:
+    wsdl: tracking-api-live-soap_1-rev7.zip
+    service: TrackingAPIService
+    port: ''
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - getMultiItemSummary
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(tracking endpoint)
+                    tls-profile: $(tracking ssl profile)
+                    title: PROXY
+            - operations:
+                - getProofOfDelivery
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 2
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(tracking endpoint)
+                    tls-profile: $(tracking ssl profile)
+                    title: PROXY
+            - operations:
+                - getSingleItemHistory
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 3
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(tracking endpoint)
+                    tls-profile: $(tracking ssl profile)
+                    title: PROXY
+            - operations:
+                - getSingleItemSummary
+              execute:
+                - activity-log:
+                    content: $(Activity Log Level)
+                    error-content: $(Error Log Level)
+                    title: Activity Log 4
+                - proxy:
+                    verb: keep
+                    timeout: 60
+                    cache-response: protocol
+                    cache-ttl: 900
+                    target-url: $(tracking endpoint)
+                    tls-profile: $(tracking ssl profile)
+                    title: PROXY
+tags: []
+definitions: {}
+securityDefinitions:
+  Client ID:
+    description: ''
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+  Client Secret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    description: ''
+consumes:
+  - text/xml
+produces:
+  - application/xml
+paths:
+  /getMultiItemSummary:
+    post:
+      description: Provides the latest summary level tracking event data for up to 5 mail items at the same time.
+      tags: []
+      operationId: getMultiItemSummary
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v1:getMultiItemSummaryRequest
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <v1:trackingNumbers>
+
+                  <!--1 to 5 repetitions:-->
+
+                  <v1:trackingNumber>string</v1:trackingNumber>
+
+                </v1:trackingNumbers>
+
+              </v1:getMultiItemSummaryRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:getMultiItemSummary'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v1:getMultiItemSummaryResponse
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <!--Optional:-->
+
+                <v1:itemSummaries>
+
+                  <!--1 to 5 repetitions:-->
+
+                  <v1:itemSummary>
+
+                    <!--Optional:-->
+
+                    <v1:eventDate>2014-06-09-05:00</v1:eventDate>
+
+                    <!--Optional:-->
+
+                    <v1:eventTime>10:52:58</v1:eventTime>
+
+                    <!--Optional:-->
+
+                    <v1:statusCode>
+
+                      <!--Optional:-->
+
+                      <identifier>string</identifier>
+
+                      <!--Optional:-->
+
+                      <code>string</code>
+
+                      <!--Optional:-->
+
+                      <name>string</name>
+
+                      <!--Optional:-->
+
+                      <description>string</description>
+
+                    </v1:statusCode>
+
+                    <!--Optional:-->
+
+                    <v1:summaryLine>string</v1:summaryLine>
+
+                    <v1:trackingNumber>string</v1:trackingNumber>
+
+                    <!--Optional:-->
+
+                    <v1:header>string</v1:header>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v1:footer>
+
+                      <!--Optional:-->
+
+                      <v1:footerID>string</v1:footerID>
+
+                      <!--Optional:-->
+
+                      <v1:footerText>string</v1:footerText>
+
+                    </v1:footer>
+
+                  </v1:itemSummary>
+
+                </v1:itemSummaries>
+
+                <!--Optional:-->
+
+                <v1:integrationFooter>
+
+                  <!--Optional:-->
+
+                  <v11:errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:error>
+
+                      <v11:errorCode>string</v11:errorCode>
+
+                      <v11:errorDescription>string</v11:errorDescription>
+
+                      <!--Optional:-->
+
+                      <v11:errorCause>string</v11:errorCause>
+
+                      <!--Optional:-->
+
+                      <v11:errorResolution>string</v11:errorResolution>
+
+                      <!--Optional:-->
+
+                      <v11:errorContext>string</v11:errorContext>
+
+                    </v11:error>
+
+                  </v11:errors>
+
+                  <!--Optional:-->
+
+                  <v11:warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:warning>
+
+                      <v11:warningCode>string</v11:warningCode>
+
+                      <v11:warningDescription>string</v11:warningDescription>
+
+                      <!--Optional:-->
+
+                      <v11:warningCause>string</v11:warningCause>
+
+                      <!--Optional:-->
+
+                      <v11:warningResolution>string</v11:warningResolution>
+
+                      <!--Optional:-->
+
+                      <v11:warningContext>string</v11:warningContext>
+
+                    </v11:warning>
+
+                  </v11:warnings>
+
+                </v1:integrationFooter>
+
+              </v1:getMultiItemSummaryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getProofOfDelivery:
+    post:
+      description: Provides the details captured at the point of delivery as proof that delivery has occurred. Note that a proof of delivery is only captured by the delivery track for those service offerings that require a signature on delivery. Please also note that for data protection reasons the API does not currently supply the signature image captured at the point of delivery.
+      tags: []
+      operationId: getProofOfDelivery
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v1:getProofOfDeliveryRequest
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <v1:trackingNumber>string</v1:trackingNumber>
+
+              </v1:getProofOfDeliveryRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:getProofOfDelivery'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v1:getProofOfDeliveryResponse
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <!--Optional:-->
+
+                <v1:wSImageResponse>
+
+                  <!--Optional:-->
+
+                  <v1:height>
+
+                    <unitOfMeasure>
+
+                      <unitOfMeasureCode>
+
+                        <!--Optional:-->
+
+                        <identifier>string</identifier>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </unitOfMeasureCode>
+
+                    </unitOfMeasure>
+
+                    <value>1.5E2</value>
+
+                  </v1:height>
+
+                  <!--Optional:-->
+
+                  <v1:image>cXVhZQ==</v1:image>
+
+                  <!--Optional:-->
+
+                  <v1:printedName>string</v1:printedName>
+
+                  <!--Optional:-->
+
+                  <v1:signatureTime>2006-08-19T12:27:14-05:00</v1:signatureTime>
+
+                  <v1:trackingNumber>string</v1:trackingNumber>
+
+                  <!--Optional:-->
+
+                  <v1:width>
+
+                    <unitOfMeasure>
+
+                      <unitOfMeasureCode>
+
+                        <!--Optional:-->
+
+                        <identifier>string</identifier>
+
+                        <!--Optional:-->
+
+                        <code>string</code>
+
+                        <!--Optional:-->
+
+                        <name>string</name>
+
+                        <!--Optional:-->
+
+                        <description>string</description>
+
+                      </unitOfMeasureCode>
+
+                    </unitOfMeasure>
+
+                    <value>1.5E2</value>
+
+                  </v1:width>
+
+                </v1:wSImageResponse>
+
+                <!--Optional:-->
+
+                <v1:integrationFooter>
+
+                  <!--Optional:-->
+
+                  <v11:errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:error>
+
+                      <v11:errorCode>string</v11:errorCode>
+
+                      <v11:errorDescription>string</v11:errorDescription>
+
+                      <!--Optional:-->
+
+                      <v11:errorCause>string</v11:errorCause>
+
+                      <!--Optional:-->
+
+                      <v11:errorResolution>string</v11:errorResolution>
+
+                      <!--Optional:-->
+
+                      <v11:errorContext>string</v11:errorContext>
+
+                    </v11:error>
+
+                  </v11:errors>
+
+                  <!--Optional:-->
+
+                  <v11:warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:warning>
+
+                      <v11:warningCode>string</v11:warningCode>
+
+                      <v11:warningDescription>string</v11:warningDescription>
+
+                      <!--Optional:-->
+
+                      <v11:warningCause>string</v11:warningCause>
+
+                      <!--Optional:-->
+
+                      <v11:warningResolution>string</v11:warningResolution>
+
+                      <!--Optional:-->
+
+                      <v11:warningContext>string</v11:warningContext>
+
+                    </v11:warning>
+
+                  </v11:warnings>
+
+                </v1:integrationFooter>
+
+              </v1:getProofOfDeliveryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getSingleItemHistory:
+    post:
+      description: Provides a history of tracks for a single mail item.
+      tags: []
+      operationId: getSingleItemHistory
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v1:getSingleItemHistoryRequest
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <v1:trackingNumber>string</v1:trackingNumber>
+
+              </v1:getSingleItemHistoryRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:getSingleItemHistory'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v1:getSingleItemHistoryResponse
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <!--Zero or more repetitions:-->
+
+                <v1:trackDetail>
+
+                  <!--Optional:-->
+
+                  <v1:trackDate>2014-06-09-05:00</v1:trackDate>
+
+                  <!--Optional:-->
+
+                  <v1:trackPoint>string</v1:trackPoint>
+
+                  <!--Optional:-->
+
+                  <v1:trackTime>10:52:58</v1:trackTime>
+
+                  <!--Optional:-->
+
+                  <v1:header>string</v1:header>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:footer>
+
+                    <!--Optional:-->
+
+                    <v1:footerID>string</v1:footerID>
+
+                    <!--Optional:-->
+
+                    <v1:footerText>string</v1:footerText>
+
+                  </v1:footer>
+
+                  <!--Optional:-->
+
+                  <v1:podMessage>string</v1:podMessage>
+
+                </v1:trackDetail>
+
+                <!--Optional:-->
+
+                <v1:integrationFooter>
+
+                  <!--Optional:-->
+
+                  <v11:errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:error>
+
+                      <v11:errorCode>string</v11:errorCode>
+
+                      <v11:errorDescription>string</v11:errorDescription>
+
+                      <!--Optional:-->
+
+                      <v11:errorCause>string</v11:errorCause>
+
+                      <!--Optional:-->
+
+                      <v11:errorResolution>string</v11:errorResolution>
+
+                      <!--Optional:-->
+
+                      <v11:errorContext>string</v11:errorContext>
+
+                    </v11:error>
+
+                  </v11:errors>
+
+                  <!--Optional:-->
+
+                  <v11:warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:warning>
+
+                      <v11:warningCode>string</v11:warningCode>
+
+                      <v11:warningDescription>string</v11:warningDescription>
+
+                      <!--Optional:-->
+
+                      <v11:warningCause>string</v11:warningCause>
+
+                      <!--Optional:-->
+
+                      <v11:warningResolution>string</v11:warningResolution>
+
+                      <!--Optional:-->
+
+                      <v11:warningContext>string</v11:warningContext>
+
+                    </v11:warning>
+
+                  </v11:warnings>
+
+                </v1:integrationFooter>
+
+              </v1:getSingleItemHistoryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+  /getSingleItemSummary:
+    post:
+      description: Provides the latest track for a mail item.
+      tags: []
+      operationId: getSingleItemSummary
+      summary: ''
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            example: >-
+              <SOAP-ENV:Envelope
+              xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><v1:getSingleItemSummaryRequest
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <v1:trackingNumber>string</v1:trackingNumber>
+
+              </v1:getSingleItemSummaryRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>
+      x-ibm-soap:
+        soap-action: 'urn:getSingleItemSummary'
+        soap-operation: null
+      responses:
+        '200':
+          description: Generated Response Description
+          examples:
+            application/xml: >-
+              <v1:getSingleItemSummaryResponse
+              xmlns:v1="http://www.royalmailgroup.com/api/track/V1"
+              xmlns:v11="http://www.royalmailgroup.com/integration/core/V1">
+
+                <v1:integrationHeader>
+
+                  <!--Optional:-->
+
+                  <v11:dateTime>2008-09-28T20:49:45</v11:dateTime>
+
+                  <!--Optional:-->
+
+                  <v11:version>1000.00</v11:version>
+
+                  <v11:identification>
+
+                    <!--Optional:-->
+
+                    <v11:endUserId>string</v11:endUserId>
+
+                    <v11:applicationId>string</v11:applicationId>
+
+                    <!--Optional:-->
+
+                    <v11:intermediaryId>string</v11:intermediaryId>
+
+                    <v11:transactionId>string</v11:transactionId>
+
+                  </v11:identification>
+
+                  <!--Optional:-->
+
+                  <v11:testFlag>true</v11:testFlag>
+
+                  <!--Optional:-->
+
+                  <v11:debugFlag>true</v11:debugFlag>
+
+                </v1:integrationHeader>
+
+                <!--Optional:-->
+
+                <v1:itemSummary>
+
+                  <!--Optional:-->
+
+                  <v1:eventDate>2014-06-09-05:00</v1:eventDate>
+
+                  <!--Optional:-->
+
+                  <v1:eventTime>10:52:58</v1:eventTime>
+
+                  <!--Optional:-->
+
+                  <v1:statusCode>
+
+                    <!--Optional:-->
+
+                    <identifier>string</identifier>
+
+                    <!--Optional:-->
+
+                    <code>string</code>
+
+                    <!--Optional:-->
+
+                    <name>string</name>
+
+                    <!--Optional:-->
+
+                    <description>string</description>
+
+                  </v1:statusCode>
+
+                  <!--Optional:-->
+
+                  <v1:summaryLine>string</v1:summaryLine>
+
+                  <v1:trackingNumber>string</v1:trackingNumber>
+
+                  <!--Optional:-->
+
+                  <v1:header>string</v1:header>
+
+                  <!--Zero or more repetitions:-->
+
+                  <v1:footer>
+
+                    <!--Optional:-->
+
+                    <v1:footerID>string</v1:footerID>
+
+                    <!--Optional:-->
+
+                    <v1:footerText>string</v1:footerText>
+
+                  </v1:footer>
+
+                </v1:itemSummary>
+
+                <!--Optional:-->
+
+                <v1:integrationFooter>
+
+                  <!--Optional:-->
+
+                  <v11:errors>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:error>
+
+                      <v11:errorCode>string</v11:errorCode>
+
+                      <v11:errorDescription>string</v11:errorDescription>
+
+                      <!--Optional:-->
+
+                      <v11:errorCause>string</v11:errorCause>
+
+                      <!--Optional:-->
+
+                      <v11:errorResolution>string</v11:errorResolution>
+
+                      <!--Optional:-->
+
+                      <v11:errorContext>string</v11:errorContext>
+
+                    </v11:error>
+
+                  </v11:errors>
+
+                  <!--Optional:-->
+
+                  <v11:warnings>
+
+                    <!--Zero or more repetitions:-->
+
+                    <v11:warning>
+
+                      <v11:warningCode>string</v11:warningCode>
+
+                      <v11:warningDescription>string</v11:warningDescription>
+
+                      <!--Optional:-->
+
+                      <v11:warningCause>string</v11:warningCause>
+
+                      <!--Optional:-->
+
+                      <v11:warningResolution>string</v11:warningResolution>
+
+                      <!--Optional:-->
+
+                      <v11:warningContext>string</v11:warningContext>
+
+                    </v11:warning>
+
+                  </v11:warnings>
+
+                </v1:integrationFooter>
+
+              </v1:getSingleItemSummaryResponse>
+      security:
+        - Client ID: []
+          Client Secret: []
+security: []

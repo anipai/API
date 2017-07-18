@@ -1,0 +1,21 @@
+product: 1.0.0
+info:
+  title: Test Parcel Tracking Plan
+  version: '18'
+  description: Test Parcel Tracking Plan
+  name: test-parcel-tracking-plan
+apis:
+  pfw-tracking-api-soap:
+    $ref: pfw-tracking-api-soap_1-rev5.yaml
+plans:
+  test-parcel-tracking-plan:
+    title: Test Parcel Tracking Plan
+    description: Test Parcel Tracking Plan
+    approval: true
+    apis:
+      pfw-tracking-api-soap:
+        operations:
+          - path: /ParcelTrackingEnquiry
+            operation: post
+          - path: /TrackingEnquiry
+            operation: post

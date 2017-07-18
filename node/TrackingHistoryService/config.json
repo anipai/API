@@ -1,0 +1,11 @@
+{
+    "userName" : "aniruddha.pai@royalmail.com",    
+    "password" : "January01!",
+    "org" : "55a900b10cf272a4b3015a7a",
+    "environment" : "55f16d010cf2fae1b6b74fec",
+    "baseUrl" : "https://eu.apiconnect.ibmcloud.com",
+    "path" : "/v1/orgs/%s/environments/%s/events?before=%s&after=%s&limit=%s",
+    "limit": 10,
+    "tolerance" : 20
+
+}
